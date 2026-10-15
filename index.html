@@ -232,7 +232,7 @@
                 if (typeof window.LAGER_CSV !== 'string' || !window.LAGER_CSV.trim()) throw new Error("Hittade inte data.js - ligger den i samma mapp som index.html?");
                 const rawText = window.LAGER_CSV.trim();
                 lagerData = hanteraCSV(rawText);
-                if (window.LAGER_UPPDATERAD) document.getElementById('dbdatum').innerText = ' · databas ' + window.LAGER_UPPDATERAD;
+                if (window.LAGER_UPPDATERAD) document.getElementById('dbdatum').innerText = ' · Databas ' + window.LAGER_UPPDATERAD;
                 document.getElementById('antalArtiklar').innerText = `Totalt i systemet: ${lagerData.length} artiklar`;
             } catch (err) {
                 console.error(err);
