@@ -1,5 +1,5 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-10-15 23:36';
+window.LAGER_UPPDATERAD = '2026-10-15 23:55';
 window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats
 100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
@@ -1678,7 +1678,6 @@ RS433116335118;J626T;Ligatur resorberbar Vicryl 0 2x70cm lila;Z-17-02-02
 ;;Modul 5 Uterustillägg;12:8
 ;;Modul 5 Abrasio galler;12:8
 ;;Modul 5 Videolap endoeye 3D 30* 10mm;12:8
-;;Modul 5 Bajs galler;12:8
 ;;Modul 5 Vaginal galler;12:9
 ;;Modul 5 Hud Och Bål Tilläggsgaller;12:10
 ;;Modul 5 Vaginal galler;12:10
