@@ -1,0 +1,9 @@
+*.bak
+*.tmp
+avvikelser.txt
+*.py
+*.bat
+installningar.txt
+dist/
+build/
+*.spec
