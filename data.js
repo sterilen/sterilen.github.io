@@ -1,5 +1,5 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-10-15 22:35';
+window.LAGER_UPPDATERAD = '2026-10-15 23:15';
 window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats
 100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
