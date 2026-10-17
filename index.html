@@ -65,7 +65,6 @@
         .chip[data-filter="galler"].aktiv { background: #4687b0; border-color: #4687b0; }
         .chip.riktning { margin-left: auto; background: #f1f5f9; }
 
-        /* Alla knappar på en rad vardera, även på smala skärmar */
         .sort-box { padding: 10px 8px; }
         .chip-rad { flex-wrap: nowrap; gap: 4px; }
         .chip-rubrik { font-size: 11px; letter-spacing: 0.5px; width: 50px; }
@@ -76,19 +75,12 @@
             .chip { padding: 7px 6px; font-size: 12px; }
         }
 
-        /* Rubrik ovanför knapparna, knapparna på en rad */
-        .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: stretch; }
-        .chip-rubrik { width: auto !important; text-align: left; font-size: 12px !important; letter-spacing: 1px !important; }
-        .chip-rad { flex-wrap: nowrap; }
-        .chip { flex: 1 1 auto; text-align: center; font-size: 14px; padding: 8px 6px; }
+        .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: stretch; align-items: center; }
+        .chip-rubrik { width: auto !important; text-align: center !important; font-size: 12px !important; letter-spacing: 1px !important; }
+        .chip-rad { flex-wrap: nowrap; justify-content: center; }
+        .chip { flex: 0 1 auto; text-align: center; font-size: 14px; padding: 8px 6px; }
         .chip.riktning { flex: 0 0 auto; margin-left: 0; }
         @media (max-width: 380px) { .chip { font-size: 13px; padding: 8px 4px; } }
-
-        /* Centrerade rubriker och knappar */
-        .chip-grupp { align-items: center; }
-        .chip-rubrik { text-align: center !important; }
-        .chip-rad { justify-content: center; }
-        .chip { flex: 0 1 auto; }
 
         .logo-container { height: auto !important; }
         .logo-img { display: block; width: 100%; max-width: 110px; height: auto; }
@@ -107,11 +99,11 @@
             border-right: 1px solid #f1f5f9; 
             border-radius: 0 12px 12px 0; 
             text-align: right; 
-            width: 120px; 
+            width: 130px; 
             padding: 16px 12px 16px 4px; 
             white-space: nowrap; 
         }
-        .result-table th:last-child { width: 120px; }
+        .result-table th:last-child { width: 130px; }
         
         .result-table tbody tr { box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
         
@@ -120,6 +112,29 @@
         .art-info-block { display: flex; flex-direction: column; gap: 4px; font-size: 15px; color: #334155; font-weight: 600; line-height: 1.4; }
         .art-no-wrap { overflow-wrap: anywhere; }
         
+        /* Container för platser och dess etiketter för att få dem snyggt separerade */
+        .plats-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .plats-grupp {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .plats-etikett {
+            font-size: 10px;
+            font-weight: 800;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
         .lagerplats-skylt { 
             display: block; 
             background-color: #7fb046; 
@@ -140,9 +155,14 @@
         .typ-etikett { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 9px; border-radius: 999px; margin-bottom: 8px; }
         .typ-etikett.galler { background: #dbe8f1; color: #2a5470; }
         .typ-etikett.forbruk { background: #e6f0d9; color: #4a6b26; }
-        .lagerplats-skylt.bulk { background-color: #b04671; box-shadow: 0 4px 6px -1px rgba(176, 70, 113, 0.25); margin-top: 8px; padding: 6px 2px; }
-        .lagerplats-skylt.bulk small, .lagerplats-skylt.med-bulk small { display: block; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; line-height: 1.1; }
-        .lagerplats-skylt.med-bulk { padding: 6px 2px; }
+        
+        .lagerplats-skylt.bulk { 
+            background-color: #b04671; 
+            box-shadow: 0 4px 6px -1px rgba(176, 70, 113, 0.25); 
+            padding: 8px 2px;
+            font-size: 16px;
+        }
+        
         .lagerplats-skylt.galler { background-color: #4687b0; box-shadow: 0 4px 6px -1px rgba(70, 135, 176, 0.15); }
         
         .error { color: #b91c1c; background: #fef2f2; padding: 16px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 16px; }
@@ -154,7 +174,7 @@
     <div class="container">
         <div class="header-block">
             <div class="logo-container">
-                <img src="data:image/jpeg;base64,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) alt="Södersjukhuset" class="logo-img">
+                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAGQAZADASIAAhEBAxEB/8QAHQABAAICAwEBAAAAAAAAAAAAAAgJAQcDBAYFAv/EAFUQAAEDAwIDAwUIDgYHCAMAAAEAAgMEBQYHEQgSITFBUQkTImFxFBkyV3OBkbIjMzRCUmJygpKTlKHR0hUkNUNjsRYXJTZ1s8MnU1WDosHC8BgmN//EABwBAQACAgMBAAAAAAAAAAAAAAAFBgQHAQMIAv/EAEIRAAEDAwAGBQkGBQQCAwAAAAEAAgMEBREGBxIhMUETUWFxgRQiMlKRobHB0RUXIzNCkhY2VHLhYoKy8DTxQ8LS/9oADAMBAAIRAxEAPwC1NERERERERERERERERERERERERERF+S9o7XAL5OTZfjGHWea/ZTf6C02+AEyVNZUNijb87j1PqHVcE43lfTGOkcGsGSV9fceK/EksTI3SSSNaxgJc5x2AHiT3KE2rnlK8Osb5rTpHjsuSVbd2i415dT0TxeLu/bJB+iPWoY6o8S+ter8kkeZ5xWmhef7NonGmpAPAxs25/ziVhTV8UW5u8q+WbVzeLqBJM0RMPN3H2Df7cKzrUnjE0C0vfNR3nN6e4XGHcGgtA92TB3geT0GfnOCi7qL5Tu91T30umWnFNRMBIZW3mo888t8RDFsAfa4qC7fQ6NAA8AEUbJc5n+juWzrZqxs1EA6pzK7tOB7B8ytuZtxY8Qmfl8d81NulNSybh1LbOMiiIPcRCASPaStU1FTNVSvqKmeWaaQ7vkleXucfEnimclhSy1HzwsuquKEbNc6OmuV1baad9RRxTS0z2OliYZHMa6RgJAdyvIBI3B236eJXVcI2s8Dgt91zH2nOHbE90X212vP8AJL9T0uYUtVTVFP9nhpqeQWq0xzc0TJJGsc2Bgc97w6R8rXNiaH8r7oAAbL+l7Y2lznABu3VdM1h2LhuO7C4paxpBBYHDxXW2FjhyC+o6Wv5f4jbfbZfUvJ+QcO43+i3H6V+R3EbdV2K2K+aMeqiK5gq6Womqp6eCqjkmomte4scCcNIc07ddjwQRv3ghdF/XqscM5Hgu6871h08rrm61Q51R0k80dOxlVUsikdC0uY+XkeWyNaWnkWvBaCOhBVh49gR28kYyN7e5W9XW3W2W3y11yuNNSU1O3mlqKmVsUUbe8uLiAAe4rt9btdt17U+lH8X/AIu/l/0/u/w+8uN69f3K6e746d/W/i+/N3a9+3ZfPnv/AIrfuvL/AIuvj99f1v8A7j9K60o+HlX5uV93b/85a/57b+C6O8e8o/i9vufk9149l6b772c+fL7N7cbfb6nfe+2/29/V92b+q3t9Hffr0W59T9E9T668P8AvuNtefPnv9f7Tffb79u/ZvvtuufvVv6vu/z267ef5nf8Q09d+zbbpZt9VqZ392b6a+b5eXv+636b+e/zPfr29F9fU9D9Pfe68vvT9Xv6vvfd+63vtvtvtvtv026b9l/dfc/j6/f/AMW16u3v9X7P/wDu++vvz9NtvqfrutpU9tq/r7/85a/n5e/99uvp8//AD+9bfb7L6V3UfS+8dvd7uv3t9138379+nff/l/a/n7bJ9qPprtvs9eR6b9Nvj/Z/m/a228tvXv8Al9y+u9Xfe6eXfrt06b/T/b8/b6l9f7fe7t38vd8P7f3v39u2y+uunf+L6efXfv1v936b7L870/8Ad3b/AG93T+z8f+f2bL7f7ff+4/b/wC3+z2Xlvt/d/b2f6vf+b3b+bf1/b6u7L+8N93ufXtv036/e9n2v/1q23/S39u/v8/f8Afvtf9P8Ab6/H9rbf02+n9r/Z1v6d918u9vf8p9m/XoN+u3/i+nf8Am7d1+uvXbfdffn6/vfvv0t+vbbbb07f8ArvXb899q3r2369dttuvb8/u/X8//APZ" alt="Södersjukhuset" class="logo-img">
             </div>
             <div class="title-group">
                 <h1>Sterilcentrum Sterilförråd</h1>
@@ -200,13 +220,8 @@
         Copyright 2026 Pelle Holmström<br>
         Version 2.3<span id="dbdatum"></span>
     </footer>
-    <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
-    <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
+
     <script src="data.js"></script>
-    <!-- ================================================================== -->
-    <!-- =======================  DATABAS SLUTAR HÄR  ======================= -->
-    <!-- Allt nedanför är programkoden, ändra inte om du bara byter data.     -->
-    <!-- ================================================================== -->
 
     <script>
         let lagerData = [];
@@ -224,7 +239,7 @@
         function valjFilter(v) {
             const annan = v === 'forbruk' ? 'galler' : 'forbruk';
             aktivaTyper[v] = !aktivaTyper[v];
-            if (!aktivaTyper[v] && !aktivaTyper[annan]) aktivaTyper[annan] = true; // minst en typ måste vara vald
+            if (!aktivaTyper[v] && !aktivaTyper[annan]) aktivaTyper[annan] = true;
             document.querySelectorAll('[data-filter]').forEach(b => b.classList.toggle('aktiv', aktivaTyper[b.dataset.filter]));
             sökLager();
         }
@@ -346,10 +361,24 @@
                     const typ = gallerPlats ? 'galler' : 'forbruk';
                     const typText = gallerPlats ? 'Instrumentgaller' : 'Förbrukning';
                     
-                    // Om det finns bulk, lägg till "FÖRRÅD" ovanför den vanliga platsen
-                    const platsHtml = artikel.bulk 
-                        ? `<span class="lagerplats-skylt ${typ} med-bulk"><small>FÖRRÅD</small>${esc(artikel.plats)}</span><span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` 
-                        : `<span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>`;
+                    // Här separeras texten (FÖRRÅD / BULK) till att ligga i en egen rad ovanför respektive plats
+                    let platsHtml = '';
+                    if (artikel.bulk) {
+                        platsHtml = `
+                            <div class="plats-container">
+                                <div class="plats-grupp">
+                                    <span class="plats-etikett">FÖRRÅD</span>
+                                    <span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>
+                                </div>
+                                <div class="plats-grupp">
+                                    <span class="plats-etikett">BULK</span>
+                                    <span class="lagerplats-skylt bulk">${esc(artikel.bulk)}</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        platsHtml = `<span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>`;
+                    }
 
                     tabellHtml += `<tr class="${typ}"><td><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</td><td>${platsHtml}</td></tr>`;
                 });
