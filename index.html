@@ -63,7 +63,6 @@
         .chip.aktiv { background: #0f172a; color: #ffffff; border-color: #0f172a; }
         .chip[data-filter="forbruk"].aktiv { background: #7fb046; border-color: #7fb046; }
         .chip[data-filter="galler"].aktiv { background: #4687b0; border-color: #4687b0; }
-        .chip[data-bulkfilter].aktiv { background: #b04671; border-color: #b04671; }
         .chip.riktning { margin-left: auto; background: #f1f5f9; }
 
         /* Alla knappar på en rad vardera, även på smala skärmar */
@@ -179,7 +178,6 @@
                     <div class="chip-rad">
                     <button type="button" class="chip aktiv" data-filter="forbruk" onclick="valjFilter('forbruk')">Förbrukning</button>
                     <button type="button" class="chip aktiv" data-filter="galler" onclick="valjFilter('galler')">Instrumentgaller</button>
-                    <button type="button" class="chip" data-bulkfilter="1" onclick="valjBulk()">Bulk</button>
                     </div>
                 </div>
                 <div class="chip-grupp">
@@ -201,7 +199,7 @@
     <footer class="footer">
         <span id="söktid"></span><br><br>
         Copyright 2026 Pelle Holmström<br>
-        Version 2.4<span id="dbdatum"></span>
+        Version 2.5<span id="dbdatum"></span>
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
@@ -216,7 +214,6 @@
         let aktivSort = 'plats';
         const aktivaTyper = { forbruk: true, galler: true };
         let fallande = false;
-        let baraBulk = false;   // true = visa bara artiklar som har en bulkplats
 
         function ärGaller(p) { return /^\d+:\d+$/.test(p); }
 
@@ -230,12 +227,6 @@
             aktivaTyper[v] = !aktivaTyper[v];
             if (!aktivaTyper[v] && !aktivaTyper[annan]) aktivaTyper[annan] = true; // minst en typ måste vara vald
             document.querySelectorAll('[data-filter]').forEach(b => b.classList.toggle('aktiv', aktivaTyper[b.dataset.filter]));
-            sökLager();
-        }
-
-        function valjBulk() {
-            baraBulk = !baraBulk;
-            document.querySelectorAll('[data-bulkfilter]').forEach(b => b.classList.toggle('aktiv', baraBulk));
             sökLager();
         }
 
@@ -321,7 +312,6 @@
             });
 
             hittade = hittade.filter(i => aktivaTyper[ärGaller(i.plats) ? 'galler' : 'forbruk']);
-            if (baraBulk) hittade = hittade.filter(i => i.bulk);
 
             const coll = (x, y) => x.localeCompare(y, 'sv', { numeric: true, sensitivity: 'base' });
             const dir = fallande ? -1 : 1;
