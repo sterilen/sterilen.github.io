@@ -1,36 +1,36 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-10-17 09:14';
+window.LAGER_UPPDATERAD = '2026-10-17 09:16';
 window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
-100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01
+100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01;BPA-31
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
 100143;87480;Endotrakealtub SHILEY HI-LO ID 8.0mm;D-13-01-01
-100201;68113;Sugset Medena dubbelbockad 22cm Ch18,5 slang 3,5m Ø 5,5x8mm;E-18-05-01
+100201;68113;Sugset Medena dubbelbockad 22cm Ch18,5 slang 3,5m Ø 5,5x8mm;E-18-05-01;BE-06-02
 100234;C8501;Sårretraktor/hake Alexis självhållande laparoskopiskt system 2,5-6cm;E-23-01-01
 10041209235239;022200;Dränagepåse steril maxi 500ml;F-15-05-01
-100532;97123664-06;Operationsset Extensionsset Modul 3 SÖS;A-09-01-01
+100532;97123664-06;Operationsset Extensionsset Modul 3 SÖS;A-09-01-01;BPA-15
 100737;C-CAE-14.0-70-FII;Ledare för intubation 14Fr längd 70cm med stylet;Z-05-01-02
 101181;63011;Skydd för röntgenrör rund 90cm;X-03-04-01
 101182;63012;Skydd för röntgenrör rund 140cm;G-13-02-01
-101822;SPE200;Förlängningsslang tryckstabil till sprutpump innedia 1,0mm längd 200cm;D-27-01-01
-101833;MG-245250;Blandningssystem för cytostatika Luer Lock Adaptor Chemfort;G-04-04-01
-101835;MG-245277;Blandningssystem för cytostatika Syringe Adaptor Lock Chemfort;G-04-05-01
-101837;MG-245248;Blandningssystem för cytostatika Vial Adaptor 13/20mm Chemfort;G-04-02-01
+101822;SPE200;Förlängningsslang tryckstabil till sprutpump innedia 1,0mm längd 200cm;D-27-01-01;BD-05-01
+101833;MG-245250;Blandningssystem för cytostatika Luer Lock Adaptor Chemfort;G-04-04-01;BD-06-02
+101835;MG-245277;Blandningssystem för cytostatika Syringe Adaptor Lock Chemfort;G-04-05-01;BD-06-03
+101837;MG-245248;Blandningssystem för cytostatika Vial Adaptor 13/20mm Chemfort;G-04-02-01;BD-06-04
 101839;MG-245269;Blandningssystem för cytostatika Vial Adaptor 32mm Chemfort;G-04-03-01
 101876;144668;Injektionskanyl 22Gx50mm svart Prosum;D-26-04-01
 101877;144669;Injektionskanyl 23Gx25mm blå Prosum;D-26-04-02
 101880;144673;Injektionskanyl 27Gx19mm grå Prosum;D-24-07-01
 101883;4665465;Injektionskanyl 21Gx80 mm grön Sterican;D-24-07-02
 101886;4550591;Uppdragningskanyl universal Spike med injektionsmembran f flaska blå;G-10-03-01
-101887;144656;Uppdragningskanyl trubbig/tvärslipad 18Gx50mm rosa singelpack Prosum;D-17-01-01
+101887;144656;Uppdragningskanyl trubbig/tvärslipad 18Gx50mm rosa singelpack Prosum;D-17-01-01;BD-02-04
 101894;10553-01;Infusionskran 3-vägs evercare 100cm slang 3x4,1mm;X-03-06-01
-101895;10575-02;Infusionskran 3-vägs evercare 10cm slang 3x4,1mm 2injmemb;G-12-05-01
+101895;10575-02;Infusionskran 3-vägs evercare 10cm slang 3x4,1mm 2injmemb;G-12-05-01;BD-08-01
 101909;B956017;Spruta injektions Luer Lock 3-komp 1ml grad 0,01ml centrisk;G-11-05-02
 102032;393227;Infusionskanyl säkerhetsprodukt 18Gx45mm grön BD Venflon™ Pro Safety;D-10-08-02
 102033;900406;Injektionskanyl 14Gx80mm ljusgrön KD-FINE;G-08-05-02
-102034;714841;Infusionskran 3-vägs två SWAN-LOCK 100cm slang SELF LOCK green line;D-27-03-01
+102034;714841;Infusionskran 3-vägs två SWAN-LOCK 100cm slang SELF LOCK green line;D-27-03-01;BD-05-04
 102188;CSE-P-125;Klockset till Haemonetics Cellsaver Elite+, 125 ml;D-22-07-01
-102190;00205-00;Uppsamlingsreservoar 3 liter till Cellsaver Elite+;D-24-09-01
-102191;00208-00;Sugslang med antikoagulering standard passar Elite+;E-05-07-01
+102190;00205-00;Uppsamlingsreservoar 3 liter till Cellsaver Elite+;D-24-09-01;BF-07-04
+102191;00208-00;Sugslang med antikoagulering standard passar Elite+;E-05-07-01;BF-07-03
 102192;HAR-A-1000;Vakuumslang mellan reservoar och CellSaver Elite+;D-22-06-01
 102193;CSE-B-1000;Extra avfallspåse 10 liter till CellSaver Elite+;E-05-01-01
 102228;412371000;Dubbellumentub vänster Ambu VivaSight 2DLT Kit 37 Fr;D-28-05-01
@@ -40,18 +40,18 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 102255;09350066;Cementkompressor/pressare bencement Exeter acetabulum seal 66mm;F-29-03-01
 102305;97128638-06;Operationsset Rygg Modul 3 SÖS;A-21-01-01
 102306;97128637-03;Operationsset Stort frakturset Modul 3 SÖS;A-11-01-01
-102308;PL775SU;Instrument till avancerad bipolär Caiman Maryland ej böjbar D5/170mm;F-19-02-01
-102309;PL770SU;Instrument till avancerad bipolär Caiman Maryland ej böjbar D5/360mm;F-17-05-01
+102308;PL775SU;Instrument till avancerad bipolär Caiman Maryland ej böjbar D5/170mm;F-19-02-01;BH-02-03
+102309;PL770SU;Instrument till avancerad bipolär Caiman Maryland ej böjbar D5/360mm;F-17-05-01;BH-02-01
 102310;PL740SU;Instrument till avancerad bipolär Caiman trubbig ej böjbar D5/360mm;F-13-02-01
 102322;EGIAUSTND;Handtag till stapler endo gia ultra standard 12mm, 16 cm;F-11-02-01
 102328;97128636-04;Operationsset Knäplastik Modul 3 SÖS;A-13-01-01
 102350;97006322-16;Operationsset Korsbandset Modul 3 SÖS;A-23-01-01
-102355;8701148SP;Aggregat till infusionspump Spaceline SafeSet PVC-DEHP fri 250 cm;D-25-04-01
-102358;8250146;Förlängningsslang till sprutpump 300cm;E-03-05-01
+102355;8701148SP;Aggregat till infusionspump Spaceline SafeSet PVC-DEHP fri 250 cm;D-25-04-01;BPA-06
+102358;8250146;Förlängningsslang till sprutpump 300cm;E-03-05-01;BE-05-01
 102877;9158121;Suturset engångs med metallinstrument;G-16-06-01
-102925;8250719SP;Aggregat till infusionspump Infusomat Space Line Flush-set;G-10-04-01
-102927;16700C;Infusionskran 3-vägs swivel 10cm slang 96h anv tid;D-25-02-01
-102929;4617509F;Spruta injektions Luer Lock 3-komp 50/60ml graderad 1ml;D-11-01-01
+102925;8250719SP;Aggregat till infusionspump Infusomat Space Line Flush-set;G-10-04-01;BF-07-01
+102927;16700C;Infusionskran 3-vägs swivel 10cm slang 96h anv tid;D-25-02-01;BE-04-01
+102929;4617509F;Spruta injektions Luer Lock 3-komp 50/60ml graderad 1ml;D-11-01-01;BPA-09
 103229;61214060;Endotrakealtub armerad HVLP-kuff utan ledare röntgentät stl 6,0mm;D-28-06-01
 103231;61214070;Endotrakealtub armerad HVLP-kuff utan ledare röntgentät stl 7,0mm;D-08-01-01
 103233;61214080;Endotrakealtub armerad HVLP-kuff utan ledare röntgentät stl 8,0mm;D-08-10-01
@@ -60,8 +60,8 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 103294;18860;Endotrakealtub lågtryckskuff sugkanal fsubglottisasp. Stl 6,0mm;D-26-07-01
 103373;PS3150A;Hudmarkeringspenna standardspets 1mm;E-14-03-01
 103598;42221410;Tempkateter Urinkateter strl 14 Fr/Ch längd 40 cm;D-22-05-02
-103724;9158194;Tvättset för anestesi;E-03-02-01
-103775;4890047N;Perifer nervblockad kundanpassat set NRFit vuxen;D-04-02-01
+103724;9158194;Tvättset för anestesi;E-03-02-01;BG-08-01
+103775;4890047N;Perifer nervblockad kundanpassat set NRFit vuxen;D-04-02-01;BPA-07
 103786;24-1013-64CZ;Epiduralkanyl NRFit honkoppling 18G 110mm;D-10-06-02
 103789;4450045N;Epiduralset NRFit kundanpassat 18G;D-30-01-01
 103790;4515501N-01;Bakteriefilter NRFit till epiduralkateter 0,2µm;D-25-01-02
@@ -73,7 +73,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 103807;8722865;Förlängningsslang NRFit tryckstabil till sprutpump 200cm dia 1,3x2,4mm;D-26-02-02
 103818;10026792;Spinalkanyl NRFit Sprotte 25G 90mm med 30mm införare;D-08-02-02
 103819;10026779;Spinalkanyl NRFit Sprotte 25G 120mm med40mm införare;D-08-02-01
-103826;4470046N;Spinalset NRFit kundanpassat 25G 88mm;D-02-02-01
+103826;4470046N;Spinalset NRFit kundanpassat 25G 88mm;D-02-02-01;BPA-08
 103828;15491050;Uppdragningskanyl NRFit trubbig tvärslipad 18Gx50mm;D-10-04-01
 103831;10027051;Propp NRFit lock hankoppling;D-22-01-01
 103837;4892610NR-01;Kanyl NRFit för perifer nervblockad injslang atr spets 20G 100mm;D-18-02-01
@@ -95,13 +95,13 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 103970;21310;Fingerförband vadderat storlek S FingerDerm;E-26-04-02
 103971;21311;Fingerförband vadderat storlek M FingerDerm;E-26-05-02
 103972;21312;Fingerförband vadderat storlek L FingerDerm;E-26-05-01
-104036;97138102-02;Operationsset Kir Lap app/Lap Diagnostik SÖS;A-06-01-01
-104046;97001636-19;Operationsset Höftplastikset Modul 3 SÖS;A-05-01-01
+104036;97138102-02;Operationsset Kir Lap app/Lap Diagnostik SÖS;A-06-01-01;BPA-22
+104046;97001636-19;Operationsset Höftplastikset Modul 3 SÖS;A-05-01-01;BPA-18
 104060;188105;Operationsduk nonwoven kirurgisk röntgent 3x40cm 5 tork/kuvert;F-06-08-01
-104061;97031742-12;Operationsset Ortopedibasset Modul 3 SÖS;A-01-01-01
-104064;496200;Förband postoperativt m superabsorb. 9x10cm, Mepilex Border Post-op;C-30-01-01
+104061;97031742-12;Operationsset Ortopedibasset Modul 3 SÖS;A-01-01-01;BPA-26
+104064;496200;Förband postoperativt m superabsorb. 9x10cm, Mepilex Border Post-op;C-30-01-01;BD-07-01
 104066;97138664-01;Operationsset Venport Modul 1 SÖS;B-09-01-01
-104068;496400;Förband postoperativt m superabsorb. 10x20cm, Mepilex Border Post-op;C-28-03-01
+104068;496400;Förband postoperativt m superabsorb. 10x20cm, Mepilex Border Post-op;C-28-03-01;BD-07-04
 104069;496450;Förband postoperativt m superabsorb. 10x25cm, Mepilex Border Post-op;C-28-02-01
 104085;60701145;Filmförband transparent duschbart 20x30cm Mediplast;H-09-09-01
 104412;3258131;Elastisk linda för stabilisering, bomull/syntet 6cmx2,1m steril;E-30-02-02
@@ -126,7 +126,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 104946;C-CAE-19.0-56-AIC;Tubbytesledare 19Fr 56cm Aintree;Z-05-01-01
 104948;97137967-01;Operationsset ASNIS/DHS Modul 3 SÖS;A-25-01-01
 104951;97033568-14;Operationsset Axelset Modul 3 SÖS;A-17-01-01
-104967;15910121;Urimeter vuxen/barn med krok Q 500 150cm slang 2000ml;E-07-03-01
+104967;15910121;Urimeter vuxen/barn med krok Q 500 150cm slang 2000ml;E-07-03-01;BG-06-03
 104968;42221210;Tempkateter Urinkateter strl 12 Fr/Ch längd 40 cm;D-22-05-01
 105410;LA21920;Lueradapter med backventil engångs Sol-M;G-12-06-02
 105412;450228V1;Venprovtagningskanyl med hållare lång 22G 0,7x38mm svart;D-06-01-02
@@ -142,28 +142,28 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 105474;62382-6S;Skalpellblad nr 20 steril rostfritt blad;G-29-02-02
 105475;62383-6S;Skalpellblad nr 21 steril rostfritt blad;G-29-03-01
 105596;AB6120;Urinkateter hematuri Couvelaire 3v 50mlballong 20Ch 42cm silikon;G-05-01-01
-105612;74-2501-S;Instrumentbordslakan tvåplan 122cm 152x205cm 3-lagers;E-04-02-01
-105652;ICE4400R;C-bågsskydd armskydd 104 x 188cm 2 gummiband;E-08-02-01
-105655;ICE4420;C-bågsskydd mini 137x216cm för Fluoroscan;E-08-04-01
+105612;74-2501-S;Instrumentbordslakan tvåplan 122cm 152x205cm 3-lagers;E-04-02-01;BC-05-01
+105652;ICE4400R;C-bågsskydd armskydd 104 x 188cm 2 gummiband;E-08-02-01;BF-04-01
+105655;ICE4420;C-bågsskydd mini 137x216cm för Fluoroscan;E-08-04-01;BF-06-01
 105671;10012151;Sugset dubbelbock 3x4 mm 17 cm spets 3,5 M slang;E-20-05-01
 105689;TB003;Insufflationsslang 3m med hepafilter transparent luer kona engångs;E-27-07-01
-105694;6088805;Sugslang kona/kona, 3,5m Ø5,6x8,2mm PVC-fri steril;H-27-01-01
+105694;6088805;Sugslang kona/kona, 3,5m Ø5,6x8,2mm PVC-fri steril;H-27-01-01;BG-04-01
 105705;610-1120;Ultraljudsprobeskydd 14 x 244 cm;H-03-01-01
 105761;957-204;Blodgasspruta 0,7- 1,0 ml aspirator medblandningskula Radiometer;D-07-04-01
 105787;PS2910;Nålräknare magnetask med nåldyna 10 nålars;E-23-05-01
-105820;489-524;Skål 500ml graderad i plast blå styckförpackad;C-24-04-01
+105820;489-524;Skål 500ml graderad i plast blå styckförpackad;C-24-04-01;BC-03-01
 105825;PS6208;Sugkyrett för exaeres flexibel 8mm;E-23-06-01
 105826;PS6210;Sugkyrett för exaeres flexibel 10mm;E-21-06-01
 105958;62450200;Uretärkateter Selectip 5F öppet ändhål rak tip 0 sidohål;F-26-01-02
 105993;60233035N;Kateteriseringsset stort;D-03-01-01
 105996;60101126;Kateteriseringsgel i spruta 11ml vattenlöslig steril;F-13-04-01
-106005;60Y-280T;Spolaggregat för urologi envägs 280cm;E-13-06-01
+106005;60Y-280T;Spolaggregat för urologi envägs 280cm;E-13-06-01;BG-05-01
 106101;688457;Tryckmätningsset slutet 1-linje röd 130+90cm;G-16-02-01
 106142;B-40160;Rensdyna tiprengörare 5x5cm med röntgentråd;F-17-06-01
 106160;450040;Venprovtagningskanyl utan hållare 21G 0,8x38mm Vacuette grön;G-23-05-01
-106174;2290ES;TIVA-set 3-vägs y-koppling 2 SmartSite,210cm roterande luer-lås;D-29-04-01
-106189;PS6102E;Sugslang till sugkurett universalkoppling hane och hona 2mx16mm;E-19-05-01
-106226;97135440-04;Dukningsset Angioset SÖS/Karolinska;B-15-01-01
+106174;2290ES;TIVA-set 3-vägs y-koppling 2 SmartSite,210cm roterande luer-lås;D-29-04-01;BE-05-03
+106189;PS6102E;Sugslang till sugkurett universalkoppling hane och hona 2mx16mm;E-19-05-01;BF-06-02
+106226;97135440-04;Dukningsset Angioset SÖS/Karolinska;B-15-01-01;BPA-14
 106233;97103856-02;EVAR/TEVAR Lakan;B-27-03-01
 106355;9640-20;PEG-set komplett Mic Peg set PULL 20Fr Silikon;F-14-07-01
 106390;EN0120;Enteralspruta Caina Medical 20ml ENFit engångs;G-20-05-01
@@ -201,7 +201,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 14020610235531;4511200.;Perifix® kateterfixering;D-26-08-01
 14020610254790;5052-258.;125 X 89 X 06MM RECIPROCATOR BLADE 5 EA;E-27-02-01
 14081108315892;990927723426;Scleroseringsnål L 230cm Diam 2.6, 0.7/0.7, engångs;F-14-01-01
-15111012201073;12771;Polstervadd Cellona steril 10cmx3m;E-06-02-01
+15111012201073;12771;Polstervadd Cellona steril 10cmx3m;E-06-02-01;BA-01-04
 16021907345046;1601-48;Embolectomikateter 4 Fr 80 cm;Z-06-01-06
 16021907345060;1601-34;Embolectomikateter 3 Fr 40 cm;Z-06-01-01
 16021907345077;1601-44;Embolectomikateter 4 Fr 40 cm;Z-06-01-02
@@ -214,8 +214,8 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 16082612324175;66800560.;Gelbildande förband m fiberstr hög;E-28-05-01
 16082612324201;66800561.;Gelbildande förband m fiberstr hög;E-28-05-02
 17012611300345;DHYNSSOAST-035-H-180;D-E Hydrophilic Nitinol GW-Angled standard tip, straight soft tip;G-11-01-01
-17020808432586;8482CEA.;LAKAN UNDERLÄGGS, 96X92CM, MED PÅSE, PE;E-17-04-01
-17020808432642;TB29429CE.;OP-LAKAN, HÖFT, ULT, M PÅSE, 217/290X350CM;F-25-04-01
+17020808432586;8482CEA.;LAKAN UNDERLÄGGS, 96X92CM, MED PÅSE, PE;E-17-04-01;BC-08-01
+17020808432642;TB29429CE.;OP-LAKAN, HÖFT, ULT, M PÅSE, 217/290X350CM;F-25-04-01;BF-08-03
 17061908322515;8728844F-06;OPS 50ML LL-EU/AP;X-08-04-01
 18021213084373;6012020;Redax uppsamlingspåse, tömbar,600ml;F-04-06-01
 18041615514608;306026;Opmi Drapes mikroskopskydd 132cmX391cm;E-06-06-01
@@ -226,19 +226,19 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 19111414155984;BCL2645;GORE Tri-Lobe Balloon Catheter 26-42 mm;Z-02-01-05
 19111910363249;682225;Pressure Accessory.COMP Adapter Male/Male;X-08-06-01
 19111910363261;MAK-NV-016;Micropunktionsset,6F kateter,nål 21Gx15cm, ledare 60cmx0,018 rak tipp;X-19-07-01
-19120313430892;316025-HP;EZ 200ml Disposable Syringe ELS;H-07-03-01
+19120313430892;316025-HP;EZ 200ml Disposable Syringe ELS;H-07-03-01;BC-01-04
 20111607364724;5071-181.;195 X 86 X 127MM (050 INCH) OSCILLATOR BLADE, QTY 5;E-27-03-02
 20121511022324;682230;Pressure tubing MF 60in TryckmätarslangCarotis;F-03-07-01
 21102914175487;480299;Endowrist suction irrigator;C-13-02-02
-21102914175509;480422;Vessel sealer extend;B-18-02-01
-21102914175528;480440;SynchroSeal;C-13-03-02
+21102914175509;480422;Vessel sealer extend;B-18-02-01;BA-01-03
+21102914175528;480440;SynchroSeal;C-13-03-02;BA-01-02
 21102914175719;470381;12 - 8 mm reducer;E-11-01-01
 21102914175784;480460;SureForm 60 instrument;C-13-01-01
 21102914175805;480445;SureForm 45 instrument;F-20-01-01
 21102914175867;48360B;SureForm 60 blue reload (3.5 mm, 6-row);G-07-08-01
 21102914175887;48360G;SureForm 60 green reload (4.3 mm, 6-row);G-07-08-03
 21102914175989;48345G;SureForm 45 green reload (4.3 mm, 6-row);G-07-08-02
-21102914180384;470015;Arm drape (box of 20);E-01-03-01
+21102914180384;470015;Arm drape (box of 20);E-01-03-01;BPA-27
 21102914180405;470341;Column drape;E-05-02-01
 21102914180843;470359;8 mm bladeless obturator (optical);E-09-01-01
 21112408421415;SU-101040;Punktionsset Supra-Fix med pigtail PUR 8Ch 65 cm;F-05-07-01
@@ -259,13 +259,13 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 22061611020831;M00550601.;Sprutset för tryckmätning Alliance Inflation 5-pack;F-14-05-01
 23021614134771;10017188;Prevena Peel & Place Kit 20 cm;H-03-03-01
 23021614134778;10017190;Prevena Peel & Place Kit 13 cm;H-01-02-01
-23031711015735;165250;R-LOCK backventil;D-21-01-01
-23110709484600;4712500398-3;Optivac 80g Refobacin med Gentamicin;E-14-01-01
+23031711015735;165250;R-LOCK backventil;D-21-01-01;BD-01-02
+23110709484600;4712500398-3;Optivac 80g Refobacin med Gentamicin;E-14-01-01;BE-07-03
 23111610272105;H-DIPP10;Huntleigh intraoperativ engångs-probe 8MHz 10-pack;F-08-09-01
 24041712210222;K2016361;Performance Fiber Thulio 272?m for stones;G-09-02-01
 24050215163419;7981832;Freka Endolumina CH8/270 cm ENFit;F-12-06-01
 2409;68133;Sugset Medena Midi 3 slitsar 26cm Ch18,5 Ø 5,5x8mm slang 3,5m;E-23-03-01
-24101513522607;ART-700-SYR;Arterion Regular syringe 150 ml;H-01-05-01
+24101513522607;ART-700-SYR;Arterion Regular syringe 150 ml;H-01-05-01;BB-04-01
 25021113062877;SGF1A;SAFEGUARD FOCUS COMPRESSION DEVICE.17 cm.15 cm.120 mL;X-08-01-01
 25021113062884;MDD200H.;MDD.1400 mL.48 (122 cm) Large Bore.Drape Clip.Female Luer Check Relief Valve.Lar;X-06-05-01
 25021309332220;M0044000040;Viking 6F 115CMS JOS 4E 5mm;X-15-01-01
@@ -274,7 +274,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 25041711225427;PD6F038.;Prelude 6F.16 cm (6.3);H-11-07-01
 25041711225448;PD7F038.;Prelude 7F.16 cm (6.3);H-11-08-01
 25050217351152;5526510.;ENDO SPONGE;G-28-05-01
-25101414435208;PN 470500;Universaltätning (5-12 mm);E-05-04-01
+25101414435208;PN 470500;Universaltätning (5-12 mm);E-05-04-01;BC-01-01
 25121817053176;60301;Bilaterlat extremitetsset knä;B-16-03-01
 26011213414830;2012-10M;Pruitt F3 Carotic Shunt;F-16-08-01
 26011213414860;1BV6M;XenoSure biologisk patch 10mmx60mm;F-25-01-02
@@ -290,8 +290,8 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 45901;4043E;Blodgasspruta 3 ml utan kanyl Luer slipPortex;X-11-07-01
 48439;10001607;Urinkateter Tiemann 2v 40cm Ch16 10ml ff spruta silikon;G-15-05-01
 51714;60760;Op-handske, latex, dubbel, grön+ofärg, hydrogel 6,0;C-12-02-01
-51715;60765;Op-handske, latex, dubbel, grön+ofärg, hydrogel 6,5;C-10-02-01
-51716;60770;Op-handske, latex, dubbel, grön+ofärg, hydrogel 7,0;C-12-03-01
+51715;60765;Op-handske, latex, dubbel, grön+ofärg, hydrogel 6,5;C-10-02-01;BG-04-02
+51716;60770;Op-handske, latex, dubbel, grön+ofärg, hydrogel 7,0;C-12-03-01;BG-04-04
 51717;60775;Op-handske, latex, dubbel, grön+ofärg, hydrogel 7,5;C-10-04-01
 51718;60780;Op-handske, latex, dubbel, grön+ofärg, hydrogel 8,0;C-12-05-01
 54831;60503;Slitslakan 200x260cm slits 7x102cm;C-11-03-01
@@ -304,7 +304,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 56962;3600-100;Thoraxdränage Oasis vux/barn torr sugregulator inkl vatten 2100 ml;F-22-06-01
 580;1902SK;Hemostatika passiv oxiderad cellulosa Surgicel 10x20cm;F-19-01-01
 58506;1610;Venkanylförband fixering av PVK för barn, 5 x 5,7 cm;G-27-02-01
-58507;1633;Venkanylförband fixering av PVK 8,5 x 7cm;D-07-02-01
+58507;1633;Venkanylförband fixering av PVK 8,5 x 7cm;D-07-02-01;BD-01-01
 58632;3345N;Hudskydd barriärfilm applikator 3ml;G-30-02-01
 59047;60880840;Sugkateter rak 40cm nr 08 ljusblå;D-28-07-01
 59056;60881653;Sugkateter rak 53cm nr 16 orange;G-08-01-01
@@ -326,16 +326,16 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 61222;10010898;Nästub Wirupren stl 32 längd 170mm;D-30-05-01
 61223;10010899;Nästub Wirupren stl 34 längd 170mm;D-30-05-02
 61358;444821;Infusionskranblock 3-ingångar MultiflowSWAN-LOCK 150cm slang;G-18-03-01
-61368;671500;Slangset Traumaset Fluido komplett, 2 spikes, 1 500 mm infusionsslang;D-14-03-01
-61369;670800-B;Fluido Irrigation URO Set slanglängd 2000mm;G-01-05-01
-61370;680801-B;Fluido Irrigation URO Patient Line 200cm patientslang;G-01-03-01
+61368;671500;Slangset Traumaset Fluido komplett, 2 spikes, 1 500 mm infusionsslang;D-14-03-01;BE-07-02
+61369;670800-B;Fluido Irrigation URO Set slanglängd 2000mm;G-01-05-01;BB-03-01
+61370;680801-B;Fluido Irrigation URO Patient Line 200cm patientslang;G-01-03-01;BE-07-01
 61454;HM002;Buktryckmätningsset FoleyManometer för mätning via urinblåsan;G-25-03-01
 61719;697H;Sutur ej resorberbar monofil Ethilon 6-0 p-1 45cm;Z-12-05-02
 61915;669600;Operationsset Akut Aortaset förstärkt;B-20-01-01
 61942;699054;Operationsset Universalset;B-20-03-01
-61964;175260;Operationsduk gasväv 3-lager 5-pack m röntgentråd 30x45cm brun;C-17-04-01
+61964;175260;Operationsduk gasväv 3-lager 5-pack m röntgentråd 30x45cm brun;C-17-04-01;BPA-10
 61967;185260;Operationsduk nonwoven 5-pack med röntgentråd 20x40cm grön;C-15-04-01
-61968;185460;Operationsduk nonwoven 5-pack med röntgentråd 30x40cm brun;C-17-02-01
+61968;185460;Operationsduk nonwoven 5-pack med röntgentråd 30x40cm brun;C-17-02-01;BF-05-01
 61969;185830;Operationsduk nonwoven 1-pack med röntgentråd 40x65cm grå;C-15-03-01
 61970;185860;Operationsduk nonwoven 5-pack med röntgentråd 40x65cm svart;C-19-03-01
 61971;159160;Operationsduk gasväv 10x10cm 12-lager mröntgentråd orange 5pk;C-17-03-01
@@ -346,7 +346,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 62099;0703125001;Knivelektrod till diatermihandtag 125mm, SafeAir;F-08-06-03
 62204;187922;Operationsduk nonwoven xtra kraftig grön rtg-tråd 40x60cm 2-pk svart;C-15-03-02
 62218;708131;Slanghållare kardborrband häftande 2,5x30cm;C-22-02-01
-62228;1463-02;Operationshandduk absorberande 70x60cm häftkant 5cm 3-lagers;E-10-04-01
+62228;1463-02;Operationshandduk absorberande 70x60cm häftkant 5cm 3-lagers;E-10-04-01;BG-05-02
 62255;1825;Slangstrumpa för kablar transparent 17x240cm;F-23-02-01
 62257;1873;Spolpåse 62x50cm med nät och tappning;C-24-03-01
 62304;60785;Op-handske, latex, dubbel, grön+ofärg, hydrogel 8,5;C-10-01-01
@@ -354,8 +354,8 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 62310;293400;Ärrbehandlingsprodukt av silikon för beh. av hypertopiska ärr 10x18cm;G-25-07-01
 62517;41455;Op-handske, latexfri, dubbel, blå+ofärg, hydrogel 5,5;C-12-01-01
 62518;41460;Op-handske, latexfri, dubbel, blå+ofärg, hydrogel 6,0;C-18-05-01
-62519;41465;Op-handske, latexfri, dubbel, blå+ofärg, hydrogel 6,5;C-20-01-01
-62520;41470;Op-handske, latexfri, dubbel, blå+ofärg, hydrogel 7,0;C-20-03-01
+62519;41465;Op-handske, latexfri, dubbel, blå+ofärg, hydrogel 6,5;C-20-01-01;BF-03-02
+62520;41470;Op-handske, latexfri, dubbel, blå+ofärg, hydrogel 7,0;C-20-03-01;BF-03-03
 62521;41475;Op-handske, latexfri, dubbel, blå+ofärg, hydrogel 7,5;C-20-05-01
 62522;41480;Op-handske, latexfri, dubbel, blå+ofärg, hydrogel 8,0;C-22-05-01
 62523;41485;Op-handske, latexfri, dubbel, blå+ofärg, hydrogel 8,5;C-30-06-01
@@ -374,7 +374,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 63382;1340.10;Magsond dubbellumen 10Fr 90cm PUR;D-14-01-01
 63384;1340.12;Magsond dubbellumen 12Fr 120cm PUR;D-14-02-01
 63387;1340.14;Magsond dubbellumen 14Fr 120cm PUR;D-18-06-01
-63390;1340.16;Magsond dubbellumen 16Fr 120cm PUR;D-19-05-01
+63390;1340.16;Magsond dubbellumen 16Fr 120cm PUR;D-19-05-01;BD-06-01
 63393;1340.18;Magsond dubbellumen 18Fr 120cm PUR;D-18-07-01
 63466;10038708;Urinpåse för blåssköljning 4L slang 120cm;G-03-03-01
 63659;226516;Urinkateter Nelaton 2-v 10ml 16Ch 40cm rosa;G-09-04-01
@@ -396,9 +396,9 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 65260;60881640;Sugkateter rak 40cm nr 16 orange;D-06-02-01
 65430;079.0021;Enkelslang steri, 1,5 meter till pleuradränagepump Thopaz;G-16-01-01
 65434;079.0017;Behållare 0,8 liter m förtjockningsmedel till pleuradränagepump Thopaz;G-25-05-01
-65834;340058065;Op-handske, latexfri, underhandske standard tunn 6,5;C-06-01-01
+65834;340058065;Op-handske, latexfri, underhandske standard tunn 6,5;C-06-01-01;BF-01-01
 65839;340058090;Op-handske, latexfri, underhandske standard tunn 9,0;C-08-06-01
-66238;4090550;Överföringsadapter Ecoflac Connect 20mm(M);D-19-03-01
+66238;4090550;Överföringsadapter Ecoflac Connect 20mm(M);D-19-03-01;BD-04-01
 66251;814775;Kopparspiral Nova T 380 IUS;E-21-07-01
 66259;420672;Gelbildande förband för riklig sårvätska 10x10cm Aquacel Extra;E-28-02-02
 66260;420673;Gelbildande förband för riklig sårvätska 15x15cm Aquacel Extra;E-28-02-01
@@ -408,13 +408,13 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 66608;68410;Dränageset med troakar med sugboll uppspåse nr 14 effekt 75mm Hg;H-29-02-01
 66633;804555;Incisionsfilm 45x55cm incisionsyta 45x49cm 25my;E-30-08-01
 66638;185060;Operationsduk nonwoven 5-pack med röntgentråd 10x40cm orange;C-19-02-01
-66727;381035;Operationstejp 9x49cm;C-26-04-01
-66729;850103;Operationsrock standard classic L-L längd 131cm bröstvidd 54cm;C-03-01-01
+66727;381035;Operationstejp 9x49cm;C-26-04-01;BC-03-02
+66729;850103;Operationsrock standard classic L-L längd 131cm bröstvidd 54cm;C-03-01-01;BPA-04
 66730;850111;Operationsrock standard classic 2 handdXXL-XL längd 161cm bröstv 66cm;C-07-01-01
 66737;860102;Operationsrock förstärkt classic L-L längd 131cm bröstvidd 54cm;C-05-03-01
-66738;860107;Operationsrock förstärkt classic XL-L längd 145cm bröstvidd 60cm;C-05-01-01
-66744;850107;Operationsrock standard classic XL-L längd 145cm bröstvidd 60cm;C-01-01-01
-66851;97011222-16;Operationsset Gyn Laparascopi SÖS;B-06-01-01
+66738;860107;Operationsrock förstärkt classic XL-L längd 145cm bröstvidd 60cm;C-05-01-01;BPA-29
+66744;850107;Operationsrock standard classic XL-L längd 145cm bröstvidd 60cm;C-01-01-01;BPA-05
+66851;97011222-16;Operationsset Gyn Laparascopi SÖS;B-06-01-01;BPA-17
 66869;97029880-28;Operationsset Kärlset M4 SÖS;B-19-01-01
 66907;97042517-12;Operationsset Universalset SÖS;A-22-01-01
 67051;9534HP;Filmförband transparent för svettig/fuktig hud 6x7cm Tegaderm HP;E-15-01-01
@@ -424,7 +424,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 67101;9150022;Omläggningsset med tråg, 5 torkar 25-30mm pincett, omslagsduk;G-02-02-01
 67103;PIC0220CE;Dränage/kateterfixering för 2-lum CVK;G-23-05-02
 67683;85.1016;Nållancett medium flöde 1,8 mm stickdjup 21G grön Safety Lancet;G-12-06-01
-67779;0703146000;Diatermihandtag , rökutsug, tryckknapp,SafeAir;E-11-07-01
+67779;0703146000;Diatermihandtag , rökutsug, tryckknapp,SafeAir;E-11-07-01;BC-06-01
 67793;0703005125;Sughylsa 125mm till SafeAir diatermihandtag;F-29-06-01
 67824;E1450X;Elektrodblad Standard 2,8 mm . Längd 6,35;F-07-01-01
 67883;97052713-07;Operationsset ERCP SÖS;A-26-01-01
@@ -440,14 +440,14 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 68617;956-623;Blodgasspruta 0,7-1,5 ml 25G x 16 mm med blandningskula Radiometer;G-14-06-01
 68622;97005829-27;Operationsset Aortaset SÖS;B-27-01-01
 68638;97012299-20;Operationsset Laparatomi-set SÖS;A-18-01-01
-68684;340058070;Op-handske, latexfri, underhandske standard tunn 7,0;C-08-02-01
-68690;340058075;Op-handske, latexfri, underhandske standard tunn 7,5;C-06-03-01
-68691;340058080;Op-handske, latexfri, underhandske standard tunn 8,0;C-08-04-01
-68696;340056060;Op-handske, latexfri, standard vit 6,0;C-02-01-01
-68697;340056070;Op-handske, latexfri, standard vit 7,0;C-02-03-01
+68684;340058070;Op-handske, latexfri, underhandske standard tunn 7,0;C-08-02-01;BF-01-02
+68690;340058075;Op-handske, latexfri, underhandske standard tunn 7,5;C-06-03-01;BF-02-02
+68691;340058080;Op-handske, latexfri, underhandske standard tunn 8,0;C-08-04-01;BF-02-01
+68696;340056060;Op-handske, latexfri, standard vit 6,0;C-02-01-01;BG-02-01
+68697;340056070;Op-handske, latexfri, standard vit 7,0;C-02-03-01;BG-02-02
 68846;4269071;Infusionskanyl 24GX19mm med injektionsport gul Vasofix Certo;D-10-07-02
-68883;4550590;Uppdragningskanyl universal spike m injektionsmembran f flaska grön;D-29-02-01
-68930;832059;Sårspruta kateterkona KD-Ject 50/60ml graderad 1ml rak spets;D-12-03-01
+68883;4550590;Uppdragningskanyl universal spike m injektionsmembran f flaska grön;D-29-02-01;BD-03-01
+68930;832059;Sårspruta kateterkona KD-Ject 50/60ml graderad 1ml rak spets;D-12-03-01;BD-08-04
 69026;4160;Blandningssystem för bencement Optivac M;E-29-07-01
 69058;7612.50.180;Cementrestriktorplugg storlek 18-22mm femlock, plast;E-24-08-01
 69099;66038973;Bencement för revision 1x40 Copal 0,5g gentamicin + 2g vankomycin;F-29-07-01
@@ -455,7 +455,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 69118;4154;Injektionsrör cementblandningssystem för Optivac/Optipac nozzle slim;E-22-02-01
 69991;340058060;Op-handske, latexfri, underhandske standard tunn 6,0;C-08-01-01
 83087;980202EU;Blodvärmare Kassett enFlow med 7 cm slang 24h användning;D-01-03-01
-84211;12-01;Diatermihandtag integrerat rökutsugsrör, No-Zmoke four teleskopisk;E-02-02-01
+84211;12-01;Diatermihandtag integrerat rökutsugsrör, No-Zmoke four teleskopisk;E-02-02-01;BPA-28
 84465;453-940700-20;Hudstans engångs 2 mm 20/fp;G-25-01-01
 84467;453-940703-20;Hudstans engångs 4 mm 20/fp;G-25-01-02
 84681;689147;Tryckmätningsset öppet 1-linje för CVP,blå 150+25cm;G-14-04-01
@@ -484,34 +484,34 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 85423;7404;Salvkompress, ej vidhäftande 10x10cm, 10 st/avfp, Jelonet;E-28-06-02
 85424;7459;Salvkompress, ej vidhäftande 10x40cm Jelonet;E-26-04-01
 85438;296470;Filmförband transparent känslig hud 10x25cm Mepitel Film;E-24-05-01
-85530;496100;Förband postoperativt m superabsorb. 6x8cm Mepilex Border Post-op;C-30-03-01
-85532;496300;Förband postoperativt m superabsorb. 10x15cm, Mepilex Border Post-op;C-28-05-01
+85530;496100;Förband postoperativt m superabsorb. 6x8cm Mepilex Border Post-op;C-30-03-01;BD-07-05
+85532;496300;Förband postoperativt m superabsorb. 10x15cm, Mepilex Border Post-op;C-28-05-01;BD-07-02
 85535;496600;Förband postoperativt m superabsorb. 10x30cm, Mepilex Border Post-op;C-28-01-01
 85601;340058085;Op-handske, latexfri, underhandske standard tunn 8,5;C-06-05-01
-85604;340056075;Op-handske, latexfri, standard vit 7,5;C-04-04-01
-85605;340056065;Op-handske, latexfri, standard vit 6,5;C-04-02-01
-85610;340056080;Op-handske, latexfri, standard vit 8,0;C-02-06-01
+85604;340056075;Op-handske, latexfri, standard vit 7,5;C-04-04-01;BG-03-02
+85605;340056065;Op-handske, latexfri, standard vit 6,5;C-04-02-01;BG-01-01
+85610;340056080;Op-handske, latexfri, standard vit 8,0;C-02-06-01;BG-03-01
 85628;LF3225;Kärlförslutning 25mm elektrod 25cm längd 34 grader kurvering på käften;E-21-01-01
-85633;97011703-24;Operationsset Kir Lap galla/ lap colorektal SÖS;A-10-01-01
+85633;97011703-24;Operationsset Kir Lap galla/ lap colorektal SÖS;A-10-01-01;BPA-21
 85635;340056085;Op-handske, latexfri, standard vit 8,5;C-04-06-01
 85690;7612.50.120;Cementrestriktorplugg storlek 12-18mm femlock,plast;E-24-06-01
 85694;97013225-09;Operationsset Vaginalset SÖS;B-14-01-01
-85840;8250833SP;Aggregat till infusionspump Infusomat Spaceline Enteral ENFit 320cm;G-08-02-01
-85852;10700;Infusionsaggregat m luftning 180cm Filterstop hydrofilt/luftstopp;D-23-01-01
+85840;8250833SP;Aggregat till infusionspump Infusomat Spaceline Enteral ENFit 320cm;G-08-02-01;BF-08-01
+85852;10700;Infusionsaggregat m luftning 180cm Filterstop hydrofilt/luftstopp;D-23-01-01;BPA-03
 85853;10702;Infusionsaggregat m luftning 320cm Filterstop hydrofilt/luftstopp;H-15-01-01
 85894;394600;Infusionskran 3-vägs för ECMO utan slang;G-14-05-01
 86087;LF1923;Kärlförslutningsinstrument LigaSure Maryland Jaw 23 cmx5mm;F-19-05-01
 86164;6659;Incisionsduk med uppsamlingspåse Ioban 74x87cm incisionsyta 42x52cm;B-18-03-01
 86249;ICE1003;Tarmpåse Isolation med knytband 51x51cm;E-26-02-01
-86251;60171040T;Koppset enkelt med rondskål 3 skålar 10tork nonwoven diam 50mm;C-11-01-01
-86269;705820;Slangstrumpa/kameraskydd perforerad topp 13x244cm;F-19-08-01
-86274;10021969;Sugset Extrudan 4,0/6,5mm 30cm risslersug rak 3,5m;E-18-03-01
+86251;60171040T;Koppset enkelt med rondskål 3 skålar 10tork nonwoven diam 50mm;C-11-01-01;BA-01-01
+86269;705820;Slangstrumpa/kameraskydd perforerad topp 13x244cm;F-19-08-01;BF-08-02
+86274;10021969;Sugset Extrudan 4,0/6,5mm 30cm risslersug rak 3,5m;E-18-03-01;BD-03-04
 86425;489-531;Skål 2500ml graderad i plast blå styckförpackad;H-29-04-01
 86439;97068023-08;Operationsset Artroskopiset Modul 3 SÖS;A-19-01-01
 86443;97083663-06;Operationsset Axelset Litet Ort Modul 3SÖS;A-19-04-01
 86474;97068857-04;Operationsset Proctoset SÖS/DKC;B-11-01-01
-86475;97061834-16;Operationsset Robotset Benstöd SÖS;A-14-01-01
-86476;97061844-17;Operationsset Robotset Universal SÖS;A-16-01-01
+86475;97061834-16;Operationsset Robotset Benstöd SÖS;A-14-01-01;BPA-20
+86476;97061844-17;Operationsset Robotset Universal SÖS;A-16-01-01;BPA-19
 86492;412018;Gelbildande förband med fiberstruktur mhydrokolloid häftkant 9x15cm;E-30-01-01
 86493;412019;Gelbildande förband med fiberstruktur mhydrokolloid häftkant 9x25cm;E-30-07-02
 86494;420669;Gelbildande förband med fiberstruktur mhydrokolloid häftkant 9x30cm;E-30-07-01
@@ -521,11 +521,11 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 86739;810222;Trakealkompress, måttlig absorption, 7,5x10cm;G-23-06-01
 86974;270724;Blandningsystem för antibiotika Hanluerkopppling sluten;G-04-01-01
 86975;4550592;Blandningssystem för antibiotika Uppdragningskanyl;G-10-02-01
-86976;97007858-21;Operationsset Handkir-op SÖS;A-02-01-01
+86976;97007858-21;Operationsset Handkir-op SÖS;A-02-01-01;BPA-24
 87396;595200;Polyuretanskumförband m. fästkant 7,5x7,5cm Mepilex Border Flex;G-27-03-01
 87397;595300;Polyuretanskumförband m. fästkant 10x10cm Mepilex Border Flex;G-27-04-01
-87670;5523;C-bågsskydd Sterilsskydd för röntgenutrustning C-arm;F-23-06-01
-88087;706500;Operationshandduk häftande 75x75cm 3-lagers;C-15-02-01
+87670;5523;C-bågsskydd Sterilsskydd för röntgenutrustning C-arm;F-23-06-01;BD-02-02
+88087;706500;Operationshandduk häftande 75x75cm 3-lagers;C-15-02-01;BE-01-01
 88151;10001937;Behandlingsset skum medium till V.A.C. 18x12,5x3,2cm;G-28-01-01
 88152;10001938;Behandlingsset skum large till V.A.C. 26x15x3,2cm;G-28-03-01
 88160;10033445;Behandlingsset skum vit till V.A.C. 10x7,5cm;G-26-02-01
@@ -564,10 +564,10 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 89229;87455;Endotrakealtub SHILEY HI-LO ID 5.5mm;D-22-02-02
 89230;87460;Endotrakealtub SHILEY HI-LO ID 6.0mm;D-15-04-01
 90998;367364;Venprovtagningsset UltraTouch lueradapter 23G 0,6x19mm slang 305mm blå;G-23-03-01
-91123;97029876-17;Operationsset Bröstset SÖS;B-05-01-01
+91123;97029876-17;Operationsset Bröstset SÖS;B-05-01-01;BPA-25
 91136;MS0004;Hemostatika passiv gelatin anal Spongostan 8x3cm;F-18-07-02
 91150;97100600-01;Operationsset Kir Rekto/ Vaginalset SÖS;B-11-04-01
-91153;97107376-03;Operationsset Sectiobubblan SÖS;B-02-01-01
+91153;97107376-03;Operationsset Sectiobubblan SÖS;B-02-01-01;BPA-16
 91183;340006075;Op-handske, latexfri, underhandske, extra kemikalietålig, grön 7,5;C-04-01-01
 91687;10583-02;Blandningsaggregat läkemedel 180cm Spinning Spiros;G-12-03-01
 91695;10672;Transfusionsaggregat 180cm slang PVC-fri;D-29-01-01
@@ -578,15 +578,15 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 91903;SAC-00820-PBX;Artärkateterset Seldinger 20Gx8cm;D-12-01-01
 91936;9001P-NO-005;Intraosseös nål 25 mm EZ-10 vuxen blå inkl förband;D-04-01-01
 91937;9079P-NO-005;Intraosseös nål 45 mm EZ-10 lång vuxen gul inkl förband;D-04-01-02
-92039;415122-01;Injektionsmembran positiv asvslut splitseptum transparent 400PSI;G-12-01-01
+92039;415122-01;Injektionsmembran positiv asvslut splitseptum transparent 400PSI;G-12-01-01;BD-02-01
 92048;TP-MF;Kombinationspropp hane/hona för infusionskanyl/spruta röd;G-08-05-01
-92049;TP-MF-B;Kombinationspropp hane/hona för infusionskanyl/spruta vit;D-23-03-01
-92054;4616022V;Spruta injektions Luer 2ml graderad 0,1ml centrerad;D-05-01-01
-92055;4616057V;Spruta injektions Luer 5ml graderad 0,2ml, excentrisk;D-03-02-01
-92056;4616103V;Spruta injektions Luer 10ml graderad 0,5ml excentrisk;D-01-02-01
-92057;4616200V;Spruta injektions Luer 20ml graderad 1ml excentrisk;D-09-01-01
+92049;TP-MF-B;Kombinationspropp hane/hona för infusionskanyl/spruta vit;D-23-03-01;BE-06-01
+92054;4616022V;Spruta injektions Luer 2ml graderad 0,1ml centrerad;D-05-01-01;BE-03-02
+92055;4616057V;Spruta injektions Luer 5ml graderad 0,2ml, excentrisk;D-03-02-01;BE-03-01
+92056;4616103V;Spruta injektions Luer 10ml graderad 0,5ml excentrisk;D-01-02-01;BPA-30
+92057;4616200V;Spruta injektions Luer 20ml graderad 1ml excentrisk;D-09-01-01;BE-03-03
 92062;200002SG;Insulinspruta säkerhetsprodukt SOL-Guard 0,5ml 29G 12,5mm;D-15-01-01
-92114;4710500394-3;Förfyllt system för bencement Optipac 40g Refobacin;E-12-01-01
+92114;4710500394-3;Förfyllt system för bencement Optipac 40g Refobacin;E-12-01-01;BE-08-02
 92826;60213;Extremitetslakan förstärkt 3-lagers 230x315cm hål 7cm;E-27-06-01
 92976;6913230;CDK-set antegrad tunnelering EquistreamXK 16Fr (5,28 yd mm) 23cm rak;H-17-07-01
 92977;6913270;CDK-set antegrad tunnelering EquistreamXK 16Fr (5,28 yd mm) 27cm rak;H-17-05-01
@@ -596,28 +596,28 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 93003;AW-16402;J-ledare till barn-CVK 0,46mmx68cm;G-19-02-01
 95021;7612.50.080;Cementrestriktorplugg storlek 8-12mm femlock, plast;E-24-07-01
 95360;15-130/10;Blodtomhetsmanschett arm/ben med strumpa rak enkelport PLC 46X10cm;E-12-05-01
-95378;688410;Tryckmätningsset slutet 1-linje röd 185+30cm;D-14-04-01
+95378;688410;Tryckmätningsset slutet 1-linje röd 185+30cm;D-14-04-01;BC-07-02
 95532;BC324SU;Sax rak 14,5cm;F-08-01-01
 95701;VMP400;Adaptor nållös till MHD6AZR5 tryckmätningsset artär;D-06-01-01
-95710;MHD6AZR5;Tryckmätningsset artär med FloTrac med sensor 150 cm med VAMP vuxen;D-08-03-01
+95710;MHD6AZR5;Tryckmätningsset artär med FloTrac med sensor 150 cm med VAMP vuxen;D-08-03-01;BE-06-03
 95908;476001000;Flexibelt videoskop till Ambu aScope 4Broncho Slim;G-17-01-01
 95909;477001000;Flexibelt videoskop till Ambu aScope 4 Broncho Regular;G-17-01-02
 95910;478001000;Flexibelt videoskop till Ambu aScope 4 Broncho Large;G-17-01-03
 96041;86233;Endotrakealtub standard utan kuff Murphy-hål engångs stl 2.5mm;D-28-01-02
-96252;606224D;Tvättset för dialys;G-14-02-01
+96252;606224D;Tvättset för dialys;G-14-02-01;BF-06-04
 96299;8201000-S;Larynxmask i-gel stl 1 engångs utan uppblåsbar kuff;D-24-05-01
 96303;8203000-S;Larynxmask i-gel stl 3 engångs med sugkanal utan uppblåsbar kuff;D-16-02-01
-96304;8204000-S;Larynxmask i-gel stl 4 engångs med sugkanal utan uppblåsbar kuff;D-16-03-01
-96305;8205000-S;Larynxmask i-gel stl 5 engångs med sugkanal utan uppblåsbar kuff;D-16-05-01
+96304;8204000-S;Larynxmask i-gel stl 4 engångs med sugkanal utan uppblåsbar kuff;D-16-03-01;BC-06-02
+96305;8205000-S;Larynxmask i-gel stl 5 engångs med sugkanal utan uppblåsbar kuff;D-16-05-01;BC-03-03
 96341;8080006-S;Ledare för intubation formbar 6Fr längd275mm;D-08-09-01
 96342;8080010-S;Ledare för intubation engångs stl 10Fr längd 340mm formbar stylet;D-08-09-02
 96343;8080014-S;Ledare för intubation engångs stl 14Fr längd 340mm formbar stylet;D-06-04-01
 96424;705860;Instrumentpåse 3 fickor häftande transparant 30X50cm;F-23-05-01
 96432;97058691-07;Operationsset Hysteroskopi SÖS;B-10-01-01
-96434;97011405-21;Operationsset Tur-set SÖS;B-01-01-01
+96434;97011405-21;Operationsset Tur-set SÖS;B-01-01-01;BPA-23
 96489;220212V14-40;Ledare Bougie böjd spets ET tub 6.0 ochstörre O2-genomföring;Z-05-01-04
 96494;10012135;Sugset Extrudan 4,6/6,5mm 40cm rektoskopisug 2,1m;E-20-02-01
-96497;777400;Operationslakan häftande 150x175cm 3-lagers;C-09-03-01
+96497;777400;Operationslakan häftande 150x175cm 3-lagers;C-09-03-01;BF-03-04
 96740;4251620-01;Infusionskanyl säkerh produkt 18Gx 64 mm u inj port grön 300 PSI;D-10-07-01
 96742;4251622-01;Infusionskanyl säkerh produkt 22Gx 64 mm u inj port blå 300 PSI;D-10-08-01
 96743;4251623-01;Infusionskanyl säkerh produkt 24Gx 32 mm u inj port gul 300 PSI;G-14-08-01
@@ -636,17 +636,17 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 97251;1298114;Tamponad 32-trådig med rtg-tråd 2cmx500cm;F-18-07-03
 97253;1298132;Tamponad 32-trådig med rtg-tråd 10cmx300cm;E-30-03-01
 97269;2450005;Rundtork nonwoven, steril 5-pack 50 mm;C-26-02-01
-97693;10018930;Bukförband till V.A.C., Abthera;G-26-04-01
+97693;10018930;Bukförband till V.A.C., Abthera;G-26-04-01;BB-04-02
 97761;4092961;Förlängningsslang spiral mikro 700cm;G-14-07-01
 97818;303172;Spruta injektions Luer slip 1 ml graderad 0,01 ml;D-07-01-01
 97938;U02A050210;Uretärkateter dilatation S-dilator set 8-20Fr 37cm ändhål gradering;G-01-02-01
 98520;68411;Dränageset med troakar med sugboll uppspåse nr 18 effekt 75mm Hg;H-29-01-01
 98546;IDE1000;Kantduk häftande 30x45cm m tejp transparent PE;E-15-02-01
 98569;10026808;Säkerhetsskalpell med handtag i plast rostfritt stål nr 15;G-29-05-02
-98607;610900;Assistansbordspåse förstärkt 3-lagers 79x145cm;C-09-02-01
+98607;610900;Assistansbordspåse förstärkt 3-lagers 79x145cm;C-09-02-01;BF-04-04
 98748;3332-4G;Krok tvåfinger 14mm 4pk;G-03-01-01
 98771;9751002;Munstycke långt för koaxialkanal PulsedLavage längd 19cm;E-29-09-01
-98772;9750000;Nätdrift Pulsed Lavage;E-16-02-01
+98772;9750000;Nätdrift Pulsed Lavage;E-16-02-01;BD-08-02
 98781;3304G;Retraktor engångs gynekologi manlig urologi 32x18cm;G-03-05-01
 98790;3707;Retraktorkit kolorektal 1 retraktor 3307G 8 hakar 3311-8G;F-22-04-01
 98810;WR-80S;Sårretraktor/hake för öppen kirurgi, small 30-60 mm;F-07-04-01
@@ -683,7 +683,7 @@ A116433732;GTB17;Preparatpåse Alexis 17cm 6400 ml;E-21-02-01
 A116435251;XX*RF02MH;Skruvlåsning Passar 0.010" - 0.038,Torque Device Terumo;X-11-02-01
 A116439629;460161;Pacemaker SSIR IS1 Amvia Sky SR-T;X-05-04-01
 A116439630;460160;Pacemaker DDDR IS1 Amvia Sky DR-T;X-05-03-01
-A116442368;97070747-08;Operationsset Pacemakerset SÖS;A-28-01-01
+A116442368;97070747-08;Operationsset Pacemakerset SÖS;A-28-01-01;BPA-11
 A116442510;KWHS308-S;K-WIRE 0.8 x 150mm t/t - steril;E-29-04-04
 A116442516;KWHS0010A-S;K-WIRE 1.0 x 150mm t/t Steril;E-29-04-03
 A116442522;KWHS0010B-S;K-Wire 1.2 x 150mm t/t steril;E-29-04-02
@@ -743,7 +743,7 @@ A116581202;7M10E;Sutur kärlgraft ej resorberbar 6-0 CV-7taper Point 1/2c 76 cm;
 A116585701;DF-3120;Imskydd Dr Fog Dyna, alkoholfri;E-19-01-01
 A116585741;J1180-1;Clips titan small gul, 6 clips/magasin;F-14-02-01
 A116585742;B2180-1;Clips titan medium blå, 6 clips/magasin;F-14-02-02
-A116586130;MEC160;Stapler linjär Mirus Endoscopic medium Ej förladdad;F-15-01-01
+A116586130;MEC160;Stapler linjär Mirus Endoscopic medium Ej förladdad;F-15-01-01;BPA-01
 A116586162;MECRP45;Magasin, Linjär endoskopisk stapler, medium Tissue 45mm Lila;F-22-02-01
 A116586262;800106;Insufflationskanyl Verresnål K-Line 150mm;G-01-01-02
 A116586329;0301-10XL;Plastclips ClickáV Plus guld XL;F-18-04-01
@@ -799,7 +799,7 @@ A1184276;M00534360;Choledochusstent förladdat Advanix BiliStent DB 10F 15cm;F-1
 A1186681;WA22302D;Resektionsslynga bipolär elektrod mediumtill 12° optik;G-07-06-01
 A1186684;WA22503D;Resektionsslynga bipolär elektrod largetill 12° optik;G-07-07-01
 A1189050;EN2007030;Snara av fleröglemodell. 18-30mm. 7F, 120cm.,EN Snare®;H-30-04-01
-A1196161;1503353;Hemostatika flytande med trombin 5ml resorptionstid 6-8 veckor 2500IE;E-17-06-01
+A1196161;1503353;Hemostatika flytande med trombin 5ml resorptionstid 6-8 veckor 2500IE;E-17-06-01;BE-05-01
 A1432249;G56231;Introducer, 6FR, armerad, röntg, 035", 55cm, rak.,High-Flex Ansel;Z-04-01-02
 A1436648;MSS111-R;Spruta 10ml Male luer Röd,Medallion®;H-12-11-01
 A1437131;IQ35F210J3;Ledare Hydrofil 0.035" 210cm 3mm J-tippStandard,InQwire®;X-02-01-01
@@ -810,7 +810,7 @@ A1437939;RM*RS6F10PQ;Introducer radialis SLENDER Mcoat 6Frx10cm S 0.021'GW 21Gx3
 A1437964;RF*PA35153M;Ledare , 0.035", 150cm, styv, 3cm böjd mjuk tip,Radifocus Guide Wire M;X-19-05-01
 A1437995;RF*GS35183M;Ledare , 0.035", 180cm, , 3cm rak mjuktip,Radifocus Guide Wire M;G-13-07-01
 A1438008;RF*GS35263M;Ledare hydrofil, 0.035", , 3cm rak mjuktip,Radifocus Guide Wire M;X-19-06-01
-A1438235;SV1051;Angioset koronar Södersjukhuset;A-27-01-01
+A1438235;SV1051;Angioset koronar Södersjukhuset;A-27-01-01;BPA-12
 A1442567;S420GH;Emboliseringspartiklar , 300-500 µm, 2 ml i spruta,Embosphere®;G-01-01-01
 A1442640;PSS-5F-4MT;Dialysintroducer,röntgentät spets 5F 4cm,Prelude® Short Sheath;H-09-10-01
 A1442651;PSS-6F-4MT;Dialysintroducer,röntgentät spets 6F 4cm,Prelude® Short Sheath;H-09-10-02
@@ -881,7 +881,7 @@ A2162205;VLOCL0326;Sutur resorberbar med hulling V-loc0 45cm taper point 37mm 1/
 A2162263;VLOCN0604;Sutur ej resorber med hulling V-loc 3-015cm taper point 26mm 1/2c blå;Z-10-03-02
 A2162316;TA6048S;Stapler linjär öppet bruk, 60 mm, mediumtjock vävnad. Färg grön.;F-15-03-01
 A2162328;TA4548S;Stapler linjär öppet bruk, 45 mm, mediumtjock vävnad. Färg grön.;F-17-04-01
-A2162482;173050G;Preparatpåse endo catch gold, 190 ml, 12mm;F-01-01-01
+A2162482;173050G;Preparatpåse endo catch gold, 190 ml, 12mm;F-01-01-01;BC-04-01
 A2162487;173052;Slitsförslutare, vinklingsbar Stapler Endo Universal 65gr 12mm, 10x 4.8 mm;B-18-01-01
 A2162488;174007;Magasin, löspackat, till stapler MultiFire Endo Hernia 10x4.8 mm staples;F-18-05-01
 A2162495;EGIAUSHORT;Handtag till stapler endo gia ultra kort12mm, 6 cm;F-09-01-01
@@ -974,10 +974,10 @@ A2656417;EVX35-08-100-120;Stent, självexpanderande, 8x100 mm, 120CM, EVERFLEX E
 A2656419;EVX35-07-120-080;Stent, självexpanderande, 7x120 mm, 80 CM, EVERFLEX ENTRUST;H-06-09-01
 A2656422;EVX35-08-120-080;Stent, självexpanderande, 8x120 mm, 80 CM, EVERFLEX ENTRUST;H-08-06-01
 A2683515;292.090S;K-wire diam 0.8 l150 sst;E-29-06-03
-A2699352;PL738SU;Instrument till avancerad bipolär Caimantrubbig ej böjbar D5/240mm;E-23-02-01
+A2699352;PL738SU;Instrument till avancerad bipolär Caimantrubbig ej böjbar D5/240mm;E-23-02-01;BH-02-02
 A2699387;PL475SU;Clips Titan DS Appendectomy med latch 11,5x16,2mm;Z-11-06-01
-A2700164;899107;Lap sug&spol set 5mm/33cm Dubbelspike;E-21-04-01
-A2706420;610132;Kärlförslutning 6F , 0.035" manuell VIP,AngioSeal VIP;H-07-01-01
+A2700164;899107;Lap sug&spol set 5mm/33cm Dubbelspike;E-21-04-01;BPA-02
+A2706420;610132;Kärlförslutning 6F , 0.035" manuell VIP,AngioSeal VIP;H-07-01-01;BG-07-01
 A2706421;610133;Kärlförslutning 8F , 0.035" manuell VIP,AngioSeal VIP;X-10-05-01
 A2707742;UPA1015;Lättviktsnät Ultrapro advanced mesh 10x15cm;F-21-02-01
 A2707745;UPA3030;Lättviktsnät Ultrapro advanced mesh 30x30cm;F-19-06-01
@@ -1013,7 +1013,7 @@ A2747219;AR-1588TB-4;Kortkal fix TightRope ABS, Button, Round, Concave, diam 14m
 A2755795;EH7761H;Sutur ej resorberbar monofil Ethilon 4-045cm svart PS-3 16mm;Z-12-06-01
 A2762480;GC510;Hemostatika antibiotikaplatta Genta-Coll10cmx10cm;E-26-06-01
 A2767558;100.12;OTS-clips set OVESCO Nitinol Clip f/endoskop 10,5-12 mm;F-20-05-01
-A2767657;5028901;Manometerspruta A125;H-03-05-01
+A2767657;5028901;Manometerspruta A125;H-03-05-01;BC-02-01
 A2769377;FJ5272BH;Sutur ej resorberbar monofil Ethilon 4-075cm svart fs-1 24mm;Z-12-06-02
 A2769398;X424H;Sutur ej resorberbar multifil Ethibond 075cm grön CT-1 13mm;Z-14-06-02
 A2775221;0600125;Applikator till flytande hemostatika laparaskopisk kirurgi 5x410mm;F-17-01-01
@@ -1051,7 +1051,7 @@ A2793082;TF14180S;Mikroledare 0.014", 180 cm, rak tipp, formbar,True Form™;H-3
 A2793202;MSS031-Y;Spruta 3ml Male luer Gul,Medallion®;H-12-10-01
 A2804155;05-1-015;Suturbootis blandade färger, 1,57x11,13mm 5 par/dyna, 5 dynor/box: 50st/fp;F-18-06-02
 A2804156;05-2-003;Suturbootis standard gul, 1,57x11,13mm 2par/dyna, 5 dynor/box: 20st/fp;F-18-06-03
-A2811586;899108;Lap sug&spol set 5mm/45cm Dubbelspike;G-13-04-01
+A2811586;899108;Lap sug&spol set 5mm/45cm Dubbelspike;G-13-04-01;BG-05-03
 A2812219;1673BH;Sutur ej resorberbar monofil Ethilon 3-075cm blå fslx 36mm;Z-12-02-01
 A2818932;14679-02;Arteriell förslutningsdevice, StarCloseSE, Vascular Closure System;H-15-03-01
 A2818934;2078175;Ledare, .014 Guide Wire, 300cm, HT Command ES,HT Command 14;X-29-02-01
@@ -1167,9 +1167,9 @@ A3276745;666623;Hatt för elektrod. IS-1, DF-1, 4,75mm.;X-01-02-01
 A3276773;664648;Ledare Guidewire till Whisper view EDS CS-J Böjd tip;X-15-02-01
 A3276793;667001;Rotation tool kit DF4 connector tool;X-01-03-02
 A3288300;EK002SU;Ventil Tätningsenhet Universal för 10/12mm troakarer engångs;F-05-03-01
-A3288301;EK001SU;Ventil Tätningsenhet för 5mm troakarer engång;F-03-04-01
+A3288301;EK001SU;Ventil Tätningsenhet för 5mm troakarer engång;F-03-04-01;BC-07-01
 A3288569;PS3895;Laparoskopisk 5mm Aspirations nål 29cm lång engångs;F-04-07-01
-A3289098;ASM-EVAC1;Insufflationsslang AIRSEAL, ASM Tri-lumen slangset, med rökfilter;E-09-02-01
+A3289098;ASM-EVAC1;Insufflationsslang AIRSEAL, ASM Tri-lumen slangset, med rökfilter;E-09-02-01;BB-01-01
 A3289099;ASM-EVAC1-BI;Insufflationsslang AIRSEAL ASM Robotic Solution slangset med rökfilter;E-09-04-01
 A3289103;IAS8-100LP;Port till insufflationsslang AIRSEAL Access Port, Optisk, 8 x 100mm;E-13-07-01
 A3289106;IAS5-100LP;Port till insufflationsslang AIRSEAL Access Port, Optisk, 5 x 100mm;E-05-06-01
@@ -1255,8 +1255,8 @@ A3985185;C0R47;Troakar blunt ballongr 12x100mm Kii Balloon Blunt tip, engångs 6
 A3985202;CD003;Preparatpåse 180ml Inzii Universal Retrieval System 10/fp;E-13-05-01
 A3985203;CD001;Preparatpåse 225ml Inzii 10mm RetrievalSystem, engångs 10/fp;E-13-01-01
 A3985204;CD004;Preparatpåse 1600ml Inzii 12/15 Retrieval System, engångs 5/fp;E-11-04-01
-A3985206;CTF03;Troakar gängad 5x100mm Kii Fios First Entry Z-thread, engångs 6/fp;F-28-01-01
-A3985209;CTF73;Troakar gängad 12x100mm Kii Fios First Entry Z-thread, engångs 6/fp;F-07-02-01
+A3985206;CTF03;Troakar gängad 5x100mm Kii Fios First Entry Z-thread, engångs 6/fp;F-28-01-01;BH-01-02
+A3985209;CTF73;Troakar gängad 12x100mm Kii Fios First Entry Z-thread, engångs 6/fp;F-07-02-01;BH-01-01
 A4107829;60L210;Pacemaker SSIR IS1 Proponent MRI SR;X-01-01-01
 A4107844;60L231;Pacemaker DDDR IS1 Proponent MRI EL DR;X-03-03-01
 A4108018;W3DR01;Pacemaker DDDR IS1 Azure S DR MRI;X-03-01-01
@@ -1336,9 +1336,9 @@ A78416;6056;Rotation tool kit IS1;X-11-04-01
 A837264;AR-8400EX;Shaverblad 4.0mm x13cm ExcaliBur;E-29-01-02
 A837281;AR-8550DC;Shaverblad 5.5mmx13cm Double Cut;E-29-03-01
 A837283;AR-8550EX;Shaverblad 5.5mm x13cm ExcaliBur;E-29-01-01
-A837314;AR-6430;Slangset utflöde, PVC med DEHP;E-16-04-01
-A837315;AR-6420;Slangset dagset, PVC med DEHP;E-12-03-01
-A837316;AR-6425;Slangset patientset, PVC med DEHP;E-14-04-01
+A837314;AR-6430;Slangset utflöde, PVC med DEHP;E-16-04-01;BB-04-03
+A837315;AR-6420;Slangset dagset, PVC med DEHP;E-12-03-01;BB-03-03
+A837316;AR-6425;Slangset patientset, PVC med DEHP;E-14-04-01;BB-03-02
 A837499;AR-1923PS;Suturankare Peek pushlock 2.9x15.5mm;E-24-02-01
 A843802;72202469;Menisksutur inside out fast-fix 360 reverse curved;E-04-01-01
 A843803;72202468;Menisksutur inside out fast-fix 360 curved;E-18-01-01
