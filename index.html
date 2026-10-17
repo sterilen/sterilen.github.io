@@ -63,6 +63,7 @@
         .chip.aktiv { background: #0f172a; color: #ffffff; border-color: #0f172a; }
         .chip[data-filter="forbruk"].aktiv { background: #7fb046; border-color: #7fb046; }
         .chip[data-filter="galler"].aktiv { background: #4687b0; border-color: #4687b0; }
+        .chip[data-bulkfilter].aktiv { background: #b04671; border-color: #b04671; }
         .chip.riktning { margin-left: auto; background: #f1f5f9; }
 
         /* Alla knappar på en rad vardera, även på smala skärmar */
@@ -125,8 +126,8 @@
             display: block; 
             background-color: #7fb046; 
             color: white; 
-            padding: 10px 2px; 
-            border-radius: 10px; 
+            padding: 6px 2px;
+            border-radius: 10px;
             font-weight: 800; 
             font-size: 18px; 
             text-align: center; 
@@ -141,8 +142,9 @@
         .typ-etikett { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 9px; border-radius: 999px; margin-bottom: 8px; }
         .typ-etikett.galler { background: #dbe8f1; color: #2a5470; }
         .typ-etikett.forbruk { background: #e6f0d9; color: #4a6b26; }
+        @media (max-width: 380px) { .lagerplats-skylt { font-size: 16px; letter-spacing: 0; } }
         .lagerplats-skylt.bulk { background-color: #b04671; box-shadow: 0 4px 6px -1px rgba(176, 70, 113, 0.25); margin-top: 8px; padding: 6px 2px; }
-        .lagerplats-skylt.bulk small { display: block; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; line-height: 1.1; }
+        .lagerplats-skylt small { display: block; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; line-height: 1.1; }
         .lagerplats-skylt.galler { background-color: #4687b0; box-shadow: 0 4px 6px -1px rgba(70, 135, 176, 0.15); }
         
         .error { color: #b91c1c; background: #fef2f2; padding: 16px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 16px; }
@@ -177,6 +179,7 @@
                     <div class="chip-rad">
                     <button type="button" class="chip aktiv" data-filter="forbruk" onclick="valjFilter('forbruk')">Förbrukning</button>
                     <button type="button" class="chip aktiv" data-filter="galler" onclick="valjFilter('galler')">Instrumentgaller</button>
+                    <button type="button" class="chip" data-bulkfilter="1" onclick="valjBulk()">Bulk</button>
                     </div>
                 </div>
                 <div class="chip-grupp">
@@ -198,7 +201,7 @@
     <footer class="footer">
         <span id="söktid"></span><br><br>
         Copyright 2026 Pelle Holmström<br>
-        Version 2.3<span id="dbdatum"></span>
+        Version 2.4<span id="dbdatum"></span>
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
@@ -213,6 +216,7 @@
         let aktivSort = 'plats';
         const aktivaTyper = { forbruk: true, galler: true };
         let fallande = false;
+        let baraBulk = false;   // true = visa bara artiklar som har en bulkplats
 
         function ärGaller(p) { return /^\d+:\d+$/.test(p); }
 
@@ -226,6 +230,12 @@
             aktivaTyper[v] = !aktivaTyper[v];
             if (!aktivaTyper[v] && !aktivaTyper[annan]) aktivaTyper[annan] = true; // minst en typ måste vara vald
             document.querySelectorAll('[data-filter]').forEach(b => b.classList.toggle('aktiv', aktivaTyper[b.dataset.filter]));
+            sökLager();
+        }
+
+        function valjBulk() {
+            baraBulk = !baraBulk;
+            document.querySelectorAll('[data-bulkfilter]').forEach(b => b.classList.toggle('aktiv', baraBulk));
             sökLager();
         }
 
@@ -311,6 +321,7 @@
             });
 
             hittade = hittade.filter(i => aktivaTyper[ärGaller(i.plats) ? 'galler' : 'forbruk']);
+            if (baraBulk) hittade = hittade.filter(i => i.bulk);
 
             const coll = (x, y) => x.localeCompare(y, 'sv', { numeric: true, sensitivity: 'base' });
             const dir = fallande ? -1 : 1;
@@ -347,7 +358,7 @@
                     const artInfo = gallerPlats ? '' : `<div class="art-info-block"><span class="art-no-wrap">Art. Nr: ${esc(artikel.artnr)}</span><span class="art-no-wrap">Lev. Art Nr: ${esc(artikel.lev_artnr)}</span></div>`;
                     const typ = gallerPlats ? 'galler' : 'forbruk';
                     const typText = gallerPlats ? 'Instrumentgaller' : 'Förbrukning';
-                    tabellHtml += `<tr class="${typ}"><td><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
+                    tabellHtml += `<tr class="${typ}"><td><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</td><td><span class="lagerplats-skylt ${typ}"><small>FÖRRÅD</small>${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = tabellHtml;
