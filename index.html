@@ -141,6 +141,21 @@
         .typ-etikett { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 9px; border-radius: 999px; margin-bottom: 8px; }
         .typ-etikett.galler { background: #dbeafe; color: #0f172a; }
         .typ-etikett.forbruk { background: #d1fae5; color: #047857; }
+        .bulk-skylt {
+            display: block;
+            margin-top: 8px;
+            background-color: #fff7ed;
+            color: #9a3412;
+            border: 2px solid #fb923c;
+            padding: 6px 2px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 14px;
+            text-align: center;
+            letter-spacing: 0;
+            white-space: nowrap;
+            width: 100%;
+        }
         .lagerplats-skylt.galler { background-color: #2563eb; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.15); }
         
         .error { color: #b91c1c; background: #fef2f2; padding: 16px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 16px; }
@@ -165,7 +180,7 @@
                 <input type="text" id="searchInput" placeholder="Sök produkt, artnr..." autofocus oninput="toggleClearButton()">
                 <button type="button" id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
             </div>
-            <button class="search-btn" onclick="sökLager()">Sök</button>
+            <button class="search-btn" onclick="sökKnapp()">Sök</button>
         </div>
 
         <div class="sort-container">
@@ -194,9 +209,9 @@
     </div>
 
     <footer class="footer">
-        <span id="söktid"></span><br><br>
+        <span id="söktid"></span><br><span id="sokantal"></span><br><br>
         Copyright 2026 Pelle Holmström<br>
-        Version 2.2<span id="dbdatum"></span>
+        Version 2.3<span id="dbdatum"></span>
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
@@ -260,7 +275,8 @@
                     artnr: hämtaCell(0) || '-',
                     lev_artnr: hämtaCell(1) || '-',
                     namn: hämtaCell(2) || 'Namn saknas',
-                    plats: hämtaCell(3) || '-'
+                    plats: hämtaCell(3) || '-',
+                    bulk: hämtaCell(4)
                 });
             }
             return resultat;
@@ -291,6 +307,28 @@
             document.getElementById('resultatOmråde').innerHTML = '';
             searchInput.focus();
         }
+
+        // Räknar sökningar som gjorts på den här enheten (sparas i webbläsaren).
+        const SOK_NYCKEL = 'lagersok_antal_sokningar';
+        let sokningarIMinnet = 0;
+        function lasAntalSokningar() {
+            try { return parseInt(localStorage.getItem(SOK_NYCKEL) || '0', 10) || 0; }
+            catch (e) { return sokningarIMinnet; }
+        }
+        function visaAntalSokningar() {
+            const el = document.getElementById('sokantal');
+            if (el) el.textContent = 'Sökningar på den här enheten: ' + lasAntalSokningar().toLocaleString('sv-SE');
+        }
+        function sökKnapp() {
+            if (document.getElementById('searchInput').value.trim()) {
+                const n = lasAntalSokningar() + 1;
+                sokningarIMinnet = n;
+                try { localStorage.setItem(SOK_NYCKEL, String(n)); } catch (e) {}
+                visaAntalSokningar();
+            }
+            sökLager();
+        }
+        window.addEventListener('DOMContentLoaded', visaAntalSokningar);
 
         function sökLager() {
             const sökord = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -344,7 +382,7 @@
                     const artInfo = gallerPlats ? '' : `<div class="art-info-block"><span class="art-no-wrap">Art. Nr: ${esc(artikel.artnr)}</span><span class="art-no-wrap">Lev. Art Nr: ${esc(artikel.lev_artnr)}</span></div>`;
                     const typ = gallerPlats ? 'galler' : 'forbruk';
                     const typText = gallerPlats ? 'Instrumentgaller' : 'Förbrukning';
-                    tabellHtml += `<tr class="${typ}"><td><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span></td></tr>`;
+                    tabellHtml += `<tr class="${typ}"><td><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="bulk-skylt">Bulk ${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = tabellHtml;
@@ -361,7 +399,7 @@
         }
 
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sökLager();
+            if (e.key === 'Enter') sökKnapp();
         });
     </script>
     <script>
