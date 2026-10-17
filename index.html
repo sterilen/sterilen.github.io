@@ -141,7 +141,7 @@
         .typ-etikett { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 9px; border-radius: 999px; margin-bottom: 8px; }
         .typ-etikett.galler { background: #dbeafe; color: #0f172a; }
         .typ-etikett.forbruk { background: #d1fae5; color: #047857; }
-        .lagerplats-skylt.bulk { background-color: #f87171; box-shadow: 0 4px 6px -1px rgba(248, 113, 113, 0.25); margin-top: 8px; padding: 6px 2px; }
+        .lagerplats-skylt.bulk { background-color: #fb7185; box-shadow: 0 4px 6px -1px rgba(251, 113, 133, 0.25); margin-top: 8px; padding: 6px 2px; }
         .lagerplats-skylt.bulk small { display: block; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; line-height: 1.1; }
         .lagerplats-skylt.galler { background-color: #2563eb; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.15); }
         
@@ -167,7 +167,7 @@
                 <input type="text" id="searchInput" placeholder="Sök produkt, artnr..." autofocus oninput="toggleClearButton()">
                 <button type="button" id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
             </div>
-            <button class="search-btn" onclick="sökKnapp()">Sök</button>
+            <button class="search-btn" onclick="sökLager()">Sök</button>
         </div>
 
         <div class="sort-container">
@@ -196,7 +196,7 @@
     </div>
 
     <footer class="footer">
-        <span id="söktid"></span><br><span id="sokantal"></span><br><br>
+        <span id="söktid"></span><br><br>
         Copyright 2026 Pelle Holmström<br>
         Version 2.3<span id="dbdatum"></span>
     </footer>
@@ -295,28 +295,6 @@
             searchInput.focus();
         }
 
-        // Räknar sökningar som gjorts på den här enheten (sparas i webbläsaren).
-        const SOK_NYCKEL = 'lagersok_antal_sokningar';
-        let sokningarIMinnet = 0;
-        function lasAntalSokningar() {
-            try { return parseInt(localStorage.getItem(SOK_NYCKEL) || '0', 10) || 0; }
-            catch (e) { return sokningarIMinnet; }
-        }
-        function visaAntalSokningar() {
-            const el = document.getElementById('sokantal');
-            if (el) el.textContent = 'Sökningar på den här enheten: ' + lasAntalSokningar().toLocaleString('sv-SE');
-        }
-        function sökKnapp() {
-            if (document.getElementById('searchInput').value.trim()) {
-                const n = lasAntalSokningar() + 1;
-                sokningarIMinnet = n;
-                try { localStorage.setItem(SOK_NYCKEL, String(n)); } catch (e) {}
-                visaAntalSokningar();
-            }
-            sökLager();
-        }
-        window.addEventListener('DOMContentLoaded', visaAntalSokningar);
-
         function sökLager() {
             const sökord = document.getElementById('searchInput').value.trim().toLowerCase();
             const ordLista = sökord.split(/\s+/).filter(Boolean);
@@ -386,7 +364,7 @@
         }
 
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sökKnapp();
+            if (e.key === 'Enter') sökLager();
         });
     </script>
     <script>
