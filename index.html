@@ -143,6 +143,7 @@
         .typ-etikett.forbruk { background: #e6f0d9; color: #4a6b26; }
         @media (max-width: 380px) { .lagerplats-skylt { font-size: 16px; letter-spacing: 0; } }
         .lagerplats-skylt.bulk { background-color: #b04671; box-shadow: 0 4px 6px -1px rgba(176, 70, 113, 0.25); margin-top: 8px; padding: 6px 2px; }
+        .lagerplats-skylt.forbruk, .lagerplats-skylt.galler { padding: 10px 2px; }
         .lagerplats-skylt small { display: block; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; line-height: 1.1; }
         .lagerplats-skylt.galler { background-color: #4687b0; box-shadow: 0 4px 6px -1px rgba(70, 135, 176, 0.15); }
         
@@ -199,7 +200,7 @@
     <footer class="footer">
         <span id="söktid"></span><br><br>
         Copyright 2026 Pelle Holmström<br>
-        Version 2.6<span id="dbdatum"></span>
+        Version 1.2<span id="dbdatum"></span>
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
@@ -348,7 +349,7 @@
                     const artInfo = gallerPlats ? '' : `<div class="art-info-block"><span class="art-no-wrap">Art. Nr: ${esc(artikel.artnr)}</span><span class="art-no-wrap">Lev. Art Nr: ${esc(artikel.lev_artnr)}</span></div>`;
                     const typ = gallerPlats ? 'galler' : 'forbruk';
                     const typText = gallerPlats ? 'Instrumentgaller' : 'Fabrikssterilt';
-                    tabellHtml += `<tr class="${typ}"><td><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</td><td><span class="lagerplats-skylt ${typ}"><small>FÖRRÅD</small>${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
+                    tabellHtml += `<tr class="${typ}"><td><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = tabellHtml;
