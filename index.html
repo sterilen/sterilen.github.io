@@ -112,6 +112,7 @@
         .art-info-block { display: flex; flex-direction: column; gap: 4px; font-size: 15px; color: #334155; font-weight: 600; line-height: 1.4; }
         .art-no-wrap { overflow-wrap: anywhere; }
         
+        /* Tydligare styling för FÖRRÅD och BULK */
         .plats-container {
             display: flex;
             flex-direction: column;
@@ -145,4 +146,33 @@
             font-size: 18px; 
             text-align: center; 
             box-shadow: 0 4px 6px -1px rgba(127, 176, 70, 0.1); 
-            letter-spacing:
+            letter-spacing: 0.5px; 
+            white-space: nowrap;
+            width: 100%;
+        }
+        
+        .result-table tr.galler td:first-child { border-left: 5px solid #4687b0; }
+        .result-table tr.forbruk td:first-child { border-left: 5px solid #7fb046; }
+        .typ-etikett { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 9px; border-radius: 999px; margin-bottom: 8px; }
+        .typ-etikett.galler { background: #dbe8f1; color: #2a5470; }
+        .typ-etikett.forbruk { background: #e6f0d9; color: #4a6b26; }
+        
+        .lagerplats-skylt.bulk { 
+            background-color: #b04671; 
+            box-shadow: 0 4px 6px -1px rgba(176, 70, 113, 0.25); 
+            padding: 8px 2px;
+            font-size: 16px;
+        }
+        
+        .lagerplats-skylt.galler { background-color: #4687b0; box-shadow: 0 4px 6px -1px rgba(70, 135, 176, 0.15); }
+        
+        .error { color: #b91c1c; background: #fef2f2; padding: 16px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 16px; }
+        
+        .footer { margin-top: auto; padding-top: 30px; font-size: 13px; color: #94a3b8; font-weight: 500; text-align: center; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-block">
+            <div class="logo-container">
+                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAGQAZADASIAAhEBAxEB/8QAHQABAAICAwEBAAAAAAAAAAAAAAgJAQcDBAYFAv/EAFUQAAEDAwIDAwUIDgYHCAMAAAEAAgMEBQYHEQgSITFBUQkTImFxFBkyV3OBkbIjMzRCUmJygpKTlKHR0hUkNUNjsRYXJTZ1s8MnU1WDosHC8BgmN//EABwBAQACAgMBAAAAAAAAAAAAAAAFBgQHAQMIAv/EAEIRAAEDAwAGBQkGBQQCAwAAAAEAAgMEBREGBxIhMUETUWFxgRQiMlKRobHB0RUXIzNCkhY2VHLhYoKy8DTxQ8LS/9oADAMBAAIRAxEAPwC1NERERERERERERERERERERERERERF+S9o7XAL5OTZfjGHWea/ZTf6C02+AEyVNZUNijb87j1PqHVcE43lfTGOkcGsGSV9fceK/EksTI3SSSNaxgJc5x2AHiT3KE2rnlK8Osb5rTpHjsuSVbd2i415dT0TxeLu/bJB+iPWoY6o8S+ter8kkeZ5xWmhef7NonGmpAPAxs25/ziVhTV8UW5u8q+WbVzeLqBJM0RMPN3H2Df7cKzrUnjE0C0vfNR3nN6e4XGHcGgtA92TB3geT0GfnOCi7qL5Tu91T30umWnFNRMBIZW3mo888t8RDFsAfa4qC7fQ6NAA8AEUbJc5n+juWzrZqxs1EA6pzK7tOB7B8ytuZtxY8Qmfl8d81NulNSybh1LbOMiiIPcRCASPaStU1FTNVSvqKmeWaaQ7vkleXucfEnimclhSy1HzwsuquKEbNc6OmuV1baad9RRxTS0z2OliYZHMa6RgJAdyvIBI3B236eJXVcI2s8Dgt91zH2nOHbE90X212vP8AJL9T0uYUtVTVFP9nhpqeQWq0xzc0TJJGsc2Bgc97w6R8rXNiaH8r7oAAbL+l7Y2lznABu3VdM1h2LhuO7C4paxpBBYHDxXW2FjhyC+o6Wv5f4jbfbZfUvJ+QcO43+i3H6V+R3H6V+R3EbdV2K2K+aMeqiK5gq6Womqp6eCqjkmomte4scCcNIc07ddjwQRv3ghdF/XqscM5Hgu6871h08rrm61Q51R0k80dOxlVUsikdC0uY+XkeWyNaWnkWvBaCOhBVh49gR28kYyN7e5W9XW3W2W3y11yuNNSU1O3mlqKmVsUUbe8uLiAAe4rt9btdt17U+lH8X/AI
