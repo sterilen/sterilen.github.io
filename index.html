@@ -163,6 +163,23 @@
         
         .footer { margin-top: auto; padding-top: 30px; font-size: 13px; color: #94a3b8; font-weight: 500; text-align: center; line-height: 1.6; }
 
+        /* ===== Kameraläge (läser REF-numret på förpackningen) ===== */
+        .kamera-knapp { display: none; flex: 0 0 auto; width: 48px; padding: 0; font-size: 22px; line-height: 1; background-color: #ffffff; color: #0f172a; border: 2px solid #e2e8f0; border-radius: 14px; cursor: pointer; align-items: center; justify-content: center; }
+        .kamera-knapp.finns { display: flex; }
+        .kamera-knapp:active { transform: scale(0.97); }
+        html[data-tema="mork"] .kamera-knapp { background-color: #1e293b; border-color: #334155; color: #f1f5f9; }
+        .kamera-lager { position: fixed; inset: 0; z-index: 1000; background: #000; color: #fff; display: flex; flex-direction: column; }
+        .kamera-lager[hidden] { display: none; }
+        .kamera-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; }
+        .kamera-ram { position: absolute; left: 4%; right: 4%; top: 32%; height: 26%; border: 3px solid rgba(255,255,255,0.9); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); pointer-events: none; }
+        .kamera-topp { position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px; background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0)); }
+        .kamera-status { flex: 1; font-size: 16px; font-weight: 700; line-height: 1.3; }
+        .kamera-stang { width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,0.2); color: #fff; font-size: 20px; cursor: pointer; flex: 0 0 auto; }
+        .kamera-botten { position: relative; z-index: 2; margin-top: auto; padding: 12px 14px 22px; display: flex; flex-direction: column; gap: 8px; background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.8)); max-height: 55%; overflow-y: auto; }
+        .kamera-val { display: flex; flex-direction: column; align-items: flex-start; width: 100%; padding: 12px 14px; border: none; border-radius: 12px; background: #ffffff; color: #0f172a; font-size: 17px; font-weight: 800; text-align: left; cursor: pointer; }
+        .kamera-val small { font-size: 13px; font-weight: 600; color: #475569; }
+        .kamera-igen { padding: 12px 14px; border: 2px solid #ffffff; border-radius: 12px; background: transparent; color: #ffffff; font-size: 16px; font-weight: 700; cursor: pointer; }
+
         /* ===== Mörkt läge ===== */
         .tema-knapp { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .tema-knapp:active { transform: scale(0.95); }
@@ -213,9 +230,10 @@
         
         <div class="search-box">
             <div class="input-wrapper">
-                <input type="text" id="searchInput" placeholder="Sök produkt, artnr, galler..." autofocus oninput="toggleClearButton()">
+                <input type="text" id="searchInput" placeholder="Sök produkt, art.nr..." autofocus oninput="toggleClearButton()">
                 <button type="button" id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
             </div>
+            <button type="button" id="kameraKnapp" class="kamera-knapp" onclick="oppnaKamera()" aria-label="Läs av REF-numret med kameran" title="Läs av REF-numret med kameran">📷</button>
             <button class="search-btn" onclick="sökLager()">Sök</button>
         </div>
 
@@ -244,10 +262,21 @@
         <div id="resultatOmråde"></div>
     </div>
 
+    <div id="kameraLager" class="kamera-lager" hidden>
+        <video id="kameraVideo" class="kamera-video" playsinline muted autoplay></video>
+        <div class="kamera-ram"></div>
+        <div class="kamera-topp">
+            <div id="kameraStatus" class="kamera-status"></div>
+            <button type="button" class="kamera-stang" onclick="stangKamera()" aria-label="Stäng kameran">✕</button>
+        </div>
+        <div id="kameraBotten" class="kamera-botten"></div>
+    </div>
+    <input type="file" id="kameraFil" accept="image/*" capture="environment" hidden>
+
     <footer class="footer">
         <span id="söktid"></span><br><br>
         Copyright 2026 Pelle Holmström<br>
-        Version 1.3<span id="dbdatum"></span>
+        Version 1.4<span id="dbdatum"></span>
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
@@ -431,6 +460,251 @@
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') sökLager();
         });
+    </script>
+    <script>
+        // ======================= KAMERALÄGE =======================
+        // Läser texten på förpackningen med kameran och letar efter ett nummer som finns i databasen
+        // (leverantörens artikelnummer, "REF", eller vårt eget artikelnummer). Textläsaren (Tesseract.js)
+        // hämtas först när man trycker på kameraknappen, första gången behövs nät (ca 8 MB).
+        const TESS_JS = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+        const TESS_SPRAK = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int';
+        let kamNummerIndex = null;
+        let kamStrom = null, kamWorker = null, kamWorkerLovar = null;
+        let kamAktiv = false, kamVarv = 0;
+
+        function kamNorm(t) {
+            return String(t || '').toUpperCase().replace(',', '.').replace(/^[^A-Z0-9]+|[^A-Z0-9]+$/g, '');
+        }
+        // Tecken som textläsaren ofta förväxlar
+        function kamFuzz(t) {
+            return t.replace(/[OQD]/g, '0').replace(/[IL]/g, '1').replace(/S/g, '5').replace(/[B3]/g, '8').replace(/Z/g, '2');
+        }
+        function kamByggIndex() {
+            const exakt = new Map(), fuzz = new Map();
+            const lagg = (m, nyckel, art) => { if (!m.has(nyckel)) m.set(nyckel, []); m.get(nyckel).push(art); };
+            (typeof lagerData !== 'undefined' ? lagerData : []).forEach(a => {
+                [a.artnr, a.lev_artnr].forEach(v => {
+                    const n = kamNorm(v);
+                    if (n.length < 4 || n === '-') return;
+                    lagg(exakt, n, a);
+                    lagg(fuzz, kamFuzz(n), { n, a });
+                });
+            });
+            kamNummerIndex = { exakt, fuzz };
+        }
+        // text -> { exakta: [nummer], osakra: [nummer] }
+        function kameraHittaNummer(text) {
+            if (!kamNummerIndex) kamByggIndex();
+            const { exakt, fuzz } = kamNummerIndex;
+            const exakta = new Set(), osakra = new Set();
+            const ord = String(text || '').split(/[\s:;()\[\]*"'<>=_]+/).filter(Boolean);
+            ord.forEach(o => {
+                const n = kamNorm(o);
+                if (n.length < 4) return;
+                const varianter = [n, n.replace(/-\d{1,2}$/, '')];                  // Intuitive skriver "470015-08"
+                if (/^[|!]/.test(o)) varianter.push('I' + n);                        // litet i läses ofta som |
+                if (/^REF./.test(n)) varianter.push(n.slice(3));                     // "REF470015"
+                let traff = false;
+                varianter.forEach(v => { if (v.length >= 4 && exakt.has(v)) { exakta.add(v); traff = true; } });
+                if (!traff && /\d/.test(n) && n.length >= 5) {
+                    varianter.forEach(v => { const f = fuzz.get(kamFuzz(v)); if (f && v.length >= 5) f.forEach(x => osakra.add(x.n)); });
+                }
+            });
+            exakta.forEach(x => osakra.delete(x));
+            return { exakta: [...exakta], osakra: [...osakra] };
+        }
+
+        function kamStatus(t) { document.getElementById('kameraStatus').textContent = t; }
+        function kamBotten(html) { document.getElementById('kameraBotten').innerHTML = html || ''; }
+
+        function laddaTesseract() {
+            if (kamWorkerLovar) return kamWorkerLovar;
+            kamWorkerLovar = (async () => {
+                if (!window.Tesseract) {
+                    await new Promise((ok, fel) => {
+                        const sc = document.createElement('script');
+                        sc.src = TESS_JS; sc.onload = ok; sc.onerror = () => fel(new Error('nät'));
+                        document.head.appendChild(sc);
+                    });
+                }
+                kamWorker = await Tesseract.createWorker('eng', 1, { langPath: TESS_SPRAK, gzip: true });
+                return kamWorker;
+            })().catch(e => { kamWorkerLovar = null; throw e; });
+            return kamWorkerLovar;
+        }
+
+        // Gör bilden gråskala och drar ut kontrasten, det gör det lättare att läsa grå text på vitt papper
+        function kamForbattra(canvas) {
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            const bild = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const d = bild.data, hist = new Uint32Array(256);
+            for (let i = 0; i < d.length; i += 4) { const g = (d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114) | 0; d[i] = g; hist[g]++; }
+            const tot = d.length / 4;
+            let lag = 0, hog = 255, sum = 0;
+            for (let v = 0; v < 256; v++) { sum += hist[v]; if (sum >= tot * 0.02) { lag = v; break; } }
+            sum = 0;
+            for (let v = 255; v >= 0; v--) { sum += hist[v]; if (sum >= tot * 0.02) { hog = v; break; } }
+            const spann = Math.max(hog - lag, 40);
+            for (let i = 0; i < d.length; i += 4) {
+                const g = Math.max(0, Math.min(255, ((d[i] - lag) * 255 / spann) | 0));
+                d[i] = d[i + 1] = d[i + 2] = g;
+            }
+            ctx.putImageData(bild, 0, 0);
+            return canvas;
+        }
+
+        // Tar en bild ur videon. hel=true: hela bilden, annars bara rutan på skärmen.
+        function kamTaBild(hel) {
+            const v = document.getElementById('kameraVideo');
+            const vw = v.videoWidth, vh = v.videoHeight;
+            if (!vw || !vh) return null;
+            let sx = 0, sy = 0, sw = vw, sh = vh;
+            if (!hel) {
+                // Rutan på skärmen omräknad till bildpunkter i videon (videon fyller skärmen med object-fit: cover)
+                const ram = document.querySelector('.kamera-ram').getBoundingClientRect();
+                const vr = v.getBoundingClientRect();
+                const skala = Math.max(vr.width / vw, vr.height / vh);
+                const offX = (vr.width - vw * skala) / 2, offY = (vr.height - vh * skala) / 2;
+                sx = Math.max(0, (ram.left - vr.left - offX) / skala);
+                sy = Math.max(0, (ram.top - vr.top - offY) / skala);
+                sw = Math.min(vw - sx, ram.width / skala);
+                sh = Math.min(vh - sy, ram.height / skala);
+            }
+            const mal = Math.min(1, 1600 / Math.max(sw, sh));
+            const c = document.createElement('canvas');
+            c.width = Math.max(1, Math.round(sw * mal)); c.height = Math.max(1, Math.round(sh * mal));
+            c.getContext('2d').drawImage(v, sx, sy, sw, sh, 0, 0, c.width, c.height);
+            return kamForbattra(c);
+        }
+
+        async function kamLas(canvas, psm) {
+            await kamWorker.setParameters({ tessedit_pageseg_mode: String(psm) });
+            const { data } = await kamWorker.recognize(canvas);
+            return data.text || '';
+        }
+
+        function kamVisaVal(exakta, osakra) {
+            const rad = (nr, osaker) => {
+                const art = (kamNummerIndex.exakt.get(nr) || [])[0];
+                return `<button type="button" class="kamera-val" data-nr="${esc(nr)}">${esc(nr)}${art ? `<small>${esc(art.namn)} · ${esc(art.plats)}</small>` : ''}</button>`;
+            };
+            kamStatus(exakta.length ? 'Flera träffar, välj rätt' : 'Menade du något av dessa?');
+            kamBotten(exakta.map(n => rad(n)).concat(osakra.filter(n => kamNummerIndex.exakt.has(n)).map(n => rad(n))).join('') +
+                '<button type="button" class="kamera-igen" onclick="kamStart()">Läs av igen</button>');
+            document.querySelectorAll('.kamera-val').forEach(b => b.onclick = () => kamValj(b.dataset.nr));
+        }
+
+        function kamValj(nr) {
+            stangKamera();
+            const inp = document.getElementById('searchInput');
+            inp.value = nr;
+            toggleClearButton();
+            sökLager();
+            try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
+        }
+
+        // Tar emot text och avgör vad som ska hända. Ger true om vi är klara.
+        // Osäkra träffar (t.ex. 3 som lästs i stället för 8) samlas och visas först om inget säkert nummer dyker upp.
+        let kamOsakra = new Set();
+        function kamHantera(text, slutgiltig) {
+            const r = kameraHittaNummer(text);
+            if (r.exakta.length === 1) { kamValj(r.exakta[0]); return true; }
+            if (r.exakta.length > 1) { kamAktiv = false; kamVisaVal(r.exakta, []); return true; }
+            r.osakra.forEach(n => kamOsakra.add(n));
+            if (kamOsakra.size && slutgiltig) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return true; }
+            return false;
+        }
+
+        async function kamStart() {
+            kamAktiv = true; kamVarv = 0; kamOsakra = new Set();
+            kamBotten('');
+            kamStatus('Håll REF-numret i rutan');
+            const klart = Date.now() + 60000;
+            // Varannan gång hela bilden, varannan gång bara rutan, och växlar mellan två lässätt
+            const upplagg = [[true, 11], [false, 6], [true, 6], [false, 11]];
+            while (kamAktiv && Date.now() < klart) {
+                const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
+                const bild = kamTaBild(hel);
+                if (!bild) { await new Promise(r => setTimeout(r, 300)); continue; }
+                let text = '';
+                try { text = await kamLas(bild, psm); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
+                if (!kamAktiv) return;
+                if (kamHantera(text, kamVarv >= 8)) return;
+                await new Promise(r => setTimeout(r, 150));
+            }
+            if (kamAktiv && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
+            if (kamAktiv) {
+                kamAktiv = false;
+                kamStatus('Hittade inget nummer som finns i databasen');
+                kamBotten('<button type="button" class="kamera-igen" onclick="kamStart()">Försök igen</button>');
+            }
+        }
+
+        async function oppnaKamera() {
+            const lager = document.getElementById('kameraLager');
+            lager.hidden = false;
+            kamBotten('');
+            kamStatus('Startar kameran...');
+            try {
+                kamStrom = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } } });
+            } catch (e) {
+                kamStatus('Kameran kunde inte startas. Tillåt kameran för sidan i webbläsarens inställningar.');
+                kamBotten('<button type="button" class="kamera-igen" onclick="document.getElementById(\'kameraFil\').click()">Ta en bild istället</button>');
+                return;
+            }
+            const video = document.getElementById('kameraVideo');
+            video.srcObject = kamStrom;
+            try { await video.play(); } catch (e) {}
+            try { const sp = kamStrom.getVideoTracks()[0]; sp.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(() => {}); } catch (e) {}
+            kamStatus('Hämtar textläsaren... (första gången tar det en stund)');
+            try { await laddaTesseract(); }
+            catch (e) {
+                kamStatus('Kunde inte hämta textläsaren. Kontrollera nätet och försök igen.');
+                kamBotten('<button type="button" class="kamera-igen" onclick="oppnaKamera()">Försök igen</button>');
+                return;
+            }
+            if (document.getElementById('kameraLager').hidden) return;
+            kamStart();
+        }
+
+        function stangKamera() {
+            kamAktiv = false;
+            document.getElementById('kameraLager').hidden = true;
+            if (kamStrom) { kamStrom.getTracks().forEach(t => t.stop()); kamStrom = null; }
+            const v = document.getElementById('kameraVideo'); if (v) v.srcObject = null;
+        }
+
+        // Reserv: en vanlig bild från kameraappen (om live-kameran inte går att använda)
+        document.getElementById('kameraFil').addEventListener('change', async (e) => {
+            const fil = e.target.files && e.target.files[0];
+            e.target.value = '';
+            if (!fil) return;
+            kamStatus('Läser bilden...');
+            try {
+                await laddaTesseract();
+                const bm = await createImageBitmap(fil);
+                const mal = Math.min(1, 1800 / Math.max(bm.width, bm.height));
+                const c = document.createElement('canvas');
+                c.width = Math.round(bm.width * mal); c.height = Math.round(bm.height * mal);
+                c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height);
+                kamForbattra(c);
+                kamOsakra = new Set();
+                for (const psm of [11, 6]) { if (kamHantera(await kamLas(c, psm), psm === 6)) return; }
+                kamStatus('Hittade inget nummer som finns i databasen');
+                kamBotten('<button type="button" class="kamera-igen" onclick="document.getElementById(\'kameraFil\').click()">Ta en ny bild</button>');
+            } catch (err) { kamStatus('Kunde inte läsa bilden'); }
+        });
+
+        document.addEventListener('visibilitychange', () => { if (document.hidden) stangKamera(); });
+
+        // Knappen visas bara på enheter med kamera och pekskärm (alltså inte på vanliga datorer)
+        (function () {
+            try {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.matchMedia('(pointer: coarse)').matches) {
+                    document.getElementById('kameraKnapp').classList.add('finns');
+                }
+            } catch (e) {}
+        })();
     </script>
     <script>
         // Offline-stöd: sparar sidan och databasen i telefonen/datorn.
