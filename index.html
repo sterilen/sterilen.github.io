@@ -161,6 +161,27 @@
         
         .error { color: #b91c1c; background: #fef2f2; padding: 16px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 16px; }
         
+        .likn-info { background: #fef9c3; color: #713f12; border: 1px solid #fde68a; border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; font-size: 15px; font-weight: 600; text-align: center; line-height: 1.4; }
+        html[data-tema="mork"] .likn-info { background: #3a3210; color: #fde68a; border-color: #5c4d12; }
+        /* ===== Hjälp ===== */
+        .hjalp-knapp { position: absolute; top: 12px; left: 12px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-size: 20px; font-weight: 800; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .hjalp-knapp:active { transform: scale(0.95); }
+        html[data-tema="mork"] .hjalp-knapp { background: #1e293b; color: #f1f5f9; border-color: #334155; }
+        .hjalp-lager { position: fixed; inset: 0; z-index: 900; background: rgba(15, 23, 42, 0.6); display: flex; align-items: flex-end; justify-content: center; }
+        .hjalp-lager[hidden] { display: none; }
+        .hjalp-ruta { width: 100%; max-width: 640px; max-height: 88%; overflow-y: auto; background: #ffffff; color: #0f172a; border-radius: 20px 20px 0 0; padding: 20px 18px 28px; box-shadow: 0 -10px 30px rgba(0,0,0,0.25); }
+        @media (min-width: 700px) { .hjalp-lager { align-items: center; } .hjalp-ruta { border-radius: 20px; max-height: 80%; } }
+        .hjalp-topp { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .hjalp-topp h2 { font-size: 22px; font-weight: 800; }
+        .hjalp-stang { width: 40px; height: 40px; border-radius: 50%; border: none; background: #f1f5f9; color: #0f172a; font-size: 18px; cursor: pointer; }
+        .hjalp-ruta h3 { font-size: 16px; font-weight: 800; margin: 18px 0 6px; }
+        .hjalp-ruta p, .hjalp-ruta li { font-size: 15px; line-height: 1.5; color: #334155; }
+        .hjalp-ruta ul, .hjalp-ruta ol { padding-left: 22px; }
+        .hjalp-ruta li { margin-bottom: 4px; }
+        .hjalp-ruta .prick { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+        html[data-tema="mork"] .hjalp-ruta { background: #162032; color: #f1f5f9; }
+        html[data-tema="mork"] .hjalp-ruta p, html[data-tema="mork"] .hjalp-ruta li { color: #cbd5e1; }
+        html[data-tema="mork"] .hjalp-stang { background: #1e293b; color: #f1f5f9; }
         .footer { margin-top: auto; padding-top: 30px; font-size: 13px; color: #94a3b8; font-weight: 500; text-align: center; line-height: 1.6; }
 
         /* ===== Kameraläge (läser REF-numret på förpackningen) ===== */
@@ -217,6 +238,7 @@
 </head>
 <body>
     <div class="container">
+        <button type="button" id="hjalpKnapp" class="hjalp-knapp" onclick="visaHjalp()" aria-label="Hjälp" title="Hjälp">?</button>
         <button type="button" id="temaKnapp" class="tema-knapp" onclick="vaxlaTema()" aria-label="Växla mellan ljust och mörkt läge" title="Växla mellan ljust och mörkt läge"></button>
         <div class="header-block">
             <div class="logo-container">
@@ -270,6 +292,12 @@
             <button type="button" class="kamera-stang" onclick="stangKamera()" aria-label="Stäng kameran">✕</button>
         </div>
         <div id="kameraBotten" class="kamera-botten"></div>
+    </div>
+    <div id="hjalpLager" class="hjalp-lager" hidden onclick="if (event.target === this) stangHjalp()">
+        <div class="hjalp-ruta" role="dialog" aria-modal="true" aria-labelledby="hjalpRubrik">
+            <div class="hjalp-topp"><h2 id="hjalpRubrik">Hjälp</h2><button type="button" class="hjalp-stang" onclick="stangHjalp()" aria-label="Stäng hjälpen">✕</button></div>
+            <div id="hjalpInnehall"></div>
+        </div>
     </div>
     <input type="file" id="kameraFil" accept="image/*" capture="environment" hidden>
 
@@ -389,6 +417,75 @@
             searchInput.focus();
         }
 
+        // ---------- Förlåtande sökning ----------
+        // 1) Först en vanlig sökning där å/ä/ö = a/a/o, versaler spelar ingen roll och bindestreck/mellanslag/punkter
+        //    i artikelnummer ignoreras (104-503 hittar 104503).
+        // 2) Om inget hittas provas ord som är felstavade (en bokstav fel, saknas, extra eller ombytt).
+        //    Ord med siffror i (artikelnummer) läses aldrig "ungefär", för ett fel nummer kan ge fel produkt.
+        function sokNorm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+        function sokKompakt(t) { return sokNorm(t).replace(/[^a-z0-9]/g, ''); }
+        function sokForbered(item) {
+            if (item._n !== undefined) return;
+            item._r = (item.artnr + ' ' + item.lev_artnr + ' ' + item.namn).toLowerCase();
+            item._n = sokNorm(item.artnr + ' ' + item.lev_artnr + ' ' + item.namn);
+            item._k = [sokKompakt(item.artnr), sokKompakt(item.lev_artnr)];
+            item._t = item._n.split(/[^a-z0-9]+/).filter(Boolean);
+        }
+        // Antal "fel" mellan två ord (ombytta grannbokstäver räknas som ett), avbryter när det blir över max
+        function sokAvstand(a, b, max) {
+            const la = a.length, lb = b.length;
+            if (Math.abs(la - lb) > max) return max + 1;
+            let prev2 = null, prev = Array.from({ length: lb + 1 }, (_, j) => j);
+            for (let i = 1; i <= la; i++) {
+                const cur = [i];
+                let minRad = i;
+                for (let j = 1; j <= lb; j++) {
+                    let v = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+                    if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) v = Math.min(v, prev2[j - 2] + 1);
+                    cur[j] = v; if (v < minRad) minRad = v;
+                }
+                if (minRad > max) return max + 1;
+                prev2 = prev; prev = cur;
+            }
+            return prev[lb];
+        }
+        // Böjd form (handskar -> handske, sprutor -> spruta): provar att ta bort vanliga ändelser och väljer den
+        // längsta stammen som faktiskt finns i någon artikel.
+        function sokStam(w) {
+            let basta = null;
+            for (const suf of ['arna', 'erna', 'orna', 'ande', 'ade', 'ar', 'er', 'or', 'en', 'et', 'na', 'a', 'e', 'n', 's']) {
+                if (!w.endsWith(suf) || w.length - suf.length < 4) continue;
+                const stam = w.slice(0, -suf.length);
+                if ((!basta || stam.length > basta.length) && lagerData.some(i => i._n.includes(stam))) basta = stam;
+            }
+            return basta;
+        }
+        function sokKompaktTraff(item, ord) {
+            const cw = sokKompakt(ord);
+            return cw.length >= 3 && (item._k[0].includes(cw) || item._k[1].includes(cw));
+        }
+        // Steg 1: som förut (exakt text), plus att bindestreck/mellanslag i nummer ignoreras
+        function sokOrdExakt(item, ord) { return item._r.includes(ord.toLowerCase()) || sokKompaktTraff(item, ord); }
+        // Steg 2: å/ä/ö räknas som a/a/o
+        function sokOrdTraff(item, ord) { return item._n.includes(sokNorm(ord)) || sokKompaktTraff(item, ord); }
+        function sokOrdLiknande(item, ord, stam) {
+            const w = sokKompakt(ord);
+            if (w.length < 4 || /\d/.test(w)) return false;
+            const max = w.length >= 9 ? 2 : 1;
+            if (stam && item._n.includes(stam)) return true;
+            // Jämför med alla delar av orden i artikeln, eftersom svenska ord ofta är sammansatta (gasvävskompress)
+            return item._t.some(t => {
+                if (t.length < w.length - max) return false;
+                if (sokAvstand(w, t, max) <= max) return true;
+                for (let L = w.length - 1; L <= w.length + 1; L++) {
+                    for (let st = 0; st + L <= t.length; st++) {
+                        if (sokAvstand(w, t.substr(st, L), max) <= max) return true;
+                    }
+                }
+                return false;
+            });
+        }
+
         function sökLager() {
             const sökord = document.getElementById('searchInput').value.trim().toLowerCase();
             const ordLista = sökord.split(/\s+/).filter(Boolean);
@@ -399,10 +496,16 @@
             
             if (!sökord) { document.getElementById('söktid').textContent = ''; return; }
 
-            let hittade = lagerData.filter(item => {
-                const text = (item.artnr + ' ' + item.lev_artnr + ' ' + item.namn).toLowerCase();
-                return ordLista.every(ord => text.includes(ord));
-            });
+            lagerData.forEach(sokForbered);
+            let hittade = lagerData.filter(item => ordLista.every(ord => sokOrdExakt(item, ord)));
+            let liknande = false;
+            if (hittade.length === 0) hittade = lagerData.filter(item => ordLista.every(ord => sokOrdTraff(item, ord)));
+            if (hittade.length === 0) {
+                // Inget alls: prova böjda former och ord som är lite felstavade
+                const stammar = ordLista.map(ord => { const w = sokKompakt(ord); return /\d/.test(w) ? null : sokStam(w); });
+                hittade = lagerData.filter(item => ordLista.every((ord, k) => sokOrdTraff(item, ord) || sokOrdLiknande(item, ord, stammar[k])));
+                liknande = hittade.length > 0;
+            }
 
             hittade = hittade.filter(i => aktivaTyper[ärGaller(i.plats) ? 'galler' : 'forbruk']);
 
@@ -444,7 +547,7 @@
                     tabellHtml += `<tr class="${typ}"><td><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
-                resultatOmråde.innerHTML = tabellHtml;
+                resultatOmråde.innerHTML = (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". Visar artiklar som liknar sökningen. Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
             } else {
                 resultatOmråde.innerHTML = "<div class='error'>🔍 Inga artiklar matchade din sökning i sterilförrådet.</div>";
             }
@@ -717,6 +820,73 @@
                 }
             } catch (e) {}
         })();
+    </script>
+    <script>
+        // ======================= HJÄLP =======================
+        // Visar hjälp som passar enheten: telefon/platta (pekskärm) eller dator.
+        function hjalpArTelefon() {
+            try { return window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; }
+        }
+        function hjalpArIphone() {
+            const ua = navigator.userAgent || '';
+            return /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        }
+        function hjalpText() {
+            const telefon = hjalpArTelefon();
+            const harKamera = !!document.getElementById('kameraKnapp') && document.getElementById('kameraKnapp').classList.contains('finns');
+            const dot = (farg) => `<span class="prick" style="background:${farg}"></span>`;
+            let h = '';
+            h += `<h3>Så söker du</h3>
+                <p>Skriv produktens namn, vårt artikelnummer eller leverantörens artikelnummer (REF) i sökfältet och tryck ${telefon ? 'på <b>Sök</b>' : 'på <b>Sök</b> eller Enter'}. Skriver du flera ord måste alla finnas i artikeln.</p>
+                <ul>
+                  <li>Det går bra att skriva med eller utan å, ä och ö, och bindestreck i artikelnummer spelar ingen roll.</li>
+                  <li>Om du stavat lite fel eller skrivit en böjd form (handskar i stället för handske) visas liknande artiklar i en <b>gul ruta</b>. Kontrollera då att det är rätt produkt.</li>
+                  <li>Siffror måste vara helt rätt. Ett artikelnummer med en siffra fel ger inga träffar, för att du inte ska få fel produkt.</li>
+                </ul>`;
+            h += `<h3>Visa och sortera</h3>
+                <p><b>Visa</b> väljer om du vill se Fabrikssterilt, Instrumentgaller eller båda. Minst en måste vara vald. <b>Sortera</b> ordnar träffarna efter plats, namn, artikelnummer eller leverantörens nummer.</p>`;
+            h += `<h3>Platsrutorna</h3>
+                <ul>
+                  <li>${dot('#7fb046')}<b>Grön</b>: fabrikssterilt, med hyllplats som <b>E-05-04-01</b>.</li>
+                  <li>${dot('#4687b0')}<b>Blå</b>: instrumentgaller, med plats som <b>12:3</b> (hylla:fack).</li>
+                  <li>${dot('#b04671')}<b>Rosa, märkt BULK</b>: bulkplats, om artikeln också finns där.</li>
+                </ul>`;
+            if (telefon && harKamera) {
+                h += `<h3>Läsa av en förpackning med kameran</h3>
+                <ol>
+                  <li>Tryck på kameraknappen 📷 bredvid Sök. Första gången frågar telefonen om kameran får användas.</li>
+                  <li>Håll telefonen stilla en bit från paketet så att numret efter <b>REF</b> (eller artikelnumret) hamnar i den vita rutan.</li>
+                  <li>Appen läser texten flera gånger i sekunden. När den hittar ett nummer som finns i databasen söker den direkt. Hittas flera, eller något som liknar, väljer du rätt.</li>
+                </ol>
+                <p>Tänk på: första gången hämtas textläsaren (cirka 8 MB), så det behövs nät. Det går bäst med bra ljus och en skarp bild. Streckkoder läses inte, bara tryckt text. Om kameran inte startar kan du välja <b>Ta en bild istället</b>.</p>`;
+            }
+            if (telefon) {
+                if (hjalpArIphone()) {
+                    h += `<h3>Lägg appen på hemskärmen (iPhone)</h3>
+                    <p>Öppna sidan i Safari, tryck på dela-ikonen (rutan med pilen uppåt) och välj <b>Lägg till på hemskärmen</b>. Då startar den som en vanlig app.</p>`;
+                } else {
+                    h += `<h3>Lägg appen på startskärmen (Android)</h3>
+                    <p>Öppna sidan i Chrome, tryck på menyn (tre punkter) och välj <b>Lägg till på startskärmen</b> eller <b>Installera app</b>. Då startar den som en vanlig app.</p>`;
+                }
+            } else {
+                h += `<h3>Kameran</h3>
+                <p>Kameraknappen finns bara på telefoner och plattor, så du ser den inte på datorn.</p>
+                <h3>Installera på datorn</h3>
+                <p>I Chrome eller Edge kan du trycka på installationsikonen längst till höger i adressfältet för att få en egen ikon för appen.</p>`;
+            }
+            h += `<h3>Mörkt läge</h3>
+                <p>Knappen med månen eller solen uppe till höger växlar mellan ljust och mörkt. Valet sparas på den här ${telefon ? 'telefonen' : 'datorn'}.</p>
+                <h3>Utan nät och databasens datum</h3>
+                <p>Appen sparar sig själv och databasen och fungerar även utan täckning efter första besöket. Längst ner står när databasen senast uppdaterades.</p>`;
+            return h;
+        }
+        function visaHjalp() {
+            document.getElementById('hjalpInnehall').innerHTML = hjalpText();
+            document.getElementById('hjalpLager').hidden = false;
+            document.querySelector('.hjalp-ruta').scrollTop = 0;
+        }
+        function stangHjalp() { document.getElementById('hjalpLager').hidden = true; }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') stangHjalp(); });
     </script>
     <script>
         // Offline-stöd: sparar sidan och databasen i telefonen/datorn.
