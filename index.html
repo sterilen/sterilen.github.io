@@ -276,7 +276,7 @@
     <footer class="footer">
         <span id="söktid"></span><br><br>
         Copyright 2026 Pelle Holmström<br>
-        Version 1.6<span id="dbdatum"></span>
+        Version 1.7<span id="dbdatum"></span>
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
@@ -536,6 +536,7 @@
                     });
                 }
                 kamWorker = await Tesseract.createWorker('eng', 1, { langPath: TESS_SPRAK, gzip: true });
+                try { localStorage.setItem('kamAnvand', '1'); } catch (e) {}
                 return kamWorker;
             })().catch(e => { kamWorkerLovar = null; throw e; });
             return kamWorkerLovar;
@@ -578,7 +579,7 @@
                 sw = Math.min(vw - sx, ram.width / skala);
                 sh = Math.min(vh - sy, ram.height / skala);
             }
-            const mal = Math.min(1, (hel ? 1400 : 1000) / Math.max(sw, sh));   // rutan är liten och går snabbare att läsa
+            const mal = Math.min(1, (hel ? 1100 : 900) / Math.max(sw, sh));   // mindre bild går snabbare att läsa
             const c = document.createElement('canvas');
             c.width = Math.max(1, Math.round(sw * mal)); c.height = Math.max(1, Math.round(sh * mal));
             c.getContext('2d').drawImage(v, sx, sy, sw, sh, 0, 0, c.width, c.height);
@@ -628,8 +629,8 @@
             kamBotten('');
             kamStatus('Håll REF-numret i rutan');
             const klart = Date.now() + 60000;
-            // Oftast bara rutan (snabbast), var tredje gång hela bilden ifall numret står utanför rutan
-            const upplagg = [[false, 6], [false, 11], [true, 11], [false, 6], [false, 11], [true, 6]];
+            // Oftast bara rutan (snabbast), varannan gång hela bilden ifall numret står utanför rutan
+            const upplagg = [[false, 6], [true, 11], [false, 11], [true, 6], [false, 6], [false, 11]];
             while (kamAktiv && Date.now() < klart) {
                 const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
                 const bild = kamTaBild(hel);
@@ -638,7 +639,7 @@
                 try { text = await kamLas(bild, psm); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
                 if (!kamAktiv) return;
                 if (kamHantera(text, kamVarv >= 12)) return;
-                await new Promise(r => setTimeout(r, 150));
+                await new Promise(r => setTimeout(r, 20));
             }
             if (kamAktiv && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
             if (kamAktiv) {
@@ -710,6 +711,9 @@
             try {
                 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.matchMedia('(pointer: coarse)').matches) {
                     document.getElementById('kameraKnapp').classList.add('finns');
+                    // Har kameran använts förut ligger textläsaren redan sparad. Då förbereds den i bakgrunden så att kameran startar fortare.
+                    let anvand = false; try { anvand = localStorage.getItem('kamAnvand') === '1'; } catch (e) {}
+                    if (anvand) setTimeout(() => { laddaTesseract().catch(() => {}); }, 2500);
                 }
             } catch (e) {}
         })();
