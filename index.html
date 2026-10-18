@@ -276,7 +276,7 @@
     <footer class="footer">
         <span id="söktid"></span><br><br>
         Copyright 2026 Pelle Holmström<br>
-        Version 1.4<span id="dbdatum"></span>
+        Version 1.6<span id="dbdatum"></span>
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
@@ -486,8 +486,12 @@
                 [a.artnr, a.lev_artnr].forEach(v => {
                     const n = kamNorm(v);
                     if (n.length < 4 || n === '-') return;
-                    lagg(exakt, n, a);
-                    lagg(fuzz, kamFuzz(n), { n, a });
+                    // Vissa nummer är registrerade med prefix och mellanslag, t.ex. "PN 470500".
+                    // Då räcker det att numret efter mellanslaget, eller hela utan mellanslag, hittas.
+                    const nycklar = new Set([n, n.replace(/\s+/g, '')]);
+                    const ord = n.split(/\s+/);
+                    if (ord.length > 1 && ord[ord.length - 1].length >= 4) nycklar.add(ord[ord.length - 1]);
+                    nycklar.forEach(k => { if (k.length >= 4) { lagg(exakt, k, a); lagg(fuzz, kamFuzz(k), { n: k, a }); } });
                 });
             });
             kamNummerIndex = { exakt, fuzz };
@@ -498,6 +502,10 @@
             const { exakt, fuzz } = kamNummerIndex;
             const exakta = new Set(), osakra = new Set();
             const ord = String(text || '').split(/[\s:;()\[\]*"'<>=_]+/).filter(Boolean);
+            for (let i = 0; i + 1 < ord.length; i++) {       // två ord i följd, t.ex. "DAR 630" eller "REF 852.01"
+                const par = kamNorm(ord[i]) + kamNorm(ord[i + 1]);
+                if (par.length >= 4 && exakt.has(par)) exakta.add(par);
+            }
             ord.forEach(o => {
                 const n = kamNorm(o);
                 if (n.length < 4) return;
@@ -570,7 +578,7 @@
                 sw = Math.min(vw - sx, ram.width / skala);
                 sh = Math.min(vh - sy, ram.height / skala);
             }
-            const mal = Math.min(1, 1600 / Math.max(sw, sh));
+            const mal = Math.min(1, (hel ? 1400 : 1000) / Math.max(sw, sh));   // rutan är liten och går snabbare att läsa
             const c = document.createElement('canvas');
             c.width = Math.max(1, Math.round(sw * mal)); c.height = Math.max(1, Math.round(sh * mal));
             c.getContext('2d').drawImage(v, sx, sy, sw, sh, 0, 0, c.width, c.height);
@@ -620,8 +628,8 @@
             kamBotten('');
             kamStatus('Håll REF-numret i rutan');
             const klart = Date.now() + 60000;
-            // Varannan gång hela bilden, varannan gång bara rutan, och växlar mellan två lässätt
-            const upplagg = [[true, 11], [false, 6], [true, 6], [false, 11]];
+            // Oftast bara rutan (snabbast), var tredje gång hela bilden ifall numret står utanför rutan
+            const upplagg = [[false, 6], [false, 11], [true, 11], [false, 6], [false, 11], [true, 6]];
             while (kamAktiv && Date.now() < klart) {
                 const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
                 const bild = kamTaBild(hel);
@@ -629,7 +637,7 @@
                 let text = '';
                 try { text = await kamLas(bild, psm); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
                 if (!kamAktiv) return;
-                if (kamHantera(text, kamVarv >= 8)) return;
+                if (kamHantera(text, kamVarv >= 12)) return;
                 await new Promise(r => setTimeout(r, 150));
             }
             if (kamAktiv && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
