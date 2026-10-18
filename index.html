@@ -357,7 +357,8 @@
                 const rawText = window.LAGER_CSV.trim();
                 lagerData = hanteraCSV(rawText);
                 if (window.LAGER_UPPDATERAD) document.getElementById('dbdatum').innerText = ' · Databas ' + window.LAGER_UPPDATERAD;
-                document.getElementById('antalArtiklar').innerText = `Totalt i systemet: ${lagerData.length} artiklar`;
+                const antalGaller = lagerData.filter(i => ärGaller(i.plats)).length;
+                document.getElementById('antalArtiklar').innerHTML = `<span style="white-space:nowrap">Fabrikssterilt: ${lagerData.length - antalGaller} artiklar</span> · <span style="white-space:nowrap">Instrumentgaller: ${antalGaller} galler</span>`;
             } catch (err) {
                 console.error(err);
                 document.getElementById('antalArtiklar').innerText = "Kunde inte ladda databasen.";
