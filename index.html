@@ -195,7 +195,7 @@
         html[data-tema="mork"] .antal-kort.galler { border-left-color: #4687b0; }
         html[data-tema="mork"] .antal-tal { color: #f1f5f9; }
         html[data-tema="mork"] .antal-namn, html[data-tema="mork"] .antal-rubrik { color: #94a3b8; }
-        /* Gunilla-knappen: syns bara på måndagar */
+        /* Gunilla-knappen: syns bara på fredagar */
         .fredag-knapp { display: none; width: 40px; height: 40px; margin: 0 auto 10px; padding: 0; border-radius: 50%; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-size: 14px; font-weight: 800; cursor: pointer; overflow: hidden; position: relative; align-items: center; justify-content: center; }
         .fredag-knapp.finns { display: flex; }
         .fredag-knapp img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -891,14 +891,15 @@
         })();
     </script>
     <script>
-        // ======================= FREDAGSKNAPP =======================
-        // Visas bara på måndagar. Spelar ljudet från en YouTube-film utan att visa något (ingen spelare, inga reglage).
+        // ======================= GUNILLA-KNAPPEN =======================
+        // Visas bara på fredagar. Spelar ljudet från ett SoundCloud-spår utan att visa något (ingen spelare, inga reglage).
         // Ett tryck startar, nästa tryck stoppar.
         (function () {
-            const FILM = 'cJAW6HfTZP8';
+            const SPAR = 'https://soundcloud.com/plastpappa/gunilla-persson-i-wont-shake-la-la-gunilla-epa-remix';
             const knapp = document.getElementById('fredagKnapp');
             let ram = null;
-            function visaOmFredag() { knapp.classList.toggle('finns', new Date().getDay() === 1); }
+            function visaOmFredag() { knapp.classList.toggle('finns', new Date().getDay() === 5); }
+            function skicka(m) { try { ram.contentWindow.postMessage(JSON.stringify(m), '*'); } catch (e) {} }
             function stoppa() {
                 if (ram) { ram.remove(); ram = null; }      // tar man bort spelaren tystnar ljudet direkt
                 knapp.classList.remove('spelar');
@@ -906,15 +907,17 @@
             window.vaxlaFredagsmusik = function () {
                 if (ram) { stoppa(); return; }
                 ram = document.createElement('iframe');
-                ram.src = 'https://www.youtube.com/embed/' + FILM + '?autoplay=1&playsinline=1&controls=0&enablejsapi=1&rel=0&origin=' + encodeURIComponent(location.origin);
-                ram.allow = 'autoplay; encrypted-media';
+                ram.src = 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(SPAR) +
+                    '&auto_play=true&visual=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&buying=false&sharing=false&download=false';
+                ram.allow = 'autoplay';
                 ram.title = '';
                 ram.setAttribute('aria-hidden', 'true');
                 ram.tabIndex = -1;
                 // Utanför bild men inte display:none, annars startar inte uppspelningen i alla webbläsare
-                ram.style.cssText = 'position:fixed;left:-300px;top:0;width:200px;height:200px;border:0;opacity:0;pointer-events:none;';
+                ram.style.cssText = 'position:fixed;left:-400px;top:0;width:300px;height:166px;border:0;opacity:0;pointer-events:none;';
                 ram.addEventListener('load', () => {
-                    try { ram.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); } catch (e) {}
+                    skicka({ method: 'addEventListener', value: 'finish' });
+                    skicka({ method: 'play' });
                 });
                 document.body.appendChild(ram);
                 knapp.classList.add('spelar');
@@ -924,8 +927,8 @@
                 if (!ram || e.source !== ram.contentWindow) return;
                 try {
                     const d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-                    const st = d && (d.event === 'onStateChange' ? d.info : (d.info && d.info.playerState));
-                    if (st === 0) stoppa();
+                    if (d && d.method === 'ready') { skicka({ method: 'addEventListener', value: 'finish' }); skicka({ method: 'play' }); }
+                    if (d && d.method === 'finish') stoppa();
                 } catch (x) {}
             });
             visaOmFredag();
