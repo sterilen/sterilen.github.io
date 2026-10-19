@@ -182,6 +182,19 @@
         html[data-tema="mork"] .hjalp-ruta { background: #162032; color: #f1f5f9; }
         html[data-tema="mork"] .hjalp-ruta p, html[data-tema="mork"] .hjalp-ruta li { color: #cbd5e1; }
         html[data-tema="mork"] .hjalp-stang { background: #1e293b; color: #f1f5f9; }
+        /* ===== Antal artiklar i databasen ===== */
+        .antal-rubrik { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .antal-rad { display: flex; gap: 8px; justify-content: center; }
+        .antal-kort { flex: 1 1 0; max-width: 210px; background: #f8fafc; border: 1px solid #e2e8f0; border-left-width: 5px; border-radius: 12px; padding: 8px 10px; text-align: left; }
+        .antal-kort.forbruk { border-left-color: #7fb046; }
+        .antal-kort.galler { border-left-color: #4687b0; }
+        .antal-tal { font-size: 24px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+        .antal-namn { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; }
+        html[data-tema="mork"] .antal-kort { background: #111c2e; border-color: #243247; }
+        html[data-tema="mork"] .antal-kort.forbruk { border-left-color: #7fb046; }
+        html[data-tema="mork"] .antal-kort.galler { border-left-color: #4687b0; }
+        html[data-tema="mork"] .antal-tal { color: #f1f5f9; }
+        html[data-tema="mork"] .antal-namn, html[data-tema="mork"] .antal-rubrik { color: #94a3b8; }
         .footer { margin-top: auto; padding-top: 30px; font-size: 13px; color: #94a3b8; font-weight: 500; text-align: center; line-height: 1.6; }
 
         /* ===== Kameraläge (läser REF-numret på förpackningen) ===== */
@@ -358,7 +371,11 @@
                 lagerData = hanteraCSV(rawText);
                 if (window.LAGER_UPPDATERAD) document.getElementById('dbdatum').innerText = ' · Databas ' + window.LAGER_UPPDATERAD;
                 const antalGaller = lagerData.filter(i => ärGaller(i.plats)).length;
-                document.getElementById('antalArtiklar').innerHTML = `<span style="white-space:nowrap">Fabrikssterilt: ${lagerData.length - antalGaller} artiklar</span> · <span style="white-space:nowrap">Instrumentgaller: ${antalGaller} galler</span>`;
+                const tal = n => n.toLocaleString('sv-SE');
+                document.getElementById('antalArtiklar').innerHTML =
+                    `<div class="antal-rubrik">Artiklar i databasen</div><div class="antal-rad">` +
+                    `<div class="antal-kort forbruk"><div class="antal-tal">${tal(lagerData.length - antalGaller)}</div><div class="antal-namn">Fabrikssterilt</div></div>` +
+                    `<div class="antal-kort galler"><div class="antal-tal">${tal(antalGaller)}</div><div class="antal-namn">Instrumentgaller</div></div></div>`;
             } catch (err) {
                 console.error(err);
                 document.getElementById('antalArtiklar').innerText = "Kunde inte ladda databasen.";
@@ -690,9 +707,29 @@
             return kamForbattra(c);
         }
 
-        async function kamLas(canvas, psm) {
+        // Vrider bilden så att text som står på sidan, upp och ner eller snett kan läsas.
+        // 0/90/180/270 vrids exakt, andra vinklar får en större duk med vit bakgrund.
+        function kamRotera(c, grader) {
+            if (!grader) return c;
+            const rad = grader * Math.PI / 180;
+            const cos = Math.abs(Math.cos(rad)), sin = Math.abs(Math.sin(rad));
+            let w = c.width * cos + c.height * sin, h = c.width * sin + c.height * cos;
+            const mal = Math.min(1, 1100 / Math.max(w, h));      // håll nere storleken så att det går fort
+            w = Math.max(1, Math.round(w * mal)); h = Math.max(1, Math.round(h * mal));
+            const r = document.createElement('canvas');
+            r.width = w; r.height = h;
+            const x = r.getContext('2d');
+            x.fillStyle = '#fff'; x.fillRect(0, 0, w, h);
+            x.translate(w / 2, h / 2); x.rotate(rad); x.scale(mal, mal);
+            x.drawImage(c, -c.width / 2, -c.height / 2);
+            return r;
+        }
+
+        let kamSenastKonf = 0;
+        async function kamLas(canvas, psm, grader) {
             await kamWorker.setParameters({ tessedit_pageseg_mode: String(psm) });
-            const { data } = await kamWorker.recognize(canvas);
+            const { data } = await kamWorker.recognize(kamRotera(canvas, grader || 0));
+            kamSenastKonf = data.confidence || 0;
             return data.text || '';
         }
 
@@ -731,18 +768,32 @@
         async function kamStart() {
             kamAktiv = true; kamVarv = 0; kamOsakra = new Set();
             kamBotten('');
-            kamStatus('Håll REF-numret i rutan');
+            kamStatus('Håll REF-numret i rutan (vilken väg som helst)');
             const klart = Date.now() + 60000;
-            // Oftast bara rutan (snabbast), varannan gång hela bilden ifall numret står utanför rutan
-            const upplagg = [[false, 6], [true, 11], [false, 11], [true, 6], [false, 6], [false, 11]];
+            // Oftast bara rutan (snabbast), ibland hela bilden ifall numret står utanför rutan.
+            // Varannan läsning är rättvänd (vanligaste fallet), varannan provar andra vinklar: på sidan, upp och ner och snett.
+            const upplagg = [[false, 6], [true, 6], [true, 11], [false, 11]];
+            const andra = [90, 270, 180, 45, 315, 135, 225];
+            const konf = {};                       // läskvalitet per vinkel, så att vi håller oss till den vinkel som ser mest ut som text
             while (kamAktiv && Date.now() < klart) {
-                const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
+                const k = kamVarv, j = k >> 1;
+                const [hel, psm] = upplagg[j % upplagg.length];
+                let v = 0;
+                if (k % 2 === 1) {
+                    v = andra[j % andra.length];
+                    if (k >= 8) {
+                        const b = Object.keys(konf).sort((a, c) => konf[c] - konf[a])[0];
+                        if (b !== undefined && +b !== 0 && konf[b] > (konf[0] || 0)) v = +b;
+                    }
+                }
+                kamVarv++;
                 const bild = kamTaBild(hel);
                 if (!bild) { await new Promise(r => setTimeout(r, 300)); continue; }
                 let text = '';
-                try { text = await kamLas(bild, psm); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
+                try { text = await kamLas(bild, psm, v); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
                 if (!kamAktiv) return;
-                if (kamHantera(text, kamVarv >= 12)) return;
+                konf[v] = Math.max(konf[v] || 0, kamSenastKonf);
+                if (kamHantera(text, kamVarv >= 32)) return;
                 await new Promise(r => setTimeout(r, 20));
             }
             if (kamAktiv && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
@@ -753,9 +804,31 @@
             }
         }
 
+        // Försöker låsa skärmen i stående läge medan kameran är öppen (fungerar på Android; iPhone tillåter det inte i webbläsare)
+        async function kamLasSkarm() {
+            try {
+                const o = screen.orientation;
+                if (!o || !o.lock) return;
+                try { await o.lock('portrait'); kamLast = true; return; } catch (e) {}
+                // Chrome på Android kräver ofta helskärm för att få låsa
+                const el = document.documentElement;
+                if (el.requestFullscreen && !document.fullscreenElement) {
+                    await el.requestFullscreen(); kamHelskarm = true;
+                    await o.lock('portrait'); kamLast = true;
+                }
+            } catch (e) {}
+        }
+        let kamLast = false, kamHelskarm = false;
+        function kamLosSkarm() {
+            try { if (kamLast) screen.orientation.unlock(); } catch (e) {}
+            try { if (kamHelskarm && document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+            kamLast = false; kamHelskarm = false;
+        }
+
         async function oppnaKamera() {
             const lager = document.getElementById('kameraLager');
             lager.hidden = false;
+            kamLasSkarm();
             kamBotten('');
             kamStatus('Startar kameran...');
             try {
@@ -783,6 +856,7 @@
         function stangKamera() {
             kamAktiv = false;
             document.getElementById('kameraLager').hidden = true;
+            kamLosSkarm();
             if (kamStrom) { kamStrom.getTracks().forEach(t => t.stop()); kamStrom = null; }
             const v = document.getElementById('kameraVideo'); if (v) v.srcObject = null;
         }
@@ -802,7 +876,11 @@
                 c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height);
                 kamForbattra(c);
                 kamOsakra = new Set();
-                for (const psm of [11, 6]) { if (kamHantera(await kamLas(c, psm), psm === 6)) return; }
+                const forsok = [[11, 0], [6, 0], [11, 90], [11, 270], [11, 180], [11, 45], [11, 315], [11, 135], [11, 225]];
+                for (let i = 0; i < forsok.length; i++) {
+                    kamStatus('Läser bilden... (' + (i + 1) + '/' + forsok.length + ')');
+                    if (kamHantera(await kamLas(c, forsok[i][0], forsok[i][1]), i === forsok.length - 1)) return;
+                }
                 kamStatus('Hittade inget nummer som finns i databasen');
                 kamBotten('<button type="button" class="kamera-igen" onclick="document.getElementById(\'kameraFil\').click()">Ta en ny bild</button>');
             } catch (err) { kamStatus('Kunde inte läsa bilden'); }
@@ -856,7 +934,8 @@
                 h += `<h3>Läsa av en förpackning med kameran</h3>
                 <ol>
                   <li>Tryck på kameraknappen 📷 bredvid Sök. Första gången frågar telefonen om kameran får användas.</li>
-                  <li>Håll telefonen stilla en bit från paketet så att numret efter <b>REF</b> (eller artikelnumret) hamnar i den vita rutan.</li>
+                  <li>Håll telefonen stilla en bit från paketet så att numret efter <b>REF</b> (eller artikelnumret) hamnar i den vita rutan. Texten får gärna stå på sidan, upp och ner eller snett, appen vrider själv bilden (det kan ta någon sekund extra).</li>
+                  <li>Skärmen låses i stående läge medan kameran är öppen (Android). På iPhone kan webbläsaren inte låsa skärmen, men det gör inget för läsningen. Vill du slippa att bilden snurrar kan du slå på <b>Lås stående riktning</b> i Kontrollcenter.</li>
                   <li>Appen läser texten flera gånger i sekunden. När den hittar ett nummer som finns i databasen söker den direkt. Hittas flera, eller något som liknar, väljer du rätt.</li>
                 </ol>
                 <p>Tänk på: första gången hämtas textläsaren (cirka 8 MB), så det behövs nät. Det går bäst med bra ljus och en skarp bild. Streckkoder läses inte, bara tryckt text. Om kameran inte startar kan du välja <b>Ta en bild istället</b>.</p>`;
