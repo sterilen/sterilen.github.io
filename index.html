@@ -601,7 +601,7 @@
             return t.replace(/[OQD]/g, '0').replace(/[IL]/g, '1').replace(/S/g, '5').replace(/[B3]/g, '8').replace(/Z/g, '2');
         }
         function kamByggIndex() {
-            const exakt = new Map(), fuzz = new Map();
+            const exakt = new Map(), fuzz = new Map(), slim = new Map();
             const lagg = (m, nyckel, art) => { if (!m.has(nyckel)) m.set(nyckel, []); m.get(nyckel).push(art); };
             (typeof lagerData !== 'undefined' ? lagerData : []).forEach(a => {
                 [a.artnr, a.lev_artnr].forEach(v => {
@@ -612,20 +612,38 @@
                     const nycklar = new Set([n, n.replace(/\s+/g, '')]);
                     const ord = n.split(/\s+/);
                     if (ord.length > 1 && ord[ord.length - 1].length >= 4) nycklar.add(ord[ord.length - 1]);
-                    nycklar.forEach(k => { if (k.length >= 4) { lagg(exakt, k, a); lagg(fuzz, kamFuzz(k), { n: k, a }); } });
+                    nycklar.forEach(k => {
+                        if (k.length < 4) return;
+                        lagg(exakt, k, a); lagg(fuzz, kamFuzz(k), { n: k, a });
+                        // Utan bindestreck, punkt och snedstreck, så att "AB-123" på förpackningen hittar "AB123" i databasen och tvärtom
+                        const sl = k.replace(/[-./]/g, '');
+                        if (sl !== k && sl.length >= 5) { if (!slim.has(sl)) slim.set(sl, new Set()); slim.get(sl).add(k); }
+                        else if (sl === k && sl.length >= 5) { if (!slim.has(sl)) slim.set(sl, new Set()); slim.get(sl).add(k); }
+                    });
                 });
             });
-            kamNummerIndex = { exakt, fuzz };
+            kamNummerIndex = { exakt, fuzz, slim };
         }
         // text -> { exakta: [nummer], osakra: [nummer] }
         function kameraHittaNummer(text) {
             if (!kamNummerIndex) kamByggIndex();
-            const { exakt, fuzz } = kamNummerIndex;
+            const { exakt, fuzz, slim } = kamNummerIndex;
             const exakta = new Set(), osakra = new Set();
             const ord = String(text || '').split(/[\s:;()\[\]*"'<>=_]+/).filter(Boolean);
+            // Träff på ett nummer som bara skiljer sig i bindestreck, punkt eller snedstreck. Ger databasens egen stavning.
+            const slimTraff = (v) => {
+                const sl = v.replace(/[-./]/g, '');
+                if (sl.length < 5 || !/\d/.test(sl)) return false;
+                const m = slim.get(sl);
+                if (!m || m.size > 3) return false;
+                let ok = false;
+                m.forEach(x => { if (exakt.has(x)) { exakta.add(x); ok = true; } });
+                return ok;
+            };
             for (let i = 0; i + 1 < ord.length; i++) {       // två ord i följd, t.ex. "DAR 630" eller "REF 852.01"
                 const par = kamNorm(ord[i]) + kamNorm(ord[i + 1]);
                 if (par.length >= 4 && exakt.has(par)) exakta.add(par);
+                else slimTraff(par);
             }
             ord.forEach(o => {
                 const n = kamNorm(o);
@@ -635,6 +653,7 @@
                 if (/^REF./.test(n)) varianter.push(n.slice(3));                     // "REF470015"
                 let traff = false;
                 varianter.forEach(v => { if (v.length >= 4 && exakt.has(v)) { exakta.add(v); traff = true; } });
+                if (!traff) varianter.forEach(v => { if (slimTraff(v)) traff = true; });
                 if (!traff && /\d/.test(n) && n.length >= 5) {
                     varianter.forEach(v => { const f = fuzz.get(kamFuzz(v)); if (f && v.length >= 5) f.forEach(x => osakra.add(x.n)); });
                 }
@@ -707,9 +726,29 @@
             return kamForbattra(c);
         }
 
-        async function kamLas(canvas, psm) {
+        // Vrider bilden så att text som står på sidan, upp och ner eller snett kan läsas.
+        // 0/90/180/270 vrids exakt, andra vinklar får en större duk med vit bakgrund.
+        function kamRotera(c, grader) {
+            if (!grader) return c;
+            const rad = grader * Math.PI / 180;
+            const cos = Math.abs(Math.cos(rad)), sin = Math.abs(Math.sin(rad));
+            let w = c.width * cos + c.height * sin, h = c.width * sin + c.height * cos;
+            const mal = Math.min(1, 1100 / Math.max(w, h));      // håll nere storleken så att det går fort
+            w = Math.max(1, Math.round(w * mal)); h = Math.max(1, Math.round(h * mal));
+            const r = document.createElement('canvas');
+            r.width = w; r.height = h;
+            const x = r.getContext('2d');
+            x.fillStyle = '#fff'; x.fillRect(0, 0, w, h);
+            x.translate(w / 2, h / 2); x.rotate(rad); x.scale(mal, mal);
+            x.drawImage(c, -c.width / 2, -c.height / 2);
+            return r;
+        }
+
+        let kamSenastKonf = 0;
+        async function kamLas(canvas, psm, grader) {
             await kamWorker.setParameters({ tessedit_pageseg_mode: String(psm) });
-            const { data } = await kamWorker.recognize(canvas);
+            const { data } = await kamWorker.recognize(kamRotera(canvas, grader || 0));
+            kamSenastKonf = data.confidence || 0;
             return data.text || '';
         }
 
@@ -748,18 +787,32 @@
         async function kamStart() {
             kamAktiv = true; kamVarv = 0; kamOsakra = new Set();
             kamBotten('');
-            kamStatus('Håll REF-numret i rutan');
+            kamStatus('Håll REF-numret i rutan (vilken väg som helst)');
             const klart = Date.now() + 60000;
-            // Oftast bara rutan (snabbast), varannan gång hela bilden ifall numret står utanför rutan
-            const upplagg = [[false, 6], [true, 11], [false, 11], [true, 6], [false, 6], [false, 11]];
+            // Oftast bara rutan (snabbast), ibland hela bilden ifall numret står utanför rutan.
+            // Varannan läsning är rättvänd (vanligaste fallet), varannan provar andra vinklar: på sidan, upp och ner och snett.
+            const upplagg = [[false, 6], [true, 6], [true, 11], [false, 11]];
+            const andra = [90, 270, 180, 45, 315, 135, 225];
+            const konf = {};                       // läskvalitet per vinkel, så att vi håller oss till den vinkel som ser mest ut som text
             while (kamAktiv && Date.now() < klart) {
-                const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
+                const k = kamVarv, j = k >> 1;
+                const [hel, psm] = upplagg[j % upplagg.length];
+                let v = 0;
+                if (k % 2 === 1) {
+                    v = andra[j % andra.length];
+                    if (k >= 8) {
+                        const b = Object.keys(konf).sort((a, c) => konf[c] - konf[a])[0];
+                        if (b !== undefined && +b !== 0 && konf[b] > (konf[0] || 0)) v = +b;
+                    }
+                }
+                kamVarv++;
                 const bild = kamTaBild(hel);
                 if (!bild) { await new Promise(r => setTimeout(r, 300)); continue; }
                 let text = '';
-                try { text = await kamLas(bild, psm); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
+                try { text = await kamLas(bild, psm, v); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
                 if (!kamAktiv) return;
-                if (kamHantera(text, kamVarv >= 12)) return;
+                konf[v] = Math.max(konf[v] || 0, kamSenastKonf);
+                if (kamHantera(text, kamVarv >= 32)) return;
                 await new Promise(r => setTimeout(r, 20));
             }
             if (kamAktiv && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
@@ -770,9 +823,31 @@
             }
         }
 
+        // Försöker låsa skärmen i stående läge medan kameran är öppen (fungerar på Android; iPhone tillåter det inte i webbläsare)
+        async function kamLasSkarm() {
+            try {
+                const o = screen.orientation;
+                if (!o || !o.lock) return;
+                try { await o.lock('portrait'); kamLast = true; return; } catch (e) {}
+                // Chrome på Android kräver ofta helskärm för att få låsa
+                const el = document.documentElement;
+                if (el.requestFullscreen && !document.fullscreenElement) {
+                    await el.requestFullscreen(); kamHelskarm = true;
+                    await o.lock('portrait'); kamLast = true;
+                }
+            } catch (e) {}
+        }
+        let kamLast = false, kamHelskarm = false;
+        function kamLosSkarm() {
+            try { if (kamLast) screen.orientation.unlock(); } catch (e) {}
+            try { if (kamHelskarm && document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+            kamLast = false; kamHelskarm = false;
+        }
+
         async function oppnaKamera() {
             const lager = document.getElementById('kameraLager');
             lager.hidden = false;
+            kamLasSkarm();
             kamBotten('');
             kamStatus('Startar kameran...');
             try {
@@ -800,6 +875,7 @@
         function stangKamera() {
             kamAktiv = false;
             document.getElementById('kameraLager').hidden = true;
+            kamLosSkarm();
             if (kamStrom) { kamStrom.getTracks().forEach(t => t.stop()); kamStrom = null; }
             const v = document.getElementById('kameraVideo'); if (v) v.srcObject = null;
         }
@@ -819,7 +895,11 @@
                 c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height);
                 kamForbattra(c);
                 kamOsakra = new Set();
-                for (const psm of [11, 6]) { if (kamHantera(await kamLas(c, psm), psm === 6)) return; }
+                const forsok = [[11, 0], [6, 0], [11, 90], [11, 270], [11, 180], [11, 45], [11, 315], [11, 135], [11, 225]];
+                for (let i = 0; i < forsok.length; i++) {
+                    kamStatus('Läser bilden... (' + (i + 1) + '/' + forsok.length + ')');
+                    if (kamHantera(await kamLas(c, forsok[i][0], forsok[i][1]), i === forsok.length - 1)) return;
+                }
                 kamStatus('Hittade inget nummer som finns i databasen');
                 kamBotten('<button type="button" class="kamera-igen" onclick="document.getElementById(\'kameraFil\').click()">Ta en ny bild</button>');
             } catch (err) { kamStatus('Kunde inte läsa bilden'); }
@@ -873,7 +953,8 @@
                 h += `<h3>Läsa av en förpackning med kameran</h3>
                 <ol>
                   <li>Tryck på kameraknappen 📷 bredvid Sök. Första gången frågar telefonen om kameran får användas.</li>
-                  <li>Håll telefonen stilla en bit från paketet så att numret efter <b>REF</b> (eller artikelnumret) hamnar i den vita rutan.</li>
+                  <li>Håll telefonen stilla en bit från paketet så att numret efter <b>REF</b> (eller artikelnumret) hamnar i den vita rutan. Texten får gärna stå på sidan, upp och ner eller snett, appen vrider själv bilden (det kan ta någon sekund extra).</li>
+                  <li>Skärmen låses i stående läge medan kameran är öppen (Android). På iPhone kan webbläsaren inte låsa skärmen, men det gör inget för läsningen. Vill du slippa att bilden snurrar kan du slå på <b>Lås stående riktning</b> i Kontrollcenter.</li>
                   <li>Appen läser texten flera gånger i sekunden. När den hittar ett nummer som finns i databasen söker den direkt. Hittas flera, eller något som liknar, väljer du rätt.</li>
                 </ol>
                 <p>Tänk på: första gången hämtas textläsaren (cirka 8 MB), så det behövs nät. Det går bäst med bra ljus och en skarp bild. Streckkoder läses inte, bara tryckt text. Om kameran inte startar kan du välja <b>Ta en bild istället</b>.</p>`;
