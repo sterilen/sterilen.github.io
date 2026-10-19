@@ -195,6 +195,14 @@
         html[data-tema="mork"] .antal-kort.galler { border-left-color: #4687b0; }
         html[data-tema="mork"] .antal-tal { color: #f1f5f9; }
         html[data-tema="mork"] .antal-namn, html[data-tema="mork"] .antal-rubrik { color: #94a3b8; }
+        /* Gunilla-knappen: syns bara på måndagar */
+        .fredag-knapp { display: none; width: 40px; height: 40px; margin: 14px auto 0; padding: 0; border-radius: 50%; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-size: 14px; font-weight: 800; cursor: pointer; overflow: hidden; position: relative; align-items: center; justify-content: center; }
+        .fredag-knapp.finns { display: flex; }
+        .fredag-knapp img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .fredag-knapp:active { transform: scale(0.95); }
+        .fredag-knapp.spelar { box-shadow: 0 0 0 3px #4687b0; animation: fredagPuls 1.2s ease-in-out infinite; }
+        @keyframes fredagPuls { 50% { box-shadow: 0 0 0 5px rgba(70,135,176,0.35); } }
+        html[data-tema="mork"] .fredag-knapp { background: #1e293b; color: #f1f5f9; border-color: #334155; }
         .footer { margin-top: auto; padding-top: 30px; font-size: 13px; color: #94a3b8; font-weight: 500; text-align: center; line-height: 1.6; }
 
         /* ===== Kameraläge (läser REF-numret på förpackningen) ===== */
@@ -318,6 +326,7 @@
         <span id="söktid"></span><br><br>
         Copyright © 2026 Pelle Holmström<br>
         Version 1.2<span id="dbdatum"></span>
+        <button type="button" id="fredagKnapp" class="fredag-knapp" aria-label="Gunilla Persson" title="Gunilla Persson" onclick="vaxlaFredagsmusik()"><img src="data:image/jpeg;base64,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" alt="" onerror="this.replaceWith(document.createTextNode('GP'))"></button>
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
@@ -879,6 +888,48 @@
                     if (anvand) setTimeout(() => { laddaTesseract().catch(() => {}); }, 2500);
                 }
             } catch (e) {}
+        })();
+    </script>
+    <script>
+        // ======================= FREDAGSKNAPP =======================
+        // Visas bara på måndagar. Spelar ljudet från en YouTube-film utan att visa något (ingen spelare, inga reglage).
+        // Ett tryck startar, nästa tryck stoppar.
+        (function () {
+            const FILM = 'cJAW6HfTZP8';
+            const knapp = document.getElementById('fredagKnapp');
+            let ram = null;
+            function visaOmFredag() { knapp.classList.toggle('finns', new Date().getDay() === 1); }
+            function stoppa() {
+                if (ram) { ram.remove(); ram = null; }      // tar man bort spelaren tystnar ljudet direkt
+                knapp.classList.remove('spelar');
+            }
+            window.vaxlaFredagsmusik = function () {
+                if (ram) { stoppa(); return; }
+                ram = document.createElement('iframe');
+                ram.src = 'https://www.youtube.com/embed/' + FILM + '?autoplay=1&playsinline=1&controls=0&enablejsapi=1&rel=0&origin=' + encodeURIComponent(location.origin);
+                ram.allow = 'autoplay; encrypted-media';
+                ram.title = '';
+                ram.setAttribute('aria-hidden', 'true');
+                ram.tabIndex = -1;
+                // Utanför bild men inte display:none, annars startar inte uppspelningen i alla webbläsare
+                ram.style.cssText = 'position:fixed;left:-300px;top:0;width:200px;height:200px;border:0;opacity:0;pointer-events:none;';
+                ram.addEventListener('load', () => {
+                    try { ram.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 1, channel: 'widget' }), '*'); } catch (e) {}
+                });
+                document.body.appendChild(ram);
+                knapp.classList.add('spelar');
+            };
+            // När låten är slut går knappen tillbaka till startläget
+            window.addEventListener('message', (e) => {
+                if (!ram || e.source !== ram.contentWindow) return;
+                try {
+                    const d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+                    const st = d && (d.event === 'onStateChange' ? d.info : (d.info && d.info.playerState));
+                    if (st === 0) stoppa();
+                } catch (x) {}
+            });
+            visaOmFredag();
+            document.addEventListener('visibilitychange', () => { if (!document.hidden) visaOmFredag(); });
         })();
     </script>
     <script>
