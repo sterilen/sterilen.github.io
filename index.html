@@ -273,7 +273,7 @@
         
         <div class="search-box">
             <div class="input-wrapper">
-                <input type="text" id="searchInput" placeholder="Sök produkt, art.nr, instrument..." autofocus oninput="toggleClearButton()">
+                <input type="text" id="searchInput" placeholder="Sök produkt, art.nr..." autofocus oninput="toggleClearButton()">
                 <button type="button" id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
             </div>
             <button type="button" id="kameraKnapp" class="kamera-knapp" onclick="oppnaKamera()" aria-label="Läs av REF-numret med kameran" title="Läs av REF-numret med kameran">📷</button>
@@ -457,6 +457,25 @@
             item._n = sokNorm(item.artnr + ' ' + item.lev_artnr + ' ' + item.namn);
             item._k = [sokKompakt(item.artnr), sokKompakt(item.lev_artnr)];
             item._t = item._n.split(/[^a-z0-9]+/).filter(Boolean);
+            item._tf = item._t.map(sokFon);                 // ljudlika former (c=k, w=v, ph=f ...)
+            item._tr = item._tf.map(sokRot);                // utan böjningsändelse
+            item._ts = item._tf.map(sokSkelett);            // bara konsonanter
+            item._fk = sokFon(sokKompakt(item.namn));       // hela namnet utan mellanrum, för ihopskrivna sökord
+        }
+        // Skriver om ord så att sådant som låter lika blir lika: katheter/cateter -> kateter, compress -> kompress,
+        // dubbla bokstäver blir en, y=i, w=v, ph=f, ch/sh/tj = sj
+        function sokFon(w) {
+            return w.replace(/ph/g, 'f').replace(/w/g, 'v').replace(/ck/g, 'k')
+                .replace(/sch|sh|ch|tj|kj/g, 'sj').replace(/c(?=[eiy])/g, 's').replace(/c/g, 'k')
+                .replace(/q/g, 'k').replace(/z/g, 's').replace(/x/g, 'ks').replace(/y/g, 'i')
+                .replace(/th/g, 't').replace(/[hgdl]j/g, 'j').replace(/(.)\1+/g, '$1');
+        }
+        // Tar bort vanlig böjningsändelse (sprutor, sprytor, spruta -> sprut/sprit)
+        function sokRot(w) {
+            for (const suf of ['arna', 'erna', 'orna', 'ande', 'ade', 'ar', 'er', 'or', 'en', 'et', 'na', 'a', 'e', 'n', 's']) {
+                if (w.length - suf.length >= 4 && w.endsWith(suf)) return w.slice(0, -suf.length);
+            }
+            return w;
         }
         // Antal "fel" mellan två ord (ombytta grannbokstäver räknas som ett), avbryter när det blir över max
         function sokAvstand(a, b, max) {
@@ -495,22 +514,77 @@
         function sokOrdExakt(item, ord) { return item._r.includes(ord.toLowerCase()) || sokKompaktTraff(item, ord); }
         // Steg 2: å/ä/ö räknas som a/a/o
         function sokOrdTraff(item, ord) { return item._n.includes(sokNorm(ord)) || sokKompaktTraff(item, ord); }
-        function sokOrdLiknande(item, ord, stam) {
+        // Hur många fel tillåts i ett ord. Nivå 2 är den mer toleranta som bara används om nivå 1 inte hittar något.
+        function sokMax(len, niva) {
+            if (niva === 1) return len >= 9 ? 3 : (len >= 6 ? 2 : 1);
+            if (niva === 2) return len >= 12 ? 4 : (len >= 8 ? 3 : (len >= 6 ? 2 : 1));
+            return len >= 11 ? 5 : (len >= 8 ? 4 : (len >= 6 ? 3 : (len >= 5 ? 2 : 1)));      // nivå 3: mycket tolerant
+        }
+        // Konsonantskelett: "kateter" -> "ktr". Hittar ord där vokalerna blivit fel.
+        function sokSkelett(w) { return w.replace(/[aeiouy]/g, ''); }
+        // Poäng för hur väl ett sökord liknar något i artikeln (0 = bäst). Oändligt = ingen likhet.
+        // Man har oftast rätt första bokstav, så på nivå 1 måste den stämma.
+        function sokOrdPoang(item, ord, stam, niva) {
             const w = sokKompakt(ord);
-            if (w.length < 4 || /\d/.test(w)) return false;
-            const max = w.length >= 9 ? 2 : 1;
-            if (stam && item._n.includes(stam)) return true;
-            // Jämför med alla delar av orden i artikeln, eftersom svenska ord ofta är sammansatta (gasvävskompress)
-            return item._t.some(t => {
-                if (t.length < w.length - max) return false;
-                if (sokAvstand(w, t, max) <= max) return true;
-                for (let L = w.length - 1; L <= w.length + 1; L++) {
-                    for (let st = 0; st + L <= t.length; st++) {
-                        if (sokAvstand(w, t.substr(st, L), max) <= max) return true;
+            if (w.length < 4 || /\d/.test(w)) return Infinity;
+            const wf = sokFon(w), max = sokMax(w.length, niva), rot = sokRot(wf);
+            if (wf.length < 3 || new Set(wf).size < 3) return Infinity;       // t.ex. "qqqqq" ska inte ge träffar
+            const forsta = niva === 1;
+            const sk = niva >= 3 ? sokSkelett(wf) : '';
+            let basta = (stam && item._n.includes(stam)) ? 1 : Infinity;
+            for (let i = 0; i < item._tf.length && basta > 0; i++) {
+                const t = item._tf[i];
+                // Hela ordet
+                if (Math.abs(t.length - wf.length) <= max && (!forsta || t[0] === wf[0])) {
+                    const d = sokAvstand(wf, t, max); if (d <= max && d < basta) basta = d;
+                }
+                // Samma ord utan böjningsändelse
+                const tr = item._tr[i];
+                if (rot.length >= 4 && tr.length >= 4 && (!forsta || tr[0] === rot[0])) {
+                    const rm = rot.length >= 7 ? 2 : 1;
+                    const d = sokAvstand(rot, tr, rm) + 0.5; if (d <= rm + 0.5 && d < basta) basta = d;
+                }
+                // Nivå 3: samma konsonanter (kataetr ~ kateter, hartstrumpa ~ hjärtstrumpa)
+                if (sk.length >= 4) {
+                    const ts = item._ts[i];
+                    if (Math.abs(ts.length - sk.length) <= 1) {
+                        const dm = sk.length >= 6 ? 1 : 0, d0 = sokAvstand(sk, ts, dm);
+                        if (d0 <= dm && d0 + 1.5 < basta) basta = d0 + 1.5;
                     }
                 }
-                return false;
-            });
+                // Del av ett sammansatt ord (gasvävskompress)
+                if (w.length >= 6 && t.length > wf.length - max) {
+                    for (let L = wf.length - 1; L <= wf.length + 1; L++) {
+                        for (let st = 0; st + L <= t.length; st++) {
+                            if (forsta && t[st] !== wf[0]) continue;
+                            const d = sokAvstand(wf, t.substr(st, L), max) + 0.75;
+                            if (d <= max + 0.75 && d < basta) basta = d;
+                        }
+                    }
+                }
+            }
+            if (niva >= 3 && basta > 0.4 * w.length) return Infinity;        // för många fel i förhållande till ordets längd = gissa inte
+            return basta;
+        }
+        // Flera sökord som egentligen är ett ord ("gas väv kompress"): prövas mot hela namnet utan mellanrum
+        function sokIhopPoang(item, ord, niva) {
+            const wf = sokFon(sokKompakt(ord)), max = sokMax(wf.length, niva), t = item._fk;
+            if (wf.length < 6 || /\d/.test(wf) || new Set(wf).size < 3) return Infinity;
+            let basta = Infinity;
+            for (let L = wf.length - 1; L <= wf.length + 1; L++) {
+                for (let st = 0; st + L <= t.length; st++) {
+                    if (niva === 1 && t[st] !== wf[0]) continue;
+                    const d = sokAvstand(wf, t.substr(st, L), max) + 1;
+                    if (d <= max + 1 && d < basta) basta = d;
+                }
+            }
+            return basta;
+        }
+        // Behåller bara de bästa träffarna (så att "infusionkran" visar infusionskranar och inte alla kanyler)
+        function sokBasta(par) {
+            if (!par.length) return [];
+            const min = Math.min(...par.map(x => x[1]));
+            return par.filter(x => x[1] <= min + 1).map(x => x[0]);
         }
 
         function sökLager() {
@@ -528,10 +602,51 @@
             let liknande = false;
             if (hittade.length === 0) hittade = lagerData.filter(item => ordLista.every(ord => sokOrdTraff(item, ord)));
             if (hittade.length === 0) {
-                // Inget alls: prova böjda former och ord som är lite felstavade
+                // Inget alls: prova böjda former och ord som är felstavade, först strängt (nivå 1), sedan toleranta (nivå 2)
                 const stammar = ordLista.map(ord => { const w = sokKompakt(ord); return /\d/.test(w) ? null : sokStam(w); });
-                hittade = lagerData.filter(item => ordLista.every((ord, k) => sokOrdTraff(item, ord) || sokOrdLiknande(item, ord, stammar[k])));
+                const poangVarje = (niva) => {
+                    const par = [];
+                    lagerData.forEach(item => {
+                        let sum = 0;
+                        for (let k = 0; k < ordLista.length; k++) {
+                            if (sokOrdTraff(item, ordLista[k])) continue;
+                            const pk = sokOrdPoang(item, ordLista[k], stammar[k], niva);
+                            if (pk === Infinity) { sum = Infinity; break; }
+                            sum += pk;
+                        }
+                        if (sum !== Infinity) par.push([item, sum]);
+                    });
+                    return par;
+                };
+                const poangIhop = (niva) => {
+                    const par = [];
+                    if (ordLista.length < 2) return par;
+                    const ihop = ordLista.join('');
+                    lagerData.forEach(item => { const pk = sokIhopPoang(item, ihop, niva); if (pk !== Infinity) par.push([item, pk]); });
+                    return par;
+                };
+                for (const niva of [1, 2, 3]) {
+                    let par = poangVarje(niva);
+                    if (!par.length) par = poangIhop(niva);
+                    if (par.length) { hittade = sokBasta(par); break; }
+                }
                 liknande = hittade.length > 0;
+                // Sista utväg: artiklar som matchar alla ord utom ett (aldrig ett nummer som inte stämmer)
+                if (!hittade.length && ordLista.length >= 2) {
+                    const par = [];
+                    lagerData.forEach(item => {
+                        let saknas = 0, sum = 0;
+                        for (let k = 0; k < ordLista.length; k++) {
+                            if (sokOrdTraff(item, ordLista[k])) continue;
+                            const pk = /\d/.test(ordLista[k]) ? Infinity : sokOrdPoang(item, ordLista[k], stammar[k], 3);
+                            if (pk === Infinity) { saknas++; if (saknas > 1 || /\d/.test(ordLista[k])) { sum = Infinity; break; } sum += 10; }
+                            else sum += pk;
+                        }
+                        if (sum !== Infinity && saknas === 1) par.push([item, sum]);
+                    });
+                    const bra = sokBasta(par);
+                    if (bra.length && bra.length <= 80) { hittade = bra; liknande = 'delvis'; }
+                }
             }
 
             hittade = hittade.filter(i => aktivaTyper[ärGaller(i.plats) ? 'galler' : 'forbruk']);
@@ -574,7 +689,7 @@
                     tabellHtml += `<tr class="${typ}"><td><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
-                resultatOmråde.innerHTML = (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". Visar artiklar som liknar sökningen. Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
+                resultatOmråde.innerHTML = (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
             } else {
                 resultatOmråde.innerHTML = "<div class='error'>🔍 Inga artiklar matchade din sökning i sterilförrådet.</div>";
             }
