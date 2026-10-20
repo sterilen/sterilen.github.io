@@ -327,16 +327,16 @@
         .tema-val { --fan-x:0px; --fan-y:0px; position:absolute; top:0; right:0; width:54px; height:54px; padding:5px 2px; border:1px solid var(--kant); border-radius:50%; background:var(--yta); color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; opacity:0; visibility:hidden; pointer-events:none; transform:translate(0,0) scale(.42); transition:transform .24s ease,opacity .18s ease; box-shadow:0 5px 14px rgba(15,23,42,.18); }
         .tema-meny.oppet .tema-val { opacity:1; visibility:visible; pointer-events:auto; transform:translate(var(--fan-x),var(--fan-y)) scale(1); }
         /* Färgvalen börjar till vänster om knappen och böjer sig sedan nedåt åt höger. */
-        .tema-val-mork { --fan-x:-44px; --fan-y:-8px; }
-        .tema-val-ljus { --fan-x:-66px; --fan-y:8px; }
-        .tema-val-bla { --fan-x:-78px; --fan-y:32px; }
-        .tema-val-gron { --fan-x:-66px; --fan-y:58px; }
-        .tema-val-sand { --fan-x:-42px; --fan-y:78px; }
+        .tema-val-mork { --fan-x:-48px; --fan-y:-18px; }
+        .tema-val-ljus { --fan-x:-104px; --fan-y:12px; }
+        .tema-val-bla { --fan-x:-130px; --fan-y:64px; }
+        .tema-val-gron { --fan-x:-104px; --fan-y:118px; }
+        .tema-val-sand { --fan-x:-32px; --fan-y:156px; }
         .tema-prick { width:17px; height:17px; display:block; border-radius:50%; border:1px solid rgba(15,23,42,.2); }
         .tema-val-mork .tema-prick { background:#0b1120; } .tema-val-ljus .tema-prick { background:#f5f8f8; } .tema-val-bla .tema-prick { background:#5b9de2; } .tema-val-gron .tema-prick { background:#4e9b6c; } .tema-val-sand .tema-prick { background:#c69a63; }
                 .tema-val[aria-checked="true"] { border:2px solid var(--fokus); box-shadow:0 0 0 3px var(--kant),0 5px 14px rgba(15,23,42,.18); }
         .tema-val:focus-visible { z-index:1; outline:3px solid var(--fokus); outline-offset:2px; }
-        @media (max-width:380px) { .tema-val { width:44px; height:44px; } .tema-val-mork { --fan-x:-44px; --fan-y:-8px; } .tema-val-ljus { --fan-x:-59px; --fan-y:7px; } .tema-val-bla { --fan-x:-69px; --fan-y:27px; } .tema-val-gron { --fan-x:-59px; --fan-y:49px; } .tema-val-sand { --fan-x:-42px; --fan-y:66px; } }
+        @media (max-width:380px) { .tema-val { width:44px; height:44px; } .tema-val-mork { --fan-x:-44px; --fan-y:-14px; } .tema-val-ljus { --fan-x:-88px; --fan-y:10px; } .tema-val-bla { --fan-x:-108px; --fan-y:52px; } .tema-val-gron { --fan-x:-86px; --fan-y:96px; } .tema-val-sand { --fan-x:-28px; --fan-y:128px; } }
         @media (prefers-reduced-motion:reduce) { .tema-val { transition:none; } }
 
     </style>
