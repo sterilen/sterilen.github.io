@@ -324,19 +324,19 @@
         .tema-knapp:active { transform:scale(.95); }
         .tema-alternativ { position:absolute; top:0; right:0; width:0; height:0; visibility:hidden; pointer-events:none; }
         .tema-meny.oppet .tema-alternativ { visibility:visible; pointer-events:auto; }
-        .tema-val { --fan-x:0px; --fan-y:0px; position:absolute; top:47px; right:0; width:54px; height:54px; padding:5px 2px; border:1px solid var(--kant); border-radius:50%; background:var(--yta); color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; opacity:0; visibility:hidden; pointer-events:none; transform:translate(0,0) scale(.42); transition:transform .24s ease,opacity .18s ease; box-shadow:0 5px 14px rgba(15,23,42,.18); }
+        .tema-val { --fan-x:0px; --fan-y:0px; position:absolute; top:0; right:0; width:54px; height:54px; padding:5px 2px; border:1px solid var(--kant); border-radius:50%; background:var(--yta); color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; opacity:0; visibility:hidden; pointer-events:none; transform:translate(0,0) scale(.42); transition:transform .24s ease,opacity .18s ease; box-shadow:0 5px 14px rgba(15,23,42,.18); }
         .tema-meny.oppet .tema-val { opacity:1; visibility:visible; pointer-events:auto; transform:translate(var(--fan-x),var(--fan-y)) scale(1); }
         /* Färgvalen börjar till vänster om knappen och böjer sig sedan nedåt åt höger. */
-        .tema-val-mork { --fan-x:-72px; --fan-y:-2px; }
-        .tema-val-ljus { --fan-x:-100px; --fan-y:24px; }
-        .tema-val-bla { --fan-x:-108px; --fan-y:58px; }
-        .tema-val-gron { --fan-x:-94px; --fan-y:94px; }
-        .tema-val-sand { --fan-x:-62px; --fan-y:124px; }
+        .tema-val-mork { --fan-x:-34px; --fan-y:-8px; }
+        .tema-val-ljus { --fan-x:-56px; --fan-y:8px; }
+        .tema-val-bla { --fan-x:-62px; --fan-y:32px; }
+        .tema-val-gron { --fan-x:-47px; --fan-y:58px; }
+        .tema-val-sand { --fan-x:-20px; --fan-y:78px; }
         .tema-prick { width:17px; height:17px; display:block; border-radius:50%; border:1px solid rgba(15,23,42,.2); }
         .tema-val-mork .tema-prick { background:#0b1120; } .tema-val-ljus .tema-prick { background:#f5f8f8; } .tema-val-bla .tema-prick { background:#5b9de2; } .tema-val-gron .tema-prick { background:#4e9b6c; } .tema-val-sand .tema-prick { background:#c69a63; }
                 .tema-val[aria-checked="true"] { border:2px solid var(--fokus); box-shadow:0 0 0 3px var(--kant),0 5px 14px rgba(15,23,42,.18); }
         .tema-val:focus-visible { z-index:1; outline:3px solid var(--fokus); outline-offset:2px; }
-        @media (max-width:380px) { .tema-val { width:44px; height:44px; } .tema-val-mork { --fan-x:-58px; --fan-y:0px; } .tema-val-ljus { --fan-x:-80px; --fan-y:20px; } .tema-val-bla { --fan-x:-86px; --fan-y:48px; } .tema-val-gron { --fan-x:-74px; --fan-y:76px; } .tema-val-sand { --fan-x:-48px; --fan-y:100px; } }
+        @media (max-width:380px) { .tema-val { width:44px; height:44px; } .tema-val-mork { --fan-x:-28px; --fan-y:-8px; } .tema-val-ljus { --fan-x:-46px; --fan-y:7px; } .tema-val-bla { --fan-x:-51px; --fan-y:27px; } .tema-val-gron { --fan-x:-39px; --fan-y:49px; } .tema-val-sand { --fan-x:-17px; --fan-y:66px; } }
         @media (prefers-reduced-motion:reduce) { .tema-val { transition:none; } }
 
     </style>
