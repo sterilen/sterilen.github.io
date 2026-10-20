@@ -162,6 +162,8 @@
         .error { color: #b91c1c; background: #fef2f2; padding: 16px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 16px; }
         
         .likn-info { background: #fef9c3; color: #713f12; border: 1px solid #fde68a; border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; font-size: 15px; font-weight: 600; text-align: center; line-height: 1.4; }
+        .plats-info { background: #e0f2fe; color: #0c4a6e; border: 1px solid #bae6fd; border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; font-size: 15px; font-weight: 600; text-align: center; line-height: 1.4; }
+        html[data-tema="mork"] .plats-info { background: #0c2a3d; color: #bae6fd; border-color: #164e63; }
         html[data-tema="mork"] .likn-info { background: #3a3210; color: #fde68a; border-color: #5c4d12; }
         /* ===== Hjälp ===== */
         .hjalp-knapp { position: absolute; top: 12px; left: 12px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-size: 20px; font-weight: 800; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -275,7 +277,7 @@
         
         <div class="search-box">
             <div class="input-wrapper">
-                <input type="text" id="searchInput" placeholder="Sök produkt, art.nr..." autofocus oninput="toggleClearButton()">
+                <input type="text" id="searchInput" placeholder="Sök produkt, art.nr, hylla..." autofocus oninput="toggleClearButton()">
                 <button type="button" id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
             </div>
             <button type="button" id="kameraKnapp" class="kamera-knapp" onclick="oppnaKamera()" aria-label="Läs av REF-numret med kameran" title="Läs av REF-numret med kameran">📷</button>
@@ -466,6 +468,7 @@
             item._tr = item._tf.map(sokRot);                // utan böjningsändelse
             item._ts = item._tf.map(sokSkelett);            // bara konsonanter
             item._fk = sokFon(sokKompakt(item.namn));       // hela namnet utan mellanrum, för ihopskrivna sökord
+            item._pd = [sokPlatsDelar(item.plats), sokPlatsDelar(item.bulk)];   // platsen delad i delar, för sökning på hylla
         }
         // Skriver om ord så att sådant som låter lika blir lika: katheter/cateter -> kateter, compress -> kompress,
         // dubbla bokstäver blir en, y=i, w=v, ph=f, ch/sh/tj = sj
@@ -592,6 +595,29 @@
             return par.filter(x => x[1] <= min + 1).map(x => x[0]);
         }
 
+        // ---------- Sök på hylla ----------
+        // Skriver man en plats, helt eller bara början (E-05, E-05-04, BD-06 eller 12: för galler), visas allt som står där.
+        // Platsen delas i delar (E, 5, 4, 1) och jämförs från början, så E-5 och e 05 ger samma svar som E-05.
+        function sokPlatsDelar(t) {
+            return (String(t || '').match(/[A-Za-z]+|\d+/g) || []).map(x => /^\d+$/.test(x) ? String(parseInt(x, 10)) : x.toUpperCase());
+        }
+        function sokPlatsFraga(raw) {
+            const t = String(raw || '').trim();
+            if (!t || t.length > 14) return null;
+            if (/^\d{1,3}:\d{0,3}$/.test(t) || /^[A-Za-z]{1,3}[-\s]?\d{1,3}([-\s]?\d{1,3}){0,3}$/.test(t)) {
+                const d = sokPlatsDelar(t);
+                return d.length ? d : null;
+            }
+            return null;
+        }
+        function sokPlatsVisa(d) {                     // delarna som en vanlig plats: E-05-04 eller 12:3
+            if (/^\d+$/.test(d[0])) return d.join(':') + (d.length === 1 ? ':' : '');
+            return d.map((x, i) => (i && x.length < 2) ? '0' + x : x).join('-');
+        }
+        function sokPlatsTraff(item, delar) {
+            return item._pd.some(pd => pd.length >= delar.length && delar.every((x, i) => pd[i] === x));
+        }
+
         function sökLager() {
             const sökord = document.getElementById('searchInput').value.trim().toLowerCase();
             const ordLista = sökord.split(/\s+/).filter(Boolean);
@@ -603,7 +629,10 @@
             if (!sökord) { document.getElementById('söktid').textContent = ''; return; }
 
             lagerData.forEach(sokForbered);
-            let hittade = lagerData.filter(item => ordLista.every(ord => sokOrdExakt(item, ord)));
+            const platsFraga = sokPlatsFraga(document.getElementById('searchInput').value);
+            let hittade = platsFraga ? lagerData.filter(item => sokPlatsTraff(item, platsFraga)) : [];
+            const platsLista = hittade.length > 0;
+            if (!platsLista) hittade = lagerData.filter(item => ordLista.every(ord => sokOrdExakt(item, ord)));
             let liknande = false;
             if (hittade.length === 0) hittade = lagerData.filter(item => ordLista.every(ord => sokOrdTraff(item, ord)));
             if (hittade.length === 0) {
@@ -694,7 +723,7 @@
                     tabellHtml += `<tr class="${typ}"><td><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
-                resultatOmråde.innerHTML = (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
+                resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
             } else {
                 resultatOmråde.innerHTML = "<div class='error'>🔍 Inga artiklar matchade din sökning i sterilförrådet.</div>";
             }
@@ -1127,6 +1156,7 @@
                 <p>Skriv produktens namn, vårt artikelnummer eller leverantörens artikelnummer (REF) i sökfältet och tryck ${telefon ? 'på <b>Sök</b>' : 'på <b>Sök</b> eller Enter'}. Skriver du flera ord måste alla finnas i artikeln.</p>
                 <ul>
                   <li>Det går bra att skriva med eller utan å, ä och ö, och bindestreck i artikelnummer spelar ingen roll.</li>
+                  <li>Vill du se allt som står på en hylla skriver du platsen eller bara början på den, till exempel <b>E-05</b> (hela hyllraden), <b>E-05-04</b> eller <b>12:</b> för alla galler på hylla 12. Bulkplatser som <b>BD-06</b> fungerar också.</li>
                   <li>Om du stavat lite fel eller skrivit en böjd form (handskar i stället för handske) visas liknande artiklar i en <b>gul ruta</b>. Kontrollera då att det är rätt produkt.</li>
                   <li>Siffror måste vara helt rätt. Ett artikelnummer med en siffra fel ger inga träffar, för att du inte ska få fel produkt.</li>
                 </ul>`;
