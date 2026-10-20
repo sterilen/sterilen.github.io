@@ -324,7 +324,7 @@
         .tema-knapp:active { transform:scale(.95); }
         .tema-alternativ { position:absolute; top:0; right:0; width:0; height:0; visibility:hidden; pointer-events:none; }
         .tema-meny.oppet .tema-alternativ { visibility:visible; pointer-events:auto; }
-        .tema-val { --fan-x:0px; --fan-y:0px; position:absolute; top:0; right:0; width:54px; height:54px; padding:5px 2px; border:1px solid var(--kant); border-radius:50%; background:var(--yta); color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; opacity:0; visibility:hidden; pointer-events:none; transform:translate(0,0) scale(.42); transition:transform .24s ease,opacity .18s ease; box-shadow:0 5px 14px rgba(15,23,42,.18); }
+        .tema-val { --fan-x:0px; --fan-y:0px; position:absolute; top:0; right:0; width:40px; height:40px; padding:3px 2px; border:1px solid var(--kant); border-radius:50%; background:var(--yta); color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; opacity:0; visibility:hidden; pointer-events:none; transform:translate(0,0) scale(.42); transition:transform .24s ease,opacity .18s ease; box-shadow:0 5px 14px rgba(15,23,42,.18); }
         .tema-meny.oppet .tema-val { opacity:1; visibility:visible; pointer-events:auto; transform:translate(var(--fan-x),var(--fan-y)) scale(1); }
         /* Solfjädern börjar direkt till vänster om knappen på samma höjd,
            böjer sig nedåt åt höger och slutar rakt under knappen. */
@@ -337,7 +337,7 @@
         .tema-val-mork .tema-prick { background:#0b1120; } .tema-val-ljus .tema-prick { background:#f5f8f8; } .tema-val-bla .tema-prick { background:#5b9de2; } .tema-val-gron .tema-prick { background:#4e9b6c; } .tema-val-sand .tema-prick { background:#c69a63; }
                 .tema-val[aria-checked="true"] { border:2px solid var(--fokus); box-shadow:0 0 0 3px var(--kant),0 5px 14px rgba(15,23,42,.18); }
         .tema-val:focus-visible { z-index:1; outline:3px solid var(--fokus); outline-offset:2px; }
-        @media (max-width:380px) { .tema-val { width:44px; height:44px; } .tema-val-mork { --fan-x:-48px; --fan-y:0px; } .tema-val-ljus { --fan-x:-96px; --fan-y:24px; } .tema-val-bla { --fan-x:-116px; --fan-y:62px; } .tema-val-gron { --fan-x:-92px; --fan-y:102px; } .tema-val-sand { --fan-x:0px; --fan-y:136px; } }
+        @media (max-width:380px) { .tema-val { width:40px; height:40px; } .tema-val-mork { --fan-x:-48px; --fan-y:0px; } .tema-val-ljus { --fan-x:-96px; --fan-y:24px; } .tema-val-bla { --fan-x:-116px; --fan-y:62px; } .tema-val-gron { --fan-x:-92px; --fan-y:102px; } .tema-val-sand { --fan-x:0px; --fan-y:136px; } }
         @media (prefers-reduced-motion:reduce) { .tema-val { transition:none; } }
 
     </style>
