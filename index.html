@@ -318,8 +318,8 @@
         html[data-tema] :focus-visible { outline:3px solid var(--fokus); outline-offset:3px; }
         html[data-tema] #searchInput:focus, html[data-tema] #searchInput:focus-visible { outline:none; outline-offset:0; border-color:var(--kant); box-shadow:none; }
 
-        /* Diskret, mjuk solfjäder för de fem färgtemana */
-        .tema-meny { position:absolute; top:12px; right:12px; width:40px; height:40px; z-index:40; }
+        /* Solfjäder med jämnt avstånd längs en kvarts cirkel. */
+        .tema-meny { position:absolute; top:12px; right:4px; width:40px; height:40px; z-index:40; }
         .tema-knapp { position:absolute; top:0; right:0; width:40px; height:40px; padding:0; border:1px solid var(--kant); background:var(--yta); color:var(--text); font-size:20px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; white-space:nowrap; box-shadow:0 2px 7px rgba(15,23,42,.09); transition:box-shadow .2s ease, border-color .2s ease, transform .2s ease; }
         .tema-knapp:hover { box-shadow:0 4px 12px rgba(15,23,42,.13); border-color:var(--fokus); }
         .tema-knapp:active { transform:scale(.96); }
@@ -329,18 +329,19 @@
         .tema-val { --fan-x:0px; --fan-y:0px; --fan-delay:0ms; position:absolute; top:0; right:0; width:40px; height:40px; padding:3px 2px; border:1px solid var(--kant); border-radius:50%; background:var(--yta); color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; opacity:0; visibility:hidden; pointer-events:none; transform:translate(0,0) scale(.72); transition:transform .34s cubic-bezier(.2,.75,.25,1),opacity .2s ease,box-shadow .2s ease,border-color .2s ease; transition-delay:var(--fan-delay); box-shadow:0 3px 9px rgba(15,23,42,.10); will-change:transform; }
         .tema-meny.oppet .tema-val { opacity:1; visibility:visible; pointer-events:auto; transform:translate(var(--fan-x),var(--fan-y)) scale(1); }
         .tema-meny.oppet .tema-val:hover { box-shadow:0 5px 13px rgba(15,23,42,.16); border-color:var(--fokus); }
-        /* Första valet ligger strax till vänster på samma höjd; bågen slutar under knappen. */
-        .tema-val-mork { --fan-x:-44px; --fan-y:0px; --fan-delay:0ms; }
-        .tema-val-ljus { --fan-x:-91px; --fan-y:34px; --fan-delay:22ms; }
-        .tema-val-bla { --fan-x:-116px; --fan-y:79px; --fan-delay:44ms; }
-        .tema-val-gron { --fan-x:-91px; --fan-y:125px; --fan-delay:66ms; }
-        .tema-val-sand { --fan-x:0px; --fan-y:166px; --fan-delay:88ms; }
+        /* Start: samma höjd som temaknappen. Slut: rakt under knappen. Alla centrum har samma bågavstånd. */
+        .tema-val-mork { --fan-x:-112px; --fan-y:0px; --fan-delay:0ms; }
+        .tema-val-ljus { --fan-x:-103.4px; --fan-y:42.9px; --fan-delay:18ms; }
+        .tema-val-bla { --fan-x:-79.2px; --fan-y:79.2px; --fan-delay:36ms; }
+        .tema-val-gron { --fan-x:-42.9px; --fan-y:103.4px; --fan-delay:54ms; }
+        .tema-val-sand { --fan-x:0px; --fan-y:112px; --fan-delay:72ms; }
         .tema-prick { width:17px; height:17px; display:block; flex:0 0 17px; border-radius:50%; border:1px solid rgba(15,23,42,.18); box-shadow:inset 0 1px 2px rgba(255,255,255,.25); }
         .tema-val-mork .tema-prick { background:#0b1120; } .tema-val-ljus .tema-prick { background:#f5f8f8; } .tema-val-bla .tema-prick { background:#5b9de2; } .tema-val-gron .tema-prick { background:#4e9b6c; } .tema-val-sand .tema-prick { background:#c69a63; }
         .tema-val[aria-checked="true"] { border:2px solid var(--fokus); box-shadow:0 0 0 2px var(--yta),0 0 0 4px var(--kant),0 4px 11px rgba(15,23,42,.12); }
         .tema-val:focus-visible { z-index:1; outline:2px solid var(--fokus); outline-offset:3px; }
-        @media (max-width:380px) { .tema-val-mork { --fan-x:-44px; --fan-y:0px; } .tema-val-ljus { --fan-x:-83px; --fan-y:27px; } .tema-val-bla { --fan-x:-103px; --fan-y:64px; } .tema-val-gron { --fan-x:-79px; --fan-y:103px; } .tema-val-sand { --fan-x:0px; --fan-y:138px; } }
-        @media (prefers-reduced-motion:reduce) { .tema-val,.tema-knapp { transition:none; } .tema-val { transition-delay:0ms; } }
+        /* Flytta rubrik/logotyp ur solfjäderns arbetsyta medan menyn är öppen. */
+        .tema-meny.oppet + .header-block { padding-top:140px; transition:padding-top .28s ease; }
+        @media (prefers-reduced-motion:reduce) { .tema-val,.tema-knapp,.header-block { transition:none !important; } .tema-val { transition-delay:0ms; } }
 
     </style>
 </head>
