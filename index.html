@@ -344,8 +344,88 @@
         @media (prefers-reduced-motion:reduce) { .tema-val,.tema-knapp,.header-block { transition:none !important; } .tema-val { transition-delay:0ms; } }
 
     </style>
+    <style>
+        /* Startbild: visas direkt medan sidan och databasen läses in */
+        #startbild { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #f8fafc; color: #0f172a; transition: opacity .35s ease, visibility .35s; }
+        html[data-tema="mork"] #startbild { background: #0b1120; color: #f1f5f9; }
+        #startbild.borta { opacity: 0; visibility: hidden; pointer-events: none; }
+        #startbild .sb-scen { width: min(300px, 78vw); height: auto; margin-bottom: 14px; overflow: hidden; border-radius: 18px; }
+        #startbild .rok, #startbild .ang { animation: sbRok 2.6s ease-in infinite; opacity: 0; transform-box: fill-box; transform-origin: center; }
+        #startbild .rok.r2 { animation-delay: .9s; } #startbild .rok.r3 { animation-delay: 1.7s; } #startbild .ang.r2 { animation-delay: 1.1s; }
+        #startbild .glod { animation: sbGlod 1.6s ease-in-out infinite alternate; }
+        #startbild .sol { animation: sbSol 4s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+        html[data-tema="mork"] #startbild .himmel { fill: #16223a; }
+        html[data-tema="mork"] #startbild .sol { fill: #e9c46a; }
+        #startbild .sb-namn { font-size: 30px; font-weight: 800; letter-spacing: -.5px; }
+        #startbild .sb-under { margin-top: 6px; font-size: 14px; opacity: .65; }
+        #startbild .sb-rad { margin-top: 26px; width: 150px; height: 4px; border-radius: 2px; background: rgba(100,116,139,.25); overflow: hidden; }
+        #startbild .sb-rad b { display: block; height: 100%; width: 40%; border-radius: 2px; background: #4687b0; animation: sbRad 1.2s ease-in-out infinite; }
+        #startbild .sb-text { margin-top: 10px; font-size: 12px; opacity: .55; }
+        @keyframes sbRok { 0% { transform: translate(0,0) scale(.6); opacity: 0; } 15% { opacity: .75; } 100% { transform: translate(7px,-26px) scale(1.5); opacity: 0; } }
+        @keyframes sbGlod { from { opacity: 1; } to { opacity: .45; } }
+        @keyframes sbSol { from { transform: scale(1); } to { transform: scale(1.06); } }
+        @keyframes sbRad { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
+        @media (prefers-reduced-motion: reduce) { #startbild .rok, #startbild .ang, #startbild .glod, #startbild .sol, #startbild .sb-rad b { animation: none; } #startbild { transition: none; } }
+    </style>
 </head>
 <body>
+    <div id="startbild" role="status" aria-live="polite">
+        <svg class="sb-scen" viewBox="0 0 320 210" aria-hidden="true">
+            <rect class="himmel" x="0" y="0" width="320" height="210" rx="18" fill="#fde9c4"/>
+            <circle class="sol" cx="258" cy="46" r="24" fill="#f6a935"/>
+            <path d="M0 168 Q70 140 140 164 T320 150 V210 H0 Z" fill="#efc77b"/>
+            <path d="M0 186 Q90 160 190 184 T320 176 V210 H0 Z" fill="#e3b05d"/>
+            <rect x="96" y="140" width="13" height="50" rx="6" fill="#b9814a"/><rect x="95" y="184" width="15" height="7" rx="3" fill="#5b3a1e"/>
+            <rect x="172" y="140" width="13" height="50" rx="6" fill="#b9814a"/><rect x="171" y="184" width="15" height="7" rx="3" fill="#5b3a1e"/>
+            <ellipse cx="122" cy="103" rx="20" ry="24" fill="#d9a066"/>
+            <ellipse cx="166" cy="105" rx="18" ry="22" fill="#d9a066"/>
+            <ellipse cx="140" cy="138" rx="66" ry="32" fill="#d9a066"/>
+            <path d="M76 132 Q60 140 64 168" stroke="#b9814a" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="64" cy="170" r="6" fill="#5b3a1e"/>
+            <rect x="110" y="146" width="13" height="46" rx="6" fill="#d9a066"/><rect x="109" y="185" width="15" height="7" rx="3" fill="#5b3a1e"/>
+            <rect x="146" y="148" width="13" height="44" rx="6" fill="#d9a066"/><rect x="145" y="185" width="15" height="7" rx="3" fill="#5b3a1e"/>
+            <path d="M186 128 Q214 118 214 84 Q214 66 224 62 L238 80 Q226 90 230 120 Q226 146 192 156 Z" fill="#d9a066"/>
+            <ellipse cx="236" cy="62" rx="24" ry="16" fill="#d9a066"/>
+            <ellipse cx="258" cy="70" rx="14" ry="11" fill="#e6b57e"/>
+            <circle cx="263" cy="66" r="1.8" fill="#5b3a1e"/>
+            <path d="M226 50 Q222 36 232 36 Q236 44 234 52 Z" fill="#b9814a"/>
+            <path d="M196 140 Q222 146 240 120" stroke="#d9a066" stroke-width="11" fill="none" stroke-linecap="round"/>
+            <circle cx="241" cy="119" r="7" fill="#5b3a1e"/>
+            <path d="M236 98 h22 v10 q0 14 -11 14 q-11 0 -11 -14 Z" fill="#ffffff" stroke="#8a6a4a" stroke-width="1.5"/>
+            <path d="M258 102 q8 0 8 7 q0 7 -8 7" stroke="#8a6a4a" stroke-width="2.5" fill="none"/>
+            <rect x="238" y="100" width="18" height="4" rx="2" fill="#5b3a1e"/>
+            <path class="ang" d="M244 94 q-5 -7 0 -13" stroke="#8a6a4a" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path class="ang r2" d="M252 94 q-5 -7 0 -13" stroke="#8a6a4a" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <rect x="266" y="74" width="19" height="3.4" rx="1.5" fill="#ffffff" stroke="#d1d5db" stroke-width=".6" transform="rotate(-8 266 74)"/>
+            <circle class="glod" cx="285.5" cy="72.6" r="2.2" fill="#ff7a1a"/>
+            <circle class="rok" cx="288" cy="68" r="4" fill="#94a3b8"/>
+            <circle class="rok r2" cx="288" cy="68" r="4" fill="#94a3b8"/>
+            <circle class="rok r3" cx="288" cy="68" r="4" fill="#94a3b8"/>
+            <path d="M220 54 L236 56" stroke="#0b0b0b" stroke-width="3" stroke-linecap="round"/>
+            <path d="M232 54 H258 Q260 54 259 58 Q256 69 247 67 Q239 66 237 60 Z" fill="#0b0b0b"/>
+            <path d="M239 57 l6 -1" stroke="#ffffff" stroke-opacity=".35" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <div class="sb-namn">Lagersök</div>
+        <div class="sb-under">Sterilcentrum Sterilförråd</div>
+        <div class="sb-rad" aria-hidden="true"><b></b></div>
+        <div class="sb-text" id="sbText">Startar…</div>
+    </div>
+    <script>
+        // Döljer startbilden när sidan är inläst (visas minst en kort stund så den inte blinkar till).
+        (function () {
+            var start = Date.now(), borta = false;
+            function dolj() {
+                if (borta) return; borta = true;
+                var el = document.getElementById('startbild'); if (!el) return;
+                el.classList.add('borta');
+                setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 600);
+            }
+            function nar() { setTimeout(dolj, Math.max(0, 700 - (Date.now() - start))); }
+            if (document.readyState === 'complete') nar(); else window.addEventListener('load', nar);
+            document.addEventListener('DOMContentLoaded', function () { var t = document.getElementById('sbText'); if (t) t.textContent = 'Läser in databasen…'; });
+            setTimeout(dolj, 8000);   // säkerhetsnät om något hänger sig
+        })();
+    </script>
     <div class="container">
         <button type="button" id="hjalpKnapp" class="hjalp-knapp" onclick="visaHjalp()" aria-label="Hjälp" title="Hjälp">?</button>
         <div class="tema-meny" id="temaMeny">
