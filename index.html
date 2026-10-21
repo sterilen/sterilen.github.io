@@ -976,7 +976,7 @@
         const TESS_JS = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
         const TESS_SPRAK = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int';
         let kamNummerIndex = null;
-        let kamStrom = null, kamWorker = null, kamWorkerLovar = null, kamPsm = null;
+        let kamStrom = null, kamWorker = null, kamWorkerLovar = null;
         let kamAktiv = false, kamVarv = 0;
 
         function kamNorm(t) {
@@ -1062,10 +1062,6 @@
                     });
                 }
                 kamWorker = await Tesseract.createWorker('eng', 1, { langPath: TESS_SPRAK, gzip: true });
-                // Begränsa OCR till tecken som förekommer i artikel- och REF-nummer.
-                // Parametern sätts en gång i stället för att skickas med varje bild.
-                await kamWorker.setParameters({ tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-/: ' });
-                kamPsm = null;
                 try { localStorage.setItem('kamAnvand', '1'); } catch (e) {}
                 return kamWorker;
             })().catch(e => { kamWorkerLovar = null; throw e; });
@@ -1117,11 +1113,7 @@
         }
 
         async function kamLas(canvas, psm) {
-            // PSM ändras bara när avläsningsläget faktiskt växlar.
-            if (kamPsm !== psm) {
-                await kamWorker.setParameters({ tessedit_pageseg_mode: String(psm) });
-                kamPsm = psm;
-            }
+            await kamWorker.setParameters({ tessedit_pageseg_mode: String(psm) });
             const { data } = await kamWorker.recognize(canvas);
             return data.text || '';
         }
@@ -1151,6 +1143,12 @@
         let kamOsakra = new Set();
         function kamHantera(text, slutgiltig) {
             const r = kameraHittaNummer(text);
+            // Står både artikelnummer och leverantörens nummer på etiketten ger de två träffar på samma artikel. Då är det ingen fråga om val.
+            if (r.exakta.length > 1) {
+                const nyckel = nr => (kamNummerIndex.exakt.get(nr) || []).map(a => a.artnr + '|' + a.lev_artnr + '|' + a.plats).sort().join(';');
+                const k0 = nyckel(r.exakta[0]);
+                if (k0 && r.exakta.every(nr => nyckel(nr) === k0)) r.exakta = [r.exakta[0]];
+            }
             if (r.exakta.length === 1) { kamValj(r.exakta[0]); return true; }
             if (r.exakta.length > 1) { kamAktiv = false; kamVisaVal(r.exakta, []); return true; }
             r.osakra.forEach(n => kamOsakra.add(n));
@@ -1163,9 +1161,8 @@
             kamBotten('');
             kamStatus('Håll REF-numret i rutan');
             const klart = Date.now() + 60000;
-            // Börja med flera snabba avläsningar av rutan. Prova hela bilden först
-            // om numret inte hittas där, så onödiga stora OCR-jobb undviks.
-            const upplagg = [[false, 11], [false, 11], [false, 11], [false, 6], [true, 11], [false, 6], [true, 6]];
+            // Oftast bara rutan (snabbast), varannan gång hela bilden ifall numret står utanför rutan
+            const upplagg = [[false, 6], [true, 11], [false, 11], [true, 6], [false, 6], [false, 11]];
             while (kamAktiv && Date.now() < klart) {
                 const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
                 const bild = kamTaBild(hel);
@@ -1173,7 +1170,8 @@
                 let text = '';
                 try { text = await kamLas(bild, psm); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
                 if (!kamAktiv) return;
-                if (kamHantera(text, kamVarv >= 6)) return;
+                if (kamHantera(text, false)) return;
+                if (kamAktiv && kamVarv >= 12 && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
                 await new Promise(r => setTimeout(r, 20));
             }
             if (kamAktiv && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
@@ -1211,11 +1209,8 @@
             kamLasSkarm();
             kamBotten('');
             kamStatus('Startar kameran...');
-            // Starta textläsaren medan webbläsaren ber om kamerabehörighet/startar kameran.
-            // Hantera felet direkt så att ett avvisat nätanrop inte blir ett ohanterat löfte.
-            const textLasare = laddaTesseract().then(worker => ({ worker }), error => ({ error }));
             try {
-                kamStrom = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } } });
+                kamStrom = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } } });
             } catch (e) {
                 kamStatus('Kameran kunde inte startas. Tillåt kameran för sidan i webbläsarens inställningar.');
                 kamBotten('<button type="button" class="kamera-igen" onclick="document.getElementById(\'kameraFil\').click()">Ta en bild istället</button>');
@@ -1225,9 +1220,9 @@
             video.srcObject = kamStrom;
             try { await video.play(); } catch (e) {}
             try { const sp = kamStrom.getVideoTracks()[0]; sp.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(() => {}); } catch (e) {}
-            kamStatus('Förbereder textläsaren...');
-            const lasarResultat = await textLasare;
-            if (lasarResultat.error) {
+            kamStatus('Hämtar textläsaren... (första gången tar det en stund)');
+            try { await laddaTesseract(); }
+            catch (e) {
                 kamStatus('Kunde inte hämta textläsaren. Kontrollera nätet och försök igen.');
                 kamBotten('<button type="button" class="kamera-igen" onclick="oppnaKamera()">Försök igen</button>');
                 return;
