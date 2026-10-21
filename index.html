@@ -411,7 +411,7 @@
         <div class="sb-text" id="sbText">Startar…</div>
     </div>
     <script>
-        // Döljer startbilden när sidan är inläst (visas minst en kort stund så den inte blinkar till).
+        // Döljer startbilden när sidan är inläst (visas minst 4 sekunder).
         (function () {
             var start = Date.now(), borta = false;
             function dolj() {
@@ -420,10 +420,10 @@
                 el.classList.add('borta');
                 setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 600);
             }
-            function nar() { setTimeout(dolj, Math.max(0, 700 - (Date.now() - start))); }
+            function nar() { setTimeout(dolj, Math.max(0, 4000 - (Date.now() - start))); }
             if (document.readyState === 'complete') nar(); else window.addEventListener('load', nar);
             document.addEventListener('DOMContentLoaded', function () { var t = document.getElementById('sbText'); if (t) t.textContent = 'Läser in databasen…'; });
-            setTimeout(dolj, 8000);   // säkerhetsnät om något hänger sig
+            setTimeout(dolj, 12000);  // säkerhetsnät om något hänger sig
         })();
     </script>
     <div class="container">
