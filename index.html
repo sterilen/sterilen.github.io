@@ -1438,6 +1438,13 @@
         // Offline-stöd: sparar sidan och databasen i telefonen/datorn.
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+            // Appen startar direkt från sparad kopia; när en nyare version hämtats laddas sidan om om man inte håller på att söka.
+            navigator.serviceWorker.addEventListener('message', e => {
+                if (e.data !== 'ny-version') return;
+                const f = document.getElementById('searchInput');
+                const kam = document.getElementById('kameraLager');
+                if (f && f.value === '' && !(kam && !kam.hidden)) location.reload();
+            });
         }
     </script>
 </body>
