@@ -972,7 +972,7 @@
         // ======================= KAMERALÄGE =======================
         // Läser texten på förpackningen med kameran och letar efter ett nummer som finns i databasen
         // (leverantörens artikelnummer, "REF", eller vårt eget artikelnummer). Textläsaren (Tesseract.js)
-        // hämtas först när man trycker på kameraknappen, första gången behövs nät (ca 8 MB).
+        // hämtas först när man trycker på kameraknappen, ligger mappen tesseract bredvid sidan används den, annars behövs nät första gången (ca 8 MB).
         const TESS_JS = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
         const TESS_SPRAK = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int';
         let kamNummerIndex = null;
@@ -1051,17 +1051,30 @@
         function kamStatus(t) { document.getElementById('kameraStatus').textContent = t; }
         function kamBotten(html) { document.getElementById('kameraBotten').innerHTML = html || ''; }
 
+        // Textläsaren ligger helst i mappen "tesseract" bredvid index.html (då behövs inget internet och inget kan blockeras).
+        // Saknas mappen hämtas den från internet som reserv.
+        function kamLaddaSkript(src) {
+            return new Promise((ok, fel) => {
+                const sc = document.createElement('script');
+                sc.src = src; sc.onload = ok; sc.onerror = () => { sc.remove(); fel(new Error('nät')); };
+                document.head.appendChild(sc);
+            });
+        }
         function laddaTesseract() {
             if (kamWorkerLovar) return kamWorkerLovar;
             kamWorkerLovar = (async () => {
+                let lokal = false;
                 if (!window.Tesseract) {
-                    await new Promise((ok, fel) => {
-                        const sc = document.createElement('script');
-                        sc.src = TESS_JS; sc.onload = ok; sc.onerror = () => fel(new Error('nät'));
-                        document.head.appendChild(sc);
-                    });
+                    try { await kamLaddaSkript('tesseract/tesseract.min.js'); lokal = true; }
+                    catch (e) { await kamLaddaSkript(TESS_JS); }
                 }
-                kamWorker = await Tesseract.createWorker('eng', 1, { langPath: TESS_SPRAK, gzip: true });
+                if (lokal) {
+                    const bas = new URL('tesseract/', location.href).href;   // måste vara fullständiga adresser (arbetaren startas från en blob)
+                    try {
+                        kamWorker = await Tesseract.createWorker('eng', 1, { workerPath: bas + 'worker.min.js', corePath: bas, langPath: bas + 'lang', gzip: true });
+                    } catch (e) { kamWorker = null; }       // filer saknas eller är trasiga: använd internet i stället
+                }
+                if (!kamWorker) kamWorker = await Tesseract.createWorker('eng', 1, { langPath: TESS_SPRAK, gzip: true });
                 try { localStorage.setItem('kamAnvand', '1'); } catch (e) {}
                 return kamWorker;
             })().catch(e => { kamWorkerLovar = null; throw e; });
