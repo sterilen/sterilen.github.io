@@ -846,6 +846,39 @@
             return item._pd.some(pd => pd.length >= delar.length && delar.every((x, i) => pd[i] === x));
         }
 
+        // ---- Statistik: skickar söktext, antal träffar och tid till den egna statistiktjänsten (tomt = av). Ingen info om vem som söker.
+        const STAT_URL = '';          // t.ex. 'https://lagersok-stat.dittnamn.workers.dev' – lämna tom för att stänga av
+        let statTimer = null, statSist = '', statKalla = 0;     // statKalla: 1 = sökningen kom från kameran
+        function statEnhet() {                       // vilken sorts enhet söker? (utan att identifiera personen)
+            const ua = navigator.userAgent || '', touch = navigator.maxTouchPoints > 1;
+            const ipad = /iPad/.test(ua) || (/Macintosh/.test(ua) && touch);
+            const surf = ipad || (/Android/.test(ua) && !/Mobile/.test(ua)) || /Tablet/i.test(ua);
+            const mobil = !surf && (/Mobi|iPhone|iPod|Android/.test(ua));
+            const e = surf ? 'surfplatta' : mobil ? 'mobil' : 'dator';
+            const o = /Android/.test(ua) ? 'Android' : (/iPhone|iPod/.test(ua) || ipad) ? 'iOS' : /CrOS/.test(ua) ? 'ChromeOS' :
+                      /Windows/.test(ua) ? 'Windows' : /Macintosh/.test(ua) ? 'Mac' : /Linux/.test(ua) ? 'Linux' : 'Annat';
+            const b = /Edg\//.test(ua) ? 'Edge' : /OPR\/|Opera/.test(ua) ? 'Opera' : /SamsungBrowser/.test(ua) ? 'Samsung' :
+                      /Firefox|FxiOS/.test(ua) ? 'Firefox' : /Chrome|CriOS/.test(ua) ? 'Chrome' : /Safari/.test(ua) ? 'Safari' : 'Annan';
+            let a = 0; try { a = (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) ? 1 : 0; } catch (x) {}
+            return { e, o, a, b };
+        }
+        function statSkicka(data) {
+            if (!STAT_URL) return;
+            try { fetch(STAT_URL.replace(/\/$/, '') + '/log', { method: 'POST', body: JSON.stringify(Object.assign(data, statEnhet())), keepalive: true, mode: 'cors' }).catch(() => {}); } catch (e) {}
+        }
+        function statKameraOppnad() { statSkicka({ q: 'kamera', n: 0, l: 0, k: 2 }); }
+        function statLogga(fraga, antal, liknande) {
+            const kalla = statKalla; statKalla = 0;
+            if (!STAT_URL) return;
+            clearTimeout(statTimer);
+            fraga = String(fraga || '').trim();
+            if (fraga.length < 2 || fraga.toLowerCase() === statSist) return;
+            statTimer = setTimeout(() => {          // skickas först när man slutat skriva en stund
+                statSist = fraga.toLowerCase();
+                statSkicka({ q: fraga.slice(0, 60), n: antal, l: liknande ? 1 : 0, k: kalla });
+            }, 2500);
+        }
+
         function sökLager() {
             const sökord = document.getElementById('searchInput').value.trim().toLowerCase();
             const ordLista = sökord.split(/\s+/).filter(Boolean);
@@ -955,6 +988,8 @@
             } else {
                 resultatOmråde.innerHTML = "<div class='error'>🔍 Inga artiklar matchade din sökning i sterilförrådet.</div>";
             }
+
+            statLogga(document.getElementById('searchInput').value, hittade.length, !!liknande);
 
             // Mät tid tills svaret är ritat på skärmen
             requestAnimationFrame(() => setTimeout(() => {
@@ -1147,6 +1182,7 @@
             const inp = document.getElementById('searchInput');
             inp.value = nr;
             toggleClearButton();
+            statKalla = 1; statSist = '';
             sökLager();
             try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
         }
@@ -1241,6 +1277,7 @@
                 return;
             }
             if (document.getElementById('kameraLager').hidden) return;
+            statKameraOppnad();
             kamStart();
         }
 
