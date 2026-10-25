@@ -847,7 +847,7 @@
         }
 
         // ---- Statistik: skickar söktext, antal träffar och tid till den egna statistiktjänsten (tomt = av). Ingen info om vem som söker.
-        const STAT_URL = '';          // t.ex. 'https://lagersok-stat.dittnamn.workers.dev' – lämna tom för att stänga av
+        const STAT_URL = 'https://sterilsok-stat.pelle-holmstrom.workers.dev/';          // t.ex. 'https://lagersok-stat.dittnamn.workers.dev' – lämna tom för att stänga av
         let statTimer = null, statSist = '', statKalla = 0;     // statKalla: 1 = sökningen kom från kameran
         function statEnhet() {                       // vilken sorts enhet söker? (utan att identifiera personen)
             const ua = navigator.userAgent || '', touch = navigator.maxTouchPoints > 1;
