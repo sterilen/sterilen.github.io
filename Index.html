@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#419f9f">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <script>
+        (function () {
+            var t = null;
+            var giltigaTeman = ['mork', 'ljus', 'bla', 'gron', 'sand'];
+            var temafarger = { mork: '#0b1120', ljus: '#f5f8f8', bla: '#edf5ff', gron: '#eef7f1', sand: '#f7f0e3' };
+            try { t = localStorage.getItem('tema'); } catch (e) {}
+            if (giltigaTeman.indexOf(t) === -1) {
+                t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'mork' : 'ljus';
+            }
+            document.documentElement.setAttribute('data-tema', t);
+            document.documentElement.style.colorScheme = t === 'mork' ? 'dark' : 'light';
+            var m = document.querySelector('meta[name="theme-color"]');
+            if (m) m.setAttribute('content', temafarger[t]);
+        })();
+    </script>
+    <title>Sterilcentrum Sterilförråd Lagersök</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        
+        body { 
+            background-color: #f8fafc; 
+            color: #0f172a; 
+            padding: 16px 8px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            -webkit-font-smoothing: antialiased; 
+        }
+        
+        .container { 
+            width: 100%; 
+            max-width: 900px; 
+            background: #ffffff; 
+            padding: 24px 14px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.02), 0 8px 10px -6px rgba(0, 0, 0, 0.02), 0 0 0 1px rgba(0,0,0,0.03); 
+        }
+        
+        .header-block { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; margin-bottom: 25px; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; }
+        .logo-container { width: auto; height: 50px; display: flex; align-items: center; justify-content: center; }
+        .title-group { display: flex; flex-direction: column; align-items: center; }
+        .title-group h1 { font-size: 24px; font-weight: 800; color: #0f172a; line-height: 1.2; }
+        .title-group p { font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+        
+        .search-box { display: flex; gap: 10px; margin-bottom: 16px; width: 100%; }
+        .input-wrapper { position: relative; flex: 1; display: flex; align-items: center; }
+        
+        input { width: 100%; padding: 16px 45px 16px 18px; font-size: 18px; border: 2px solid #e2e8f0; border-radius: 14px; outline: none; background-color: #f1f5f9; transition: all 0.2s ease; color: #0f172a; }
+        input:focus { border-color: #0f172a; background-color: #ffffff; box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.08); }
+        
+        .clear-btn { position: absolute; right: 14px; width: 24px; height: 24px; background: #cbd5e1; color: #ffffff; border: none; border-radius: 50%; font-size: 12px; font-weight: 700; cursor: pointer; display: none; align-items: center; justify-content: center; }
+
+        button.search-btn { padding: 16px 24px; font-size: 18px; font-weight: 700; background-color: #0f172a; color: white; border: none; border-radius: 14px; cursor: pointer; }
+        button.search-btn:active { transform: scale(0.98); }
+
+        .sort-container { display: flex; justify-content: center; width: 100%; margin-bottom: 20px; }
+        .sort-box { display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 10px 16px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; justify-content: center; }
+        .sort-box label { font-size: 15px; font-weight: 700; color: #475569; white-space: nowrap; }
+        .sort-box select { padding: 6px 12px; font-size: 15px; font-weight: 600; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; background-color: #ffffff; color: #0f172a; max-width: 65%; }
+
+        .sort-box { flex-direction: column; align-items: stretch; gap: 10px; }
+        .chip-rad { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+        .chip-rubrik { font-size: 13px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; width: 62px; flex-shrink: 0; text-align: left; }
+        .chip { padding: 8px 13px; font-size: 14px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 999px; cursor: pointer; }
+        .chip:active { transform: scale(0.97); }
+        .chip.aktiv { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+        .chip[data-filter="forbruk"].aktiv { background: #7fb046; border-color: #7fb046; }
+        .chip[data-filter="galler"].aktiv { background: #4687b0; border-color: #4687b0; }
+        .chip.riktning { margin-left: auto; background: #f1f5f9; }
+
+        /* Alla knappar på en rad vardera, även på smala skärmar */
+        .sort-box { padding: 10px 8px; }
+        .chip-rad { flex-wrap: nowrap; gap: 4px; }
+        .chip-rubrik { font-size: 11px; letter-spacing: 0.5px; width: 50px; }
+        .chip { flex: 0 1 auto; min-width: 0; white-space: nowrap; padding: 7px 8px; font-size: 13px; }
+        .chip.riktning { margin-left: auto; }
+        @media (max-width: 380px) {
+            .chip-rubrik { width: 42px; font-size: 10px; letter-spacing: 0; }
+            .chip { padding: 7px 6px; font-size: 12px; }
+        }
+
+        /* Rubrik ovanför knapparna, knapparna på en rad */
+        .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: stretch; }
+        .chip-rubrik { width: auto !important; text-align: left; font-size: 12px !important; letter-spacing: 1px !important; }
+        .chip-rad { flex-wrap: nowrap; }
+        .chip { flex: 1 1 auto; text-align: center; font-size: 14px; padding: 8px 6px; }
+        .chip.riktning { flex: 0 0 auto; margin-left: 0; }
+        @media (max-width: 380px) { .chip { font-size: 13px; padding: 8px 4px; } }
+
+        /* Centrerade rubriker och knappar */
+        .chip-grupp { align-items: center; }
+        .chip-rubrik { text-align: center !important; }
+        .chip-rad { justify-content: center; }
+        .chip { flex: 0 1 auto; }
+
+        .logo-container { height: auto !important; }
+        .logo-img { display: block; width: 100%; max-width: 110px; height: auto; }
+
+        .count-info { font-size: 14px; color: #64748b; margin-bottom: 12px; font-weight: 500; text-align: center; }
+        
+        .table-responsive { width: 100%; overflow-x: hidden; }
+        
+        .result-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; table-layout: fixed; }
+        .result-table th { color: #64748b; text-align: left; padding: 0 12px 4px 12px; font-size: 13px; text-transform: uppercase; font-weight: 700; }
+        .result-table td { padding: 16px 12px; background-color: #ffffff; vertical-align: middle; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; }
+        
+        .result-table td:first-child { border-left: 1px solid #f1f5f9; border-radius: 12px 0 0 12px; }
+        
+        /* MODIFIERAT: Ökat bredden och lagt till padding-right (20px) så rutan flyttas mer till vänster */
+        .result-table td:last-child { 
+            border-right: 1px solid #f1f5f9; 
+            border-radius: 0 12px 12px 0; 
+            text-align: right; 
+            width: 120px; 
+            padding: 16px 12px 16px 4px; 
+            white-space: nowrap; 
+        }
+        .result-table th:last-child { width: 120px; }
+        
+        .result-table tbody tr { box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        
+        .prod-namn { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 6px; line-height: 1.3; overflow-wrap: anywhere; word-break: break-word; hyphens: auto; }
+        
+        .art-info-block { display: flex; flex-direction: column; gap: 4px; font-size: 15px; color: #334155; font-weight: 600; line-height: 1.4; }
+        .art-no-wrap { overflow-wrap: anywhere; }
+        
+        .lagerplats-skylt { 
+            display: block; 
+            background-color: #7fb046; 
+            color: white; 
+            padding: 6px 2px;
+            border-radius: 10px;
+            font-weight: 800; 
+            font-size: 18px; 
+            text-align: center; 
+            box-shadow: 0 4px 6px -1px rgba(127, 176, 70, 0.1); 
+            letter-spacing: 0.5px; 
+            white-space: nowrap;
+            width: 100%;
+        }
+        
+        .result-table tr.galler td:first-child { border-left: 5px solid #4687b0; }
+        .result-table tr.forbruk td:first-child { border-left: 5px solid #7fb046; }
+        .typ-etikett { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; padding: 3px 9px; border-radius: 999px; margin-bottom: 8px; }
+        .typ-etikett.galler { background: #dbe8f1; color: #2a5470; }
+        .typ-etikett.forbruk { background: #e6f0d9; color: #4a6b26; }
+        @media (max-width: 400px) { .lagerplats-skylt { font-size: 16px; letter-spacing: 0; } }
+        .lagerplats-skylt.bulk { background-color: #b04671; box-shadow: 0 4px 6px -1px rgba(176, 70, 113, 0.25); margin-top: 8px; padding: 6px 2px; }
+        .lagerplats-skylt.forbruk, .lagerplats-skylt.galler { padding: 10px 2px; }
+        .lagerplats-skylt small { display: block; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; line-height: 1.1; }
+        .lagerplats-skylt.galler { background-color: #4687b0; box-shadow: 0 4px 6px -1px rgba(70, 135, 176, 0.15); }
+        
+        .error { color: #b91c1c; background: #fef2f2; padding: 16px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 16px; }
+        
+        .likn-info { background: #fef9c3; color: #713f12; border: 1px solid #fde68a; border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; font-size: 15px; font-weight: 600; text-align: center; line-height: 1.4; }
+        .plats-info { background: #e0f2fe; color: #0c4a6e; border: 1px solid #bae6fd; border-radius: 12px; padding: 10px 14px; margin: 0 0 12px; font-size: 15px; font-weight: 600; text-align: center; line-height: 1.4; }
+        html[data-tema="mork"] .plats-info { background: #0c2a3d; color: #bae6fd; border-color: #164e63; }
+        html[data-tema="mork"] .likn-info { background: #3a3210; color: #fde68a; border-color: #5c4d12; }
+        /* ===== Hjälp ===== */
+        .hjalp-knapp { position: absolute; top: 12px; left: 12px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-size: 20px; font-weight: 800; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .hjalp-knapp:active { transform: scale(0.95); }
+        html[data-tema="mork"] .hjalp-knapp { background: #1e293b; color: #f1f5f9; border-color: #334155; }
+        .hjalp-lager { position: fixed; inset: 0; z-index: 900; background: rgba(15, 23, 42, 0.6); display: flex; align-items: flex-end; justify-content: center; }
+        .hjalp-lager[hidden] { display: none; }
+        .hjalp-ruta { width: 100%; max-width: 640px; max-height: 88%; overflow-y: auto; background: #ffffff; color: #0f172a; border-radius: 20px 20px 0 0; padding: 20px 18px 28px; box-shadow: 0 -10px 30px rgba(0,0,0,0.25); }
+        @media (min-width: 700px) { .hjalp-lager { align-items: center; } .hjalp-ruta { border-radius: 20px; max-height: 80%; } }
+        .hjalp-topp { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .hjalp-topp h2 { font-size: 22px; font-weight: 800; }
+        .hjalp-stang { width: 40px; height: 40px; border-radius: 50%; border: none; background: #f1f5f9; color: #0f172a; font-size: 18px; cursor: pointer; }
+        .hjalp-ruta h3 { font-size: 16px; font-weight: 800; margin: 18px 0 6px; }
+        .hjalp-ruta p, .hjalp-ruta li { font-size: 15px; line-height: 1.5; color: #334155; }
+        .hjalp-ruta ul, .hjalp-ruta ol { padding-left: 22px; }
+        .hjalp-ruta li { margin-bottom: 4px; }
+        .hjalp-ruta .prick { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+        html[data-tema="mork"] .hjalp-ruta { background: #162032; color: #f1f5f9; }
+        html[data-tema="mork"] .hjalp-ruta p, html[data-tema="mork"] .hjalp-ruta li { color: #cbd5e1; }
+        html[data-tema="mork"] .hjalp-stang { background: #1e293b; color: #f1f5f9; }
+        /* ===== Antal artiklar i databasen ===== */
+        .antal-rubrik { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .antal-rad { display: flex; gap: 8px; justify-content: center; }
+        .antal-kort { flex: 1 1 0; max-width: 210px; background: #f8fafc; border: 1px solid #e2e8f0; border-left-width: 5px; border-radius: 12px; padding: 8px 10px; text-align: left; }
+        .antal-kort.forbruk { border-left-color: #7fb046; }
+        .antal-kort.galler { border-left-color: #4687b0; }
+        .antal-tal { font-size: 24px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+        .antal-namn { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; }
+        html[data-tema="mork"] .antal-kort { background: #111c2e; border-color: #243247; }
+        html[data-tema="mork"] .antal-kort.forbruk { border-left-color: #7fb046; }
+        html[data-tema="mork"] .antal-kort.galler { border-left-color: #4687b0; }
+        html[data-tema="mork"] .antal-tal { color: #f1f5f9; }
+        html[data-tema="mork"] .antal-namn, html[data-tema="mork"] .antal-rubrik { color: #94a3b8; }
+        /* Gunilla-knappen: syns bara på fredagar */
+        .fredag-knapp { display: none; width: 40px; height: 40px; margin: 0 auto 10px; padding: 0; border-radius: 50%; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-size: 14px; font-weight: 800; cursor: pointer; overflow: hidden; position: relative; align-items: center; justify-content: center; }
+        .fredag-knapp.finns { display: flex; }
+        .knapp-rad { display: flex; justify-content: center; gap: 10px; margin: 0 auto 10px; }
+        .knapp-rad .fredag-knapp { margin: 0; }
+        .fredag-knapp img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .fredag-knapp:active { transform: scale(0.95); }
+        .fredag-knapp.spelar { box-shadow: 0 0 0 3px #4687b0; animation: fredagPuls 1.2s ease-in-out infinite; }
+        @keyframes fredagPuls { 50% { box-shadow: 0 0 0 5px rgba(70,135,176,0.35); } }
+        html[data-tema="mork"] .fredag-knapp { background: #1e293b; color: #f1f5f9; border-color: #334155; }
+        .footer { margin-top: auto; padding-top: 30px; font-size: 13px; color: #94a3b8; font-weight: 500; text-align: center; line-height: 1.6; }
+
+        /* ===== Kameraläge (läser REF-numret på förpackningen) ===== */
+        .kamera-knapp { display: none; flex: 0 0 auto; width: 48px; padding: 0; font-size: 22px; line-height: 1; background-color: #ffffff; color: #0f172a; border: 2px solid #e2e8f0; border-radius: 14px; cursor: pointer; align-items: center; justify-content: center; }
+        .kamera-knapp.finns { display: flex; }
+        .kamera-knapp:active { transform: scale(0.97); }
+        html[data-tema="mork"] .kamera-knapp { background-color: #1e293b; border-color: #334155; color: #f1f5f9; }
+        .kamera-lager { position: fixed; inset: 0; z-index: 1000; background: #000; color: #fff; display: flex; flex-direction: column; }
+        .kamera-lager[hidden] { display: none; }
+        .kamera-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; }
+        .kamera-ram { position: absolute; left: 4%; right: 4%; top: 32%; height: 26%; border: 3px solid rgba(255,255,255,0.9); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); pointer-events: none; }
+        .kamera-topp { position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px; background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0)); }
+        .kamera-status { flex: 1; font-size: 16px; font-weight: 700; line-height: 1.3; }
+        .kamera-stang { width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,0.2); color: #fff; font-size: 20px; cursor: pointer; flex: 0 0 auto; }
+        .kamera-botten { position: relative; z-index: 2; margin-top: auto; padding: 12px 14px 22px; display: flex; flex-direction: column; gap: 8px; background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.8)); max-height: 55%; overflow-y: auto; }
+        .kamera-val { display: flex; flex-direction: column; align-items: flex-start; width: 100%; padding: 12px 14px; border: none; border-radius: 12px; background: #ffffff; color: #0f172a; font-size: 17px; font-weight: 800; text-align: left; cursor: pointer; }
+        .kamera-val small { font-size: 13px; font-weight: 600; color: #475569; }
+        .kamera-igen { padding: 12px 14px; border: 2px solid #ffffff; border-radius: 12px; background: transparent; color: #ffffff; font-size: 16px; font-weight: 700; cursor: pointer; }
+
+        /* ===== Mörkt läge ===== */
+        .tema-knapp { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .tema-knapp:active { transform: scale(0.95); }
+        .container { position: relative; }
+        html[data-tema="mork"] { color-scheme: dark; }
+        html[data-tema="mork"] body { background-color: #0b1120; color: #e2e8f0; }
+        html[data-tema="mork"] .container { background: #162032; box-shadow: 0 0 0 1px #243247; }
+        html[data-tema="mork"] .tema-knapp { background: #1e293b; color: #fde68a; border-color: #334155; }
+        html[data-tema="mork"] .header-block { border-bottom-color: #243247; }
+        html[data-tema="mork"] .logo-img { background: #ffffff; border-radius: 10px; padding: 6px; }
+        html[data-tema="mork"] .title-group h1 { color: #f1f5f9; }
+        html[data-tema="mork"] .title-group p { color: #94a3b8; }
+        html[data-tema="mork"] input { background-color: #0f1a2b; border-color: #334155; color: #f1f5f9; }
+        html[data-tema="mork"] input::placeholder { color: #64748b; }
+        html[data-tema="mork"] input:focus { background-color: #0b1120; border-color: #94a3b8; box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.18); }
+        html[data-tema="mork"] .clear-btn { background: #475569; }
+        html[data-tema="mork"] button.search-btn { background-color: #e2e8f0; color: #0f172a; }
+        html[data-tema="mork"] .sort-box { background: #111c2e; border-color: #243247; }
+        html[data-tema="mork"] .chip-rubrik { color: #94a3b8; }
+        html[data-tema="mork"] .chip { background: #1e293b; color: #cbd5e1; border-color: #334155; }
+        html[data-tema="mork"] .chip.aktiv { background: #e2e8f0; color: #0f172a; border-color: #e2e8f0; }
+        html[data-tema="mork"] .chip[data-filter="forbruk"].aktiv { background: #7fb046; border-color: #7fb046; color: #ffffff; }
+        html[data-tema="mork"] .chip[data-filter="galler"].aktiv { background: #4687b0; border-color: #4687b0; color: #ffffff; }
+        html[data-tema="mork"] .count-info { color: #94a3b8; }
+        html[data-tema="mork"] .result-table th { color: #94a3b8; }
+        html[data-tema="mork"] .result-table td { background-color: #1c2a40; border-top-color: #243247; border-bottom-color: #243247; }
+        html[data-tema="mork"] .result-table td:last-child { border-right-color: #243247; }
+        html[data-tema="mork"] .prod-namn { color: #f1f5f9; }
+        html[data-tema="mork"] .art-info-block { color: #cbd5e1; }
+        html[data-tema="mork"] .typ-etikett.galler { background: #1d3a4f; color: #a9d0ea; }
+        html[data-tema="mork"] .typ-etikett.forbruk { background: #2b3f1a; color: #bfe093; }
+        html[data-tema="mork"] .error { background: #3b1d1d; color: #fca5a5; }
+        html[data-tema="mork"] .footer { color: #64748b; }
+
+        /* ===== Sammanhängande fem teman ===== */
+        html[data-tema="ljus"] {
+            --bakgrund:#f5f8f8; --yta:#fff; --yta-dim:#edf3f4; --text:#14272e; --text-dim:#5c727c; --kant:#d8e3e6; --accent:#226f71; --accent-text:#fff; --fokus:#1b777a; --forbruk:#4e7d2d; --galler:#28678e; --bulk:#983d62; --info-bg:#e7f3f8; --info-text:#174e68; --info-border:#b9dbe9; --warn-bg:#fff6ce; --warn-text:#654b13; --warn-border:#e8d988; --error-bg:#fff0ef; --error-text:#9b2828; color-scheme:light;
+        }
+        html[data-tema="mork"] {
+            --bakgrund:#0b1120; --yta:#162032; --yta-dim:#111c2e; --text:#e8eef7; --text-dim:#a5b3c5; --kant:#2b3b52; --accent:#29a6a8; --accent-text:#07191c; --fokus:#57d4d5; --forbruk:#79a948; --galler:#4d9ac2; --bulk:#d06a91; --info-bg:#0c2a3d; --info-text:#c7ecfb; --info-border:#20506b; --warn-bg:#3a3210; --warn-text:#fde68a; --warn-border:#65551a; --error-bg:#3b1d1d; --error-text:#ffc2bd; color-scheme:dark;
+        }
+        html[data-tema="bla"] {
+            --bakgrund:#edf5ff; --yta:#fff; --yta-dim:#e2edfb; --text:#10243d; --text-dim:#526b86; --kant:#c9d9ec; --accent:#245f9f; --accent-text:#fff; --fokus:#2c75c4; --forbruk:#4e7d2d; --galler:#245f9f; --bulk:#983d62; --info-bg:#dceeff; --info-text:#123d66; --info-border:#a8cdef; --warn-bg:#fff4cf; --warn-text:#654b13; --warn-border:#e8d988; --error-bg:#fff0ef; --error-text:#9b2828; color-scheme:light;
+        }
+        html[data-tema="gron"] {
+            --bakgrund:#eef7f1; --yta:#fff; --yta-dim:#e1efe5; --text:#183127; --text-dim:#536e60; --kant:#c9dfd0; --accent:#26714c; --accent-text:#fff; --fokus:#2b8a5b; --forbruk:#4e7d2d; --galler:#28678e; --bulk:#983d62; --info-bg:#e5f2eb; --info-text:#214f37; --info-border:#bad9c5; --warn-bg:#fff5cf; --warn-text:#654b13; --warn-border:#e8d988; --error-bg:#fff0ef; --error-text:#9b2828; color-scheme:light;
+        }
+        html[data-tema="sand"] {
+            --bakgrund:#f7f0e3; --yta:#fffaf1; --yta-dim:#efe4d0; --text:#362c1e; --text-dim:#71624c; --kant:#dfd0b8; --accent:#8a5a2b; --accent-text:#fff; --fokus:#9a652f; --forbruk:#52723c; --galler:#416d87; --bulk:#983d62; --info-bg:#e9f0ed; --info-text:#285048; --info-border:#bfd2ca; --warn-bg:#f8edc7; --warn-text:#5f471b; --warn-border:#dfca83; --error-bg:#f9e9df; --error-text:#8b3428; color-scheme:light;
+        }
+        html[data-tema] body { background:var(--bakgrund); color:var(--text); }
+        html[data-tema] .container, html[data-tema] .hjalp-ruta { background:var(--yta); color:var(--text); }
+        html[data-tema] .container { box-shadow:0 10px 28px rgba(26,45,62,.08),0 0 0 1px var(--kant); }
+        html[data-tema] .header-block { border-bottom-color:var(--kant); }
+        html[data-tema] .title-group h1, html[data-tema] .prod-namn, html[data-tema] .antal-tal { color:var(--text); }
+        html[data-tema] .title-group p, html[data-tema] .count-info, html[data-tema] .result-table th, html[data-tema] .antal-rubrik, html[data-tema] .antal-namn, html[data-tema] .footer { color:var(--text-dim); }
+        html[data-tema] input { background:var(--yta-dim); border-color:var(--kant); color:var(--text); }
+        html[data-tema] input::placeholder { color:var(--text-dim); opacity:.82; }
+        html[data-tema] input:focus { background:var(--yta); border-color:var(--fokus); box-shadow:0 0 0 4px var(--kant); }
+        html[data-tema] button.search-btn { background:var(--accent); color:var(--accent-text); }
+        html[data-tema] .clear-btn { background:var(--text-dim); color:var(--yta); }
+        html[data-tema] .sort-box, html[data-tema] .antal-kort { background:var(--yta-dim); border-color:var(--kant); }
+        html[data-tema] .chip-rubrik { color:var(--text-dim); }
+        html[data-tema] .chip { background:var(--yta); color:var(--text); border-color:var(--kant); }
+        html[data-tema] .chip.aktiv { background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
+        html[data-tema] .chip[data-filter="forbruk"].aktiv { background:var(--forbruk); border-color:var(--forbruk); color:#fff; }
+        html[data-tema] .chip[data-filter="galler"].aktiv { background:var(--galler); border-color:var(--galler); color:#fff; }
+        html[data-tema] .result-table td { background:var(--yta); border-top-color:var(--kant); border-bottom-color:var(--kant); }
+        html[data-tema] .result-table td:first-child { border-left-color:var(--kant); }
+        html[data-tema] .result-table td:last-child { border-right-color:var(--kant); }
+        html[data-tema] .art-info-block { color:var(--text-dim); }
+        html[data-tema] .result-table tr.forbruk td:first-child { border-left-color:var(--forbruk); }
+        html[data-tema] .result-table tr.galler td:first-child { border-left-color:var(--galler); }
+        html[data-tema] .lagerplats-skylt.forbruk { background:var(--forbruk); color:#fff; }
+        html[data-tema] .lagerplats-skylt.galler { background:var(--galler); color:#fff; }
+        html[data-tema] .lagerplats-skylt.bulk { background:var(--bulk); color:#fff; }
+        html[data-tema] .typ-etikett.forbruk { background:var(--yta-dim); color:var(--forbruk); }
+        html[data-tema] .typ-etikett.galler { background:var(--yta-dim); color:var(--galler); }
+        html[data-tema] .plats-info { background:var(--info-bg); color:var(--info-text); border-color:var(--info-border); }
+        html[data-tema] .likn-info { background:var(--warn-bg); color:var(--warn-text); border-color:var(--warn-border); }
+        html[data-tema] .error { background:var(--error-bg); color:var(--error-text); }
+        html[data-tema] .hjalp-ruta p, html[data-tema] .hjalp-ruta li { color:var(--text-dim); }
+        html[data-tema] .hjalp-stang { background:var(--yta-dim); color:var(--text); }
+        html[data-tema] .antal-kort.forbruk { border-left-color:var(--forbruk); }
+        html[data-tema] .antal-kort.galler { border-left-color:var(--galler); }
+        html[data-tema] .hjalp-knapp, html[data-tema] .kamera-knapp { background:var(--yta); color:var(--text); border-color:var(--kant); }
+        html[data-tema] :focus-visible { outline:3px solid var(--fokus); outline-offset:3px; }
+        html[data-tema] #searchInput:focus, html[data-tema] #searchInput:focus-visible { outline:none; outline-offset:0; border-color:var(--kant); box-shadow:none; }
+
+        /* Solfjäder med jämnt avstånd längs en kvarts cirkel. */
+        .tema-meny { position:absolute; top:12px; right:12px; width:40px; height:40px; z-index:40; }
+        .tema-knapp { position:absolute; top:0; right:0; width:40px; height:40px; padding:0; border:1px solid var(--kant); background:var(--yta); color:var(--text); font-size:20px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; white-space:nowrap; box-shadow:0 2px 7px rgba(15,23,42,.09); transition:box-shadow .2s ease, border-color .2s ease, transform .2s ease; }
+        .tema-knapp:hover { box-shadow:0 4px 12px rgba(15,23,42,.13); border-color:var(--fokus); }
+        .tema-knapp:active { transform:scale(.96); }
+        .tema-knapp:focus-visible { outline:2px solid var(--fokus); outline-offset:3px; }
+        .tema-alternativ { position:absolute; top:0; right:0; width:0; height:0; visibility:hidden; pointer-events:none; }
+        .tema-meny.oppet .tema-alternativ { visibility:visible; pointer-events:auto; }
+        .tema-val { --fan-x:0px; --fan-y:0px; --fan-delay:0ms; position:absolute; top:0; right:0; width:40px; height:40px; padding:3px 2px; border:1px solid var(--kant); border-radius:50%; background:var(--yta); color:var(--text); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; opacity:0; visibility:hidden; pointer-events:none; transform:translate(0,0) scale(.72); transition:transform .34s cubic-bezier(.2,.75,.25,1),opacity .2s ease,box-shadow .2s ease,border-color .2s ease; transition-delay:var(--fan-delay); box-shadow:0 3px 9px rgba(15,23,42,.10); will-change:transform; }
+        .tema-meny.oppet .tema-val { opacity:1; visibility:visible; pointer-events:auto; transform:translate(var(--fan-x),var(--fan-y)) scale(1); }
+        .tema-meny.oppet .tema-val:hover { box-shadow:0 5px 13px rgba(15,23,42,.16); border-color:var(--fokus); }
+        /* Start: samma höjd som temaknappen. Slut: rakt under knappen. Alla centrum har samma bågavstånd. */
+        .tema-val-mork { --fan-x:-112px; --fan-y:0px; --fan-delay:0ms; }
+        .tema-val-ljus { --fan-x:-103.4px; --fan-y:42.9px; --fan-delay:18ms; }
+        .tema-val-bla { --fan-x:-79.2px; --fan-y:79.2px; --fan-delay:36ms; }
+        .tema-val-gron { --fan-x:-42.9px; --fan-y:103.4px; --fan-delay:54ms; }
+        .tema-val-sand { --fan-x:0px; --fan-y:112px; --fan-delay:72ms; }
+        .tema-prick { width:17px; height:17px; display:block; flex:0 0 17px; border-radius:50%; border:1px solid rgba(15,23,42,.18); box-shadow:inset 0 1px 2px rgba(255,255,255,.25); }
+        .tema-val-mork .tema-prick { background:#0b1120; } .tema-val-ljus .tema-prick { background:#f5f8f8; } .tema-val-bla .tema-prick { background:#5b9de2; } .tema-val-gron .tema-prick { background:#4e9b6c; } .tema-val-sand .tema-prick { background:#c69a63; }
+        .tema-val[aria-checked="true"] { border:2px solid var(--fokus); box-shadow:0 0 0 2px var(--yta),0 0 0 4px var(--kant),0 4px 11px rgba(15,23,42,.12); }
+        .tema-val:focus-visible { z-index:1; outline:2px solid var(--fokus); outline-offset:3px; }
+        /* Flytta rubrik/logotyp ur solfjäderns arbetsyta medan menyn är öppen. */
+        .tema-meny.oppet + .header-block { padding-top:140px; transition:padding-top .28s ease; }
+        @media (prefers-reduced-motion:reduce) { .tema-val,.tema-knapp,.header-block { transition:none !important; } .tema-val { transition-delay:0ms; } }
+
+    </style>
+    <style>
+        /* Startbild: visas direkt medan sidan och databasen läses in */
+        #startbild { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #f8fafc; color: #0f172a; transition: opacity .35s ease, visibility .35s; }
+        html[data-tema="mork"] #startbild { background: #0b1120; color: #f1f5f9; }
+        #startbild.borta { opacity: 0; visibility: hidden; pointer-events: none; }
+        #startbild .sb-scen { width: min(300px, 78vw); height: auto; margin-bottom: 14px; overflow: hidden; border-radius: 18px; }
+        #startbild .rok, #startbild .ang { animation: sbRok 2.6s ease-in infinite; opacity: 0; transform-box: fill-box; transform-origin: center; }
+        #startbild .rok.r2 { animation-delay: .9s; } #startbild .rok.r3 { animation-delay: 1.7s; } #startbild .ang.r2 { animation-delay: 1.1s; }
+        #startbild .glod { animation: sbGlod 1.6s ease-in-out infinite alternate; }
+        #startbild .sol { animation: sbSol 4s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+        html[data-tema="mork"] #startbild .himmel { fill: #16223a; }
+        html[data-tema="mork"] #startbild .sol { fill: #e9c46a; }
+        #startbild .sb-namn { font-size: 30px; font-weight: 800; letter-spacing: -.5px; }
+        #startbild .sb-under { margin-top: 6px; font-size: 14px; opacity: .65; }
+        #startbild .sb-rad { margin-top: 26px; width: 150px; height: 4px; border-radius: 2px; background: rgba(100,116,139,.25); overflow: hidden; }
+        #startbild .sb-rad b { display: block; height: 100%; width: 40%; border-radius: 2px; background: #4687b0; animation: sbRad 1.2s ease-in-out infinite; }
+        #startbild .sb-text { margin-top: 10px; font-size: 12px; opacity: .55; }
+        @keyframes sbRok { 0% { transform: translate(0,0) scale(.6); opacity: 0; } 15% { opacity: .75; } 100% { transform: translate(7px,-26px) scale(1.5); opacity: 0; } }
+        @keyframes sbGlod { from { opacity: 1; } to { opacity: .45; } }
+        @keyframes sbSol { from { transform: scale(1); } to { transform: scale(1.06); } }
+        @keyframes sbRad { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
+        @media (prefers-reduced-motion: reduce) { #startbild .rok, #startbild .ang, #startbild .glod, #startbild .sol, #startbild .sb-rad b { animation: none; } #startbild { transition: none; } }
+    </style>
+</head>
+<body>
+    <div id="startbild" role="status" aria-live="polite">
+        <svg class="sb-scen" viewBox="0 0 320 210" aria-hidden="true">
+            <rect class="himmel" x="0" y="0" width="320" height="210" rx="18" fill="#fde9c4"/>
+            <circle class="sol" cx="258" cy="46" r="24" fill="#f6a935"/>
+            <path d="M0 168 Q70 140 140 164 T320 150 V210 H0 Z" fill="#efc77b"/>
+            <path d="M0 186 Q90 160 190 184 T320 176 V210 H0 Z" fill="#e3b05d"/>
+            <rect x="96" y="140" width="13" height="50" rx="6" fill="#b9814a"/><rect x="95" y="184" width="15" height="7" rx="3" fill="#5b3a1e"/>
+            <rect x="172" y="140" width="13" height="50" rx="6" fill="#b9814a"/><rect x="171" y="184" width="15" height="7" rx="3" fill="#5b3a1e"/>
+            <ellipse cx="122" cy="103" rx="20" ry="24" fill="#d9a066"/>
+            <ellipse cx="166" cy="105" rx="18" ry="22" fill="#d9a066"/>
+            <ellipse cx="140" cy="138" rx="66" ry="32" fill="#d9a066"/>
+            <path d="M76 132 Q60 140 64 168" stroke="#b9814a" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="64" cy="170" r="6" fill="#5b3a1e"/>
+            <rect x="110" y="146" width="13" height="46" rx="6" fill="#d9a066"/><rect x="109" y="185" width="15" height="7" rx="3" fill="#5b3a1e"/>
+            <rect x="146" y="148" width="13" height="44" rx="6" fill="#d9a066"/><rect x="145" y="185" width="15" height="7" rx="3" fill="#5b3a1e"/>
+            <path d="M186 128 Q214 118 214 84 Q214 66 224 62 L238 80 Q226 90 230 120 Q226 146 192 156 Z" fill="#d9a066"/>
+            <ellipse cx="236" cy="62" rx="24" ry="16" fill="#d9a066"/>
+            <ellipse cx="258" cy="70" rx="14" ry="11" fill="#e6b57e"/>
+            <circle cx="263" cy="66" r="1.8" fill="#5b3a1e"/>
+            <path d="M226 50 Q222 36 232 36 Q236 44 234 52 Z" fill="#b9814a"/>
+            <path d="M196 140 Q222 146 240 120" stroke="#d9a066" stroke-width="11" fill="none" stroke-linecap="round"/>
+            <circle cx="241" cy="119" r="7" fill="#5b3a1e"/>
+            <path d="M236 98 h22 v10 q0 14 -11 14 q-11 0 -11 -14 Z" fill="#ffffff" stroke="#8a6a4a" stroke-width="1.5"/>
+            <path d="M258 102 q8 0 8 7 q0 7 -8 7" stroke="#8a6a4a" stroke-width="2.5" fill="none"/>
+            <rect x="238" y="100" width="18" height="4" rx="2" fill="#5b3a1e"/>
+            <path class="ang" d="M244 94 q-5 -7 0 -13" stroke="#8a6a4a" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path class="ang r2" d="M252 94 q-5 -7 0 -13" stroke="#8a6a4a" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <rect x="266" y="74" width="19" height="3.4" rx="1.5" fill="#ffffff" stroke="#d1d5db" stroke-width=".6" transform="rotate(-8 266 74)"/>
+            <circle class="glod" cx="285.5" cy="72.6" r="2.2" fill="#ff7a1a"/>
+            <circle class="rok" cx="288" cy="68" r="4" fill="#94a3b8"/>
+            <circle class="rok r2" cx="288" cy="68" r="4" fill="#94a3b8"/>
+            <circle class="rok r3" cx="288" cy="68" r="4" fill="#94a3b8"/>
+            <path d="M220 54 L236 56" stroke="#0b0b0b" stroke-width="3" stroke-linecap="round"/>
+            <path d="M232 54 H258 Q260 54 259 58 Q256 69 247 67 Q239 66 237 60 Z" fill="#0b0b0b"/>
+            <path d="M239 57 l6 -1" stroke="#ffffff" stroke-opacity=".35" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <div class="sb-namn">Lagersök</div>
+        <div class="sb-under">Sterilcentrum Sterilförråd</div>
+        <div class="sb-rad" aria-hidden="true"><b></b></div>
+        <div class="sb-text" id="sbText">Startar…</div>
+    </div>
+    <script>
+        // Döljer startbilden när sidan är inläst (visas minst 4 sekunder).
+        (function () {
+            var start = Date.now(), borta = false;
+            function dolj() {
+                if (borta) return; borta = true;
+                var el = document.getElementById('startbild'); if (!el) return;
+                el.classList.add('borta');
+                setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 600);
+            }
+            function nar() { setTimeout(dolj, Math.max(0, 4000 - (Date.now() - start))); }
+            if (document.readyState === 'complete') nar(); else window.addEventListener('load', nar);
+            document.addEventListener('DOMContentLoaded', function () { var t = document.getElementById('sbText'); if (t) t.textContent = 'Läser in databasen…'; });
+            setTimeout(dolj, 12000);  // säkerhetsnät om något hänger sig
+        })();
+    </script>
+    <div class="container">
+        <button type="button" id="hjalpKnapp" class="hjalp-knapp" onclick="visaHjalp()" aria-label="Hjälp" title="Hjälp">?</button>
+        <div class="tema-meny" id="temaMeny">
+            <button type="button" id="temaKnapp" class="tema-knapp" aria-label="Byt färgschema" aria-haspopup="menu" aria-expanded="false" aria-controls="temaAlternativ" title="Byt färgschema"><span aria-hidden="true">🎨</span></button>
+            <div class="tema-alternativ" id="temaAlternativ" role="menu" aria-label="Färgteman" aria-hidden="true">
+                <button type="button" class="tema-val tema-val-mork" data-tema-val="mork" role="menuitemradio" aria-checked="false" tabindex="-1" aria-label="Mörkt tema"><span class="tema-prick" aria-hidden="true"></span></button>
+                <button type="button" class="tema-val tema-val-ljus" data-tema-val="ljus" role="menuitemradio" aria-checked="false" tabindex="-1" aria-label="Ljust tema"><span class="tema-prick" aria-hidden="true"></span></button>
+                <button type="button" class="tema-val tema-val-bla" data-tema-val="bla" role="menuitemradio" aria-checked="false" tabindex="-1" aria-label="Blått tema"><span class="tema-prick" aria-hidden="true"></span></button>
+                <button type="button" class="tema-val tema-val-gron" data-tema-val="gron" role="menuitemradio" aria-checked="false" tabindex="-1" aria-label="Grönt tema"><span class="tema-prick" aria-hidden="true"></span></button>
+                <button type="button" class="tema-val tema-val-sand" data-tema-val="sand" role="menuitemradio" aria-checked="false" tabindex="-1" aria-label="Sandtema"><span class="tema-prick" aria-hidden="true"></span></button>
+            </div>
+        </div>
+        <div class="header-block">
+            <div class="logo-container">
+                <img src="data:image/jpeg;base64,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iIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIi4wDxU6uAviyktc9DobqNcyaOQiHHbhO/7S49lJI4n4J+8J7D6PgrDWSc5Gx6FUFMe9jw+N5Y5p3a4EgtI7CCOoKtI4GOKA6vYv/oBmNaDl+Pwj7LIQDcqQdGzDxkb0a8ex3eVNUFWXjon8eS0RrF0PFG43aibhh9MDkfW7jzUsUX5a7mX6UstScUREREREREUcuNDiPi0K0/dbrHUsOW5G19PbI+hNNH2SVTh4N32b4uI8Ct55dlVlwzG7nlGQ1zKO3WqmfV1M7zsGRtG5Pt7h6yFS5rnq9e9cNSbrn14MkUdQ/zNBSl24pKRhPm4/bt6TvFzisGuqegZsjiVedA9Gf4gr+lmH4Me93aeTfmexeGqJ5KmWSoqJHyzSvdJJI93M573Hdzie8kkknxK4kRV0nJyV6YAAGG8AiIiL6RERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERfewXNci05y615tile+judpnbPC8djh98x472OG7XDwK+Ci5a4tOQuqaGOojdFKMtcMEdYKu50N1dx7WvTy153YHhoq4+Srpi7d1LUt6SRO9h7D3gg962EqkuCTiFk0W1Kjsd+rnNxTKJGUta1x9ClqD6MNR6up5HfikH71W0xyCRjXtIII3BHerLSVAqI9rmOK8s6XaPP0cuLoMfhu3sPZ1eC5ERFlKrosO32OyyvHas6iWfSrT2+55fZP6taaR8wj32M0nZHGPW55a351wSAMlfcUT55GxRjJccDvKhT5SXXczz0ehWOVrmtZ5uvyAsd8Lvgpzt3f3jh+QoFDdfXyzJ7xmuS3PLshqHT3O8VUlZUvJ39N7t9h6gNgPUAvkqsVUxnlLjw5L1foxZGWC2spGjzuLj1uPH6dyIiLHVhREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREWWkDfcb7q1rgO16dq1pi3F77XGXI8QbHR1Je7d9RS7bQTnxOwLHHxb61VItpcNOsdXofq3aMwE722yZ4obvGCdpKORwDyR4sOzx+Ssuim6GXfwKpmnNgbfbW7YH4kfnN+Y8QrqFldehq6evpIa2k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" alt="Södersjukhuset" class="logo-img">
+            </div>
+            <div class="title-group">
+                <h1>Sterilcentrum Sterilförråd</h1>
+                <p>Lagersökning</p>
+            </div>
+        </div>
+        
+        <div class="search-box">
+            <div class="input-wrapper">
+                <input type="text" id="searchInput" placeholder="Sök produkt, art.nr, hylla..." autofocus oninput="toggleClearButton()">
+                <button type="button" id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
+            </div>
+            <button type="button" id="kameraKnapp" class="kamera-knapp" onclick="oppnaKamera()" aria-label="Läs av REF-numret med kameran" title="Läs av REF-numret med kameran">📷</button>
+            <button class="search-btn" onclick="sökLager()">Sök</button>
+        </div>
+
+        <div class="sort-container">
+            <div class="sort-box">
+                <div class="chip-grupp">
+                    <span class="chip-rubrik">Visa</span>
+                    <div class="chip-rad">
+                    <button type="button" class="chip aktiv" data-filter="forbruk" onclick="valjFilter('forbruk')">Fabrikssterilt</button>
+                    <button type="button" class="chip aktiv" data-filter="galler" onclick="valjFilter('galler')">Instrumentgaller</button>
+                    </div>
+                </div>
+                <div class="chip-grupp">
+                    <span class="chip-rubrik">Sortera</span>
+                    <div class="chip-rad">
+                    <button type="button" class="chip aktiv" data-sort="plats" onclick="valjSort('plats')">Plats</button>
+                    <button type="button" class="chip" data-sort="namn" onclick="valjSort('namn')">Namn</button>
+                    <button type="button" class="chip" data-sort="artnr" onclick="valjSort('artnr')">Art.nr</button>
+                    <button type="button" class="chip" data-sort="lev_artnr" onclick="valjSort('lev_artnr')">Lev.nr</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="antalArtiklar" class="count-info">Laddar sterilförrådets databas...</div>
+        <div id="resultatOmråde"></div>
+    </div>
+
+    <div id="kameraLager" class="kamera-lager" hidden>
+        <video id="kameraVideo" class="kamera-video" playsinline muted autoplay></video>
+        <div class="kamera-ram"></div>
+        <div class="kamera-topp">
+            <div id="kameraStatus" class="kamera-status"></div>
+            <button type="button" class="kamera-stang" onclick="stangKamera()" aria-label="Stäng kameran">✕</button>
+        </div>
+        <div id="kameraBotten" class="kamera-botten"></div>
+    </div>
+    <div id="hjalpLager" class="hjalp-lager" hidden onclick="if (event.target === this) stangHjalp()">
+        <div class="hjalp-ruta" role="dialog" aria-modal="true" aria-labelledby="hjalpRubrik">
+            <div class="hjalp-topp"><h2 id="hjalpRubrik">Hjälp</h2><button type="button" class="hjalp-stang" onclick="stangHjalp()" aria-label="Stäng hjälpen">✕</button></div>
+            <div id="hjalpInnehall"></div>
+        </div>
+    </div>
+    <input type="file" id="kameraFil" accept="image/*" capture="environment" hidden>
+
+    <footer class="footer">
+        <span id="söktid"></span><br><br>
+        <div class="knapp-rad">
+            <button type="button" id="fredagKnapp" class="fredag-knapp" aria-label="Gunilla Persson" title="Gunilla Persson"><img src="data:image/jpeg;base64,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" alt="" onerror="this.replaceWith(document.createTextNode('GP'))"></button>
+            <button type="button" id="marockoKnapp" class="fredag-knapp" aria-label="Marocko" title="Marocko"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDAgQDAwMEBAQFBgoGBgUFBgwICQcKDgwPDg4MDQ0PERYTDxAVEQ0NExoTFRcYGRkZDxIbHRsYHRYYGRj/2wBDAQQEBAYFBgsGBgsYEA0QGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBj/wAARCACAAIADASIAAhEBAxEB/8QAGgABAAMBAQEAAAAAAAAAAAAAAAMEBQECB//EAC0QAAICAQEFBwQDAQAAAAAAAAABAgMEEQUSITFBExUiUZHB0SRTYfBCUrEj/8QAHAEBAAEFAQEAAAAAAAAAAAAAAAIBBAUGBwMI/8QAKxEAAgECBQMCBwEBAAAAAAAAAQIAAxEEBRIhMQYTQVFhIiMkQnFygZEz/9oADAMBAAIRAxEAPwD5WADUZ9NQABEAARAAEQABEAARAAEQABEAARAAEQABEAHmclCuU5PRRTbEi7qilmNgJ6B5hJTrjOL1Ukmj0IR1dQym4MAASUAARAAEQABEAARAAEQUdqW9ngOKfGb3S8ZmT9TtuqjnGvjL/X7HtQAL3PA3mpdbYqpTytsNRPzK5FJfy5sf8W5/kl2Xb2mAot8YPdLxmY30227aOUbOMf8AV7mmK4s1xwd5TonFVKmVrhq5+ZQJpN+UNh/q2P8AYAB4zboAAiAAIgACIOSbUW0m35I6BKMLiwNpnz2tRXNwnTdGS5ppfJzvnG+3d6Is5WJTlQ0mtJLlJc0UYWXbPmqsmtWU8ozS5fvkXaLScbDf0vOU5xj+o8pxX1WJVcMeKgpBgp8BwGBX9hccceJe+Mb7V3ovkp4mdVVk25F0JylN8N1cuJdz7qe7HOrcfaPdTS9SxiY8asKuDgtdNXqurK6kVCdPO3MtXwmdZpnNKguOR+wncDCmNIL3VRYNuSt2Bvt4mVl51VuTVkUwnGUHx3lz4lzvjG+1d6L5LOXjxtwrIKC101Wi6or4F1PdinbuLs3uttegujoDp425hMJnWV5zVoNjkTvp3CxpjSSllYWLbELZib7+ZzvnG+3d6I9Q2tRZNQhTdKT5JJfJBO27aE3Vi1qulcJTa5/vkXsXDpxYaQWsnzk+bKOtJBuN/S8usnx/UebYr6XEq2GHNQ0goY+QgLEt+xsOefM8W3FNpp+TOgFpOrKLAAm8AASsAARAAEQeZwjODhOKlF80z0cbSi23olxYEhUVGQrUAKnm/FveYOTjqnaHZY8ZWKPicOenXQ1sXNqyo8PDPrB+xV2brbkX5k+r0TfTr8EGW6sjNisGDduvGcOC/fyX7juHQ3IHM4VlOJfIKJzrAle3iah00LfEyBiE7drnUNza2mx8bTRys2rFj4vFPpBe5k42OrtodlkKVal4lBcNeuhLiOrHzZLOhJW68Jz4r9/JPtL/AJZGPmQ46PRtdevyEHbOheT5jNsS+f0RnWOK9vDVBqoW+JULAP3L2Oo7G1tNh53mjCEYQUIRUYrkkejiacU09U+KOlhO601RUC0wAo4txb2gACTgACIAAiAAIgqbSt7LZ89Oc/CvctkF+LDItg7XrCH8fN/knTIDAtxML1DQxWJy6th8F/0caQSbAatiSfYEnbf0mVi05OVjxpT7KhPVv+z9zXox6sercqjp5vqyRJRSSSSXJI6Tq1i/sJiumuj8NkyLUdjVrBQutvAAtpQfavsNz5JkV+PVkVblsdfJ9UZGVTk4uPKmT7Whvwv+r9jcONKSaaTT5pilWKe4jqXo/DZyrVEY0qxUrrXyCLaXH3L7HceCJV2bb2uz4a84eF+xbIKMWGPbN1PSE/4+T/BOQqEFiV4mV6eoYrDZdRw+Nt3EGkkG4OnYEfkAHff1gAEJmoAAiAAIgACIAAiAAIgACIAAiAAIgACIAAiAAIgACIAAiAAIgACIAAiAAIn/2Q==" alt=""></button>
+        </div>
+        Copyright © 2026 Pelle Holmström<br>
+        Version 1.2<span id="dbdatum"></span>
+    </footer>
+    <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
+    <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
+    <script src="data.js"></script>
+    <!-- ================================================================== -->
+    <!-- =======================  DATABAS SLUTAR HÄR  ======================= -->
+    <!-- Allt nedanför är programkoden, ändra inte om du bara byter data.     -->
+    <!-- ================================================================== -->
+
+    <script>
+        let lagerData = [];
+        let aktivSort = 'plats';
+        const aktivaTyper = { forbruk: true, galler: true };
+        let fallande = false;
+
+
+        const TEMA_FARGER = { mork: '#0b1120', ljus: '#f5f8f8', bla: '#edf5ff', gron: '#eef7f1', sand: '#f7f0e3' };
+        const temaMeny = document.getElementById('temaMeny');
+        const temaKnapp = document.getElementById('temaKnapp');
+        const temaAlternativ = document.getElementById('temaAlternativ');
+        const temaVal = Array.from(document.querySelectorAll('[data-tema-val]'));
+
+        function uppdateraTemaVal() {
+            const valt = document.documentElement.getAttribute('data-tema') || 'ljus';
+            temaVal.forEach(knapp => {
+                const aktivt = knapp.dataset.temaVal === valt;
+                knapp.setAttribute('aria-checked', String(aktivt));
+                knapp.tabIndex = temaMeny.classList.contains('oppet') ? 0 : -1;
+            });
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', TEMA_FARGER[valt] || TEMA_FARGER.ljus);
+            document.documentElement.style.colorScheme = valt === 'mork' ? 'dark' : 'light';
+        }
+        function valjTema(tema) {
+            if (!Object.prototype.hasOwnProperty.call(TEMA_FARGER, tema)) return;
+            document.documentElement.setAttribute('data-tema', tema);
+            try { localStorage.setItem('tema', tema); } catch (e) {}
+            uppdateraTemaVal();
+            stangTemaMeny(true);
+        }
+        function oppnaTemaMeny() {
+            temaMeny.classList.add('oppet');
+            temaKnapp.setAttribute('aria-expanded', 'true');
+            temaAlternativ.setAttribute('aria-hidden', 'false');
+            uppdateraTemaVal();
+            const valt = temaVal.find(knapp => knapp.getAttribute('aria-checked') === 'true') || temaVal[0];
+            if (valt) valt.focus();
+        }
+        function stangTemaMeny(fokusTillKnapp) {
+            if (!temaMeny.classList.contains('oppet')) return;
+            temaMeny.classList.remove('oppet');
+            temaKnapp.setAttribute('aria-expanded', 'false');
+            temaAlternativ.setAttribute('aria-hidden', 'true');
+            uppdateraTemaVal();
+            if (fokusTillKnapp) temaKnapp.focus();
+        }
+        function vaxlaTema() {
+            if (temaMeny.classList.contains('oppet')) stangTemaMeny(false);
+            else oppnaTemaMeny();
+        }
+        temaKnapp.addEventListener('click', vaxlaTema);
+        temaVal.forEach(knapp => knapp.addEventListener('click', () => valjTema(knapp.dataset.temaVal)));
+        document.addEventListener('pointerdown', event => {
+            if (temaMeny.classList.contains('oppet') && !temaMeny.contains(event.target)) stangTemaMeny(false);
+        });
+        document.addEventListener('focusin', event => {
+            if (temaMeny.classList.contains('oppet') && !temaMeny.contains(event.target)) stangTemaMeny(false);
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && temaMeny.classList.contains('oppet')) {
+                event.preventDefault();
+                stangTemaMeny(true);
+            }
+        });
+        temaAlternativ.addEventListener('keydown', event => {
+            const index = temaVal.indexOf(document.activeElement);
+            let target = null;
+            if (event.key === 'Escape') { event.preventDefault(); stangTemaMeny(true); return; }
+            if (event.key === 'ArrowDown' || event.key === 'ArrowRight') target = temaVal[(index + 1 + temaVal.length) % temaVal.length];
+            if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') target = temaVal[(index - 1 + temaVal.length) % temaVal.length];
+            if (event.key === 'Home') target = temaVal[0];
+            if (event.key === 'End') target = temaVal[temaVal.length - 1];
+            if (target) { event.preventDefault(); target.focus(); }
+        });
+        uppdateraTemaVal();
+
+        function ärGaller(p) { return /^\d+:\d+$/.test(p); }
+
+        function valjSort(v) {
+            aktivSort = v;
+            document.querySelectorAll('[data-sort]').forEach(b => b.classList.toggle('aktiv', b.dataset.sort === v));
+            sökLager();
+        }
+        function valjFilter(v) {
+            const annan = v === 'forbruk' ? 'galler' : 'forbruk';
+            aktivaTyper[v] = !aktivaTyper[v];
+            if (!aktivaTyper[v] && !aktivaTyper[annan]) aktivaTyper[annan] = true; // minst en typ måste vara vald
+            document.querySelectorAll('[data-filter]').forEach(b => b.classList.toggle('aktiv', aktivaTyper[b.dataset.filter]));
+            sökLager();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                if (typeof window.LAGER_CSV !== 'string' || !window.LAGER_CSV.trim()) throw new Error("Hittade inte data.js - ligger den i samma mapp som index.html?");
+                const rawText = window.LAGER_CSV.trim();
+                lagerData = hanteraCSV(rawText);
+                if (window.LAGER_UPPDATERAD) document.getElementById('dbdatum').innerText = ' · Databas ' + window.LAGER_UPPDATERAD;
+                const antalGaller = lagerData.filter(i => ärGaller(i.plats)).length;
+                const tal = n => n.toLocaleString('sv-SE');
+                document.getElementById('antalArtiklar').innerHTML =
+                    `<div class="antal-rubrik">Artiklar i databasen</div><div class="antal-rad">` +
+                    `<div class="antal-kort forbruk"><div class="antal-tal">${tal(lagerData.length - antalGaller)}</div><div class="antal-namn">Fabrikssterilt</div></div>` +
+                    `<div class="antal-kort galler"><div class="antal-tal">${tal(antalGaller)}</div><div class="antal-namn">Instrumentgaller</div></div></div>`;
+            } catch (err) {
+                console.error(err);
+                document.getElementById('antalArtiklar').innerText = "Kunde inte ladda databasen.";
+                document.getElementById('resultatOmråde').innerHTML = "<div class='error'>Fel vid inläsning av data: " + err.message + "</div>";
+            }
+        });
+
+        function hanteraCSV(text) {
+            const rader = text.split('\n');
+            if (rader.length <= 1) return [];
+            let resultat = [];
+            
+            for (let i = 1; i < rader.length; i++) {
+                const rad = rader[i].trim();
+                if (!rad) continue;
+                
+                const värden = rad.split(';');
+                const hämtaCell = (index) => {
+                    if (!värden || värden[index] === undefined || värden[index] === null) return '';
+                    return String(värden[index]).trim();
+                };
+
+                resultat.push({
+                    artnr: hämtaCell(0) || '-',
+                    lev_artnr: hämtaCell(1) || '-',
+                    namn: hämtaCell(2) || 'Namn saknas',
+                    plats: hämtaCell(3) || '-',
+                    bulk: hämtaCell(4)
+                });
+            }
+            return resultat;
+        }
+
+        function esc(t) {
+            return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function ärRiktigPlats(p) {
+            return /^[A-Z]-\d{2}-\d{2}-\d{2}$/.test(p);
+        }
+
+        function toggleClearButton() {
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearBtn');
+            clearBtn.style.display = searchInput.value.length > 0 ? 'flex' : 'none';
+            
+            if (searchInput.value.length === 0) {
+                document.getElementById('resultatOmråde').innerHTML = '';
+            }
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = '';
+            toggleClearButton();
+            document.getElementById('resultatOmråde').innerHTML = '';
+            searchInput.focus();
+        }
+
+        // ---------- Förlåtande sökning ----------
+        // 1) Först en vanlig sökning där å/ä/ö = a/a/o, versaler spelar ingen roll och bindestreck/mellanslag/punkter
+        //    i artikelnummer ignoreras (104-503 hittar 104503).
+        // 2) Om inget hittas provas ord som är felstavade (en bokstav fel, saknas, extra eller ombytt).
+        //    Ord med siffror i (artikelnummer) läses aldrig "ungefär", för ett fel nummer kan ge fel produkt.
+        function sokNorm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+        function sokKompakt(t) { return sokNorm(t).replace(/[^a-z0-9]/g, ''); }
+        function sokForbered(item) {
+            if (item._n !== undefined) return;
+            item._r = (item.artnr + ' ' + item.lev_artnr + ' ' + item.namn).toLowerCase();
+            item._n = sokNorm(item.artnr + ' ' + item.lev_artnr + ' ' + item.namn);
+            item._k = [sokKompakt(item.artnr), sokKompakt(item.lev_artnr)];
+            item._t = item._n.split(/[^a-z0-9]+/).filter(Boolean);
+            item._tf = item._t.map(sokFon);                 // ljudlika former (c=k, w=v, ph=f ...)
+            item._tr = item._tf.map(sokRot);                // utan böjningsändelse
+            item._ts = item._tf.map(sokSkelett);            // bara konsonanter
+            item._fk = sokFon(sokKompakt(item.namn));       // hela namnet utan mellanrum, för ihopskrivna sökord
+            item._pd = [sokPlatsDelar(item.plats), sokPlatsDelar(item.bulk)];   // platsen delad i delar, för sökning på hylla
+        }
+        // Skriver om ord så att sådant som låter lika blir lika: katheter/cateter -> kateter, compress -> kompress,
+        // dubbla bokstäver blir en, y=i, w=v, ph=f, ch/sh/tj = sj
+        function sokFon(w) {
+            return w.replace(/ph/g, 'f').replace(/w/g, 'v').replace(/ck/g, 'k')
+                .replace(/sch|sh|ch|tj|kj/g, 'sj').replace(/c(?=[eiy])/g, 's').replace(/c/g, 'k')
+                .replace(/q/g, 'k').replace(/z/g, 's').replace(/x/g, 'ks').replace(/y/g, 'i')
+                .replace(/th/g, 't').replace(/[hgdl]j/g, 'j').replace(/(.)\1+/g, '$1');
+        }
+        // Tar bort vanlig böjningsändelse (sprutor, sprytor, spruta -> sprut/sprit)
+        function sokRot(w) {
+            for (const suf of ['arna', 'erna', 'orna', 'ande', 'ade', 'ar', 'er', 'or', 'en', 'et', 'na', 'a', 'e', 'n', 's']) {
+                if (w.length - suf.length >= 4 && w.endsWith(suf)) return w.slice(0, -suf.length);
+            }
+            return w;
+        }
+        // Antal "fel" mellan två ord (ombytta grannbokstäver räknas som ett), avbryter när det blir över max
+        function sokAvstand(a, b, max) {
+            const la = a.length, lb = b.length;
+            if (Math.abs(la - lb) > max) return max + 1;
+            let prev2 = null, prev = Array.from({ length: lb + 1 }, (_, j) => j);
+            for (let i = 1; i <= la; i++) {
+                const cur = [i];
+                let minRad = i;
+                for (let j = 1; j <= lb; j++) {
+                    let v = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+                    if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) v = Math.min(v, prev2[j - 2] + 1);
+                    cur[j] = v; if (v < minRad) minRad = v;
+                }
+                if (minRad > max) return max + 1;
+                prev2 = prev; prev = cur;
+            }
+            return prev[lb];
+        }
+        // Böjd form (handskar -> handske, sprutor -> spruta): provar att ta bort vanliga ändelser och väljer den
+        // längsta stammen som faktiskt finns i någon artikel.
+        function sokStam(w) {
+            let basta = null;
+            for (const suf of ['arna', 'erna', 'orna', 'ande', 'ade', 'ar', 'er', 'or', 'en', 'et', 'na', 'a', 'e', 'n', 's']) {
+                if (!w.endsWith(suf) || w.length - suf.length < 4) continue;
+                const stam = w.slice(0, -suf.length);
+                if ((!basta || stam.length > basta.length) && lagerData.some(i => i._n.includes(stam))) basta = stam;
+            }
+            return basta;
+        }
+        function sokKompaktTraff(item, ord) {
+            const cw = sokKompakt(ord);
+            return cw.length >= 3 && (item._k[0].includes(cw) || item._k[1].includes(cw));
+        }
+        // Steg 1: som förut (exakt text), plus att bindestreck/mellanslag i nummer ignoreras
+        function sokOrdExakt(item, ord) { return item._r.includes(ord.toLowerCase()) || sokKompaktTraff(item, ord); }
+        // Steg 2: å/ä/ö räknas som a/a/o
+        function sokOrdTraff(item, ord) { return item._n.includes(sokNorm(ord)) || sokKompaktTraff(item, ord); }
+        // Hur många fel tillåts i ett ord. Nivå 2 är den mer toleranta som bara används om nivå 1 inte hittar något.
+        function sokMax(len, niva) {
+            if (niva === 1) return len >= 9 ? 3 : (len >= 6 ? 2 : 1);
+            if (niva === 2) return len >= 12 ? 4 : (len >= 8 ? 3 : (len >= 6 ? 2 : 1));
+            return len >= 11 ? 5 : (len >= 8 ? 4 : (len >= 6 ? 3 : (len >= 5 ? 2 : 1)));      // nivå 3: mycket tolerant
+        }
+        // Konsonantskelett: "kateter" -> "ktr". Hittar ord där vokalerna blivit fel.
+        function sokSkelett(w) { return w.replace(/[aeiouy]/g, ''); }
+        // Poäng för hur väl ett sökord liknar något i artikeln (0 = bäst). Oändligt = ingen likhet.
+        // Man har oftast rätt första bokstav, så på nivå 1 måste den stämma.
+        function sokOrdPoang(item, ord, stam, niva) {
+            const w = sokKompakt(ord);
+            if (w.length < 4 || /\d/.test(w)) return Infinity;
+            const wf = sokFon(w), max = sokMax(w.length, niva), rot = sokRot(wf);
+            if (wf.length < 3 || new Set(wf).size < 3) return Infinity;       // t.ex. "qqqqq" ska inte ge träffar
+            const forsta = niva === 1;
+            const sk = niva >= 3 ? sokSkelett(wf) : '';
+            let basta = (stam && item._n.includes(stam)) ? 1 : Infinity;
+            for (let i = 0; i < item._tf.length && basta > 0; i++) {
+                const t = item._tf[i];
+                // Hela ordet
+                if (Math.abs(t.length - wf.length) <= max && (!forsta || t[0] === wf[0])) {
+                    const d = sokAvstand(wf, t, max); if (d <= max && d < basta) basta = d;
+                }
+                // Samma ord utan böjningsändelse
+                const tr = item._tr[i];
+                if (rot.length >= 4 && tr.length >= 4 && (!forsta || tr[0] === rot[0])) {
+                    const rm = rot.length >= 7 ? 2 : 1;
+                    const d = sokAvstand(rot, tr, rm) + 0.5; if (d <= rm + 0.5 && d < basta) basta = d;
+                }
+                // Nivå 3: samma konsonanter (kataetr ~ kateter, hartstrumpa ~ hjärtstrumpa)
+                if (sk.length >= 4) {
+                    const ts = item._ts[i];
+                    if (Math.abs(ts.length - sk.length) <= 1) {
+                        const dm = sk.length >= 6 ? 1 : 0, d0 = sokAvstand(sk, ts, dm);
+                        if (d0 <= dm && d0 + 1.5 < basta) basta = d0 + 1.5;
+                    }
+                }
+                // Del av ett sammansatt ord (gasvävskompress)
+                if (w.length >= 6 && t.length > wf.length - max) {
+                    for (let L = wf.length - 1; L <= wf.length + 1; L++) {
+                        for (let st = 0; st + L <= t.length; st++) {
+                            if (forsta && t[st] !== wf[0]) continue;
+                            const d = sokAvstand(wf, t.substr(st, L), max) + 0.75;
+                            if (d <= max + 0.75 && d < basta) basta = d;
+                        }
+                    }
+                }
+            }
+            if (niva >= 3 && basta > 0.4 * w.length) return Infinity;        // för många fel i förhållande till ordets längd = gissa inte
+            return basta;
+        }
+        // Flera sökord som egentligen är ett ord ("gas väv kompress"): prövas mot hela namnet utan mellanrum
+        function sokIhopPoang(item, ord, niva) {
+            const wf = sokFon(sokKompakt(ord)), max = sokMax(wf.length, niva), t = item._fk;
+            if (wf.length < 6 || /\d/.test(wf) || new Set(wf).size < 3) return Infinity;
+            let basta = Infinity;
+            for (let L = wf.length - 1; L <= wf.length + 1; L++) {
+                for (let st = 0; st + L <= t.length; st++) {
+                    if (niva === 1 && t[st] !== wf[0]) continue;
+                    const d = sokAvstand(wf, t.substr(st, L), max) + 1;
+                    if (d <= max + 1 && d < basta) basta = d;
+                }
+            }
+            return basta;
+        }
+        // Behåller bara de bästa träffarna (så att "infusionkran" visar infusionskranar och inte alla kanyler)
+        function sokBasta(par) {
+            if (!par.length) return [];
+            const min = Math.min(...par.map(x => x[1]));
+            return par.filter(x => x[1] <= min + 1).map(x => x[0]);
+        }
+
+        // ---------- Sök på hylla ----------
+        // Skriver man en plats, helt eller bara början (E-05, E-05-04, BD-06 eller 12: för galler), visas allt som står där.
+        // Platsen delas i delar (E, 5, 4, 1) och jämförs från början, så E-5 och e 05 ger samma svar som E-05.
+        function sokPlatsDelar(t) {
+            return (String(t || '').match(/[A-Za-z]+|\d+/g) || []).map(x => /^\d+$/.test(x) ? String(parseInt(x, 10)) : x.toUpperCase());
+        }
+        function sokPlatsFraga(raw) {
+            const t = String(raw || '').trim();
+            if (!t || t.length > 14) return null;
+            if (/^\d{1,3}:\d{0,3}$/.test(t) || /^[A-Za-z]{1,3}[-\s]?\d{1,3}([-\s]?\d{1,3}){0,3}$/.test(t)) {
+                const d = sokPlatsDelar(t);
+                return d.length ? d : null;
+            }
+            return null;
+        }
+        function sokPlatsVisa(d) {                     // delarna som en vanlig plats: E-05-04 eller 12:3
+            if (/^\d+$/.test(d[0])) return d.join(':') + (d.length === 1 ? ':' : '');
+            return d.map((x, i) => (i && x.length < 2) ? '0' + x : x).join('-');
+        }
+        function sokPlatsTraff(item, delar) {
+            return item._pd.some(pd => pd.length >= delar.length && delar.every((x, i) => pd[i] === x));
+        }
+
+        // ---- Statistik: skickar söktext, antal träffar och tid till den egna statistiktjänsten (tomt = av). Ingen info om vem som söker.
+        const STAT_URL = 'https://sterilsok-stat.pelle-holmstrom.workers.dev/';          // t.ex. 'https://lagersok-stat.dittnamn.workers.dev' – lämna tom för att stänga av
+        let statTimer = null, statSist = '', statKalla = 0;     // statKalla: 1 = sökningen kom från kameran
+        function statEnhet() {                       // vilken sorts enhet söker? (utan att identifiera personen)
+            const ua = navigator.userAgent || '', touch = navigator.maxTouchPoints > 1;
+            const ipad = /iPad/.test(ua) || (/Macintosh/.test(ua) && touch);
+            const surf = ipad || (/Android/.test(ua) && !/Mobile/.test(ua)) || /Tablet/i.test(ua);
+            const mobil = !surf && (/Mobi|iPhone|iPod|Android/.test(ua));
+            const e = surf ? 'surfplatta' : mobil ? 'mobil' : 'dator';
+            const o = /Android/.test(ua) ? 'Android' : (/iPhone|iPod/.test(ua) || ipad) ? 'iOS' : /CrOS/.test(ua) ? 'ChromeOS' :
+                      /Windows/.test(ua) ? 'Windows' : /Macintosh/.test(ua) ? 'Mac' : /Linux/.test(ua) ? 'Linux' : 'Annat';
+            const b = /Edg\//.test(ua) ? 'Edge' : /OPR\/|Opera/.test(ua) ? 'Opera' : /SamsungBrowser/.test(ua) ? 'Samsung' :
+                      /Firefox|FxiOS/.test(ua) ? 'Firefox' : /Chrome|CriOS/.test(ua) ? 'Chrome' : /Safari/.test(ua) ? 'Safari' : 'Annan';
+            let a = 0; try { a = (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) ? 1 : 0; } catch (x) {}
+            return { e, o, a, b };
+        }
+        function statSkicka(data) {
+            if (!STAT_URL) return;
+            try { fetch(STAT_URL.replace(/\/$/, '') + '/log', { method: 'POST', body: JSON.stringify(Object.assign(data, statEnhet())), keepalive: true, mode: 'cors' }).catch(() => {}); } catch (e) {}
+        }
+        function statKameraOppnad() { statSkicka({ q: 'kamera', n: 0, l: 0, k: 2 }); }
+        function statLogga(fraga, antal, liknande, traffKalla) {
+            const kalla = statKalla; statKalla = 0;
+            if (!STAT_URL) return;
+            clearTimeout(statTimer);
+            fraga = String(fraga || '').trim();
+            if (fraga.length < 2 || fraga.toLowerCase() === statSist) return;
+            statTimer = setTimeout(() => {          // skickas först när man slutat skriva en stund
+                statSist = fraga.toLowerCase();
+                // s = träffkälla: "artikel" | "galler" | "båda" | "utan"
+                statSkicka({ q: fraga.slice(0, 60), n: antal, l: liknande ? 1 : 0, k: kalla, s: traffKalla || 'utan' });
+            }, 2500);
+        }
+
+        function sökLager() {
+            const sökord = document.getElementById('searchInput').value.trim().toLowerCase();
+            const ordLista = sökord.split(/\s+/).filter(Boolean);
+            const t0 = performance.now();
+            const resultatOmråde = document.getElementById('resultatOmråde');
+            const sortVal = aktivSort;
+            resultatOmråde.innerHTML = ""; 
+            
+            if (!sökord) { document.getElementById('söktid').textContent = ''; return; }
+
+            lagerData.forEach(sokForbered);
+            const platsFraga = sokPlatsFraga(document.getElementById('searchInput').value);
+            let hittade = platsFraga ? lagerData.filter(item => sokPlatsTraff(item, platsFraga)) : [];
+            const platsLista = hittade.length > 0;
+            if (!platsLista) hittade = lagerData.filter(item => ordLista.every(ord => sokOrdExakt(item, ord)));
+            let liknande = false;
+            if (hittade.length === 0) hittade = lagerData.filter(item => ordLista.every(ord => sokOrdTraff(item, ord)));
+            if (hittade.length === 0) {
+                // Inget alls: prova böjda former och ord som är felstavade, först strängt (nivå 1), sedan toleranta (nivå 2)
+                const stammar = ordLista.map(ord => { const w = sokKompakt(ord); return /\d/.test(w) ? null : sokStam(w); });
+                const poangVarje = (niva) => {
+                    const par = [];
+                    lagerData.forEach(item => {
+                        let sum = 0;
+                        for (let k = 0; k < ordLista.length; k++) {
+                            if (sokOrdTraff(item, ordLista[k])) continue;
+                            const pk = sokOrdPoang(item, ordLista[k], stammar[k], niva);
+                            if (pk === Infinity) { sum = Infinity; break; }
+                            sum += pk;
+                        }
+                        if (sum !== Infinity) par.push([item, sum]);
+                    });
+                    return par;
+                };
+                const poangIhop = (niva) => {
+                    const par = [];
+                    if (ordLista.length < 2) return par;
+                    const ihop = ordLista.join('');
+                    lagerData.forEach(item => { const pk = sokIhopPoang(item, ihop, niva); if (pk !== Infinity) par.push([item, pk]); });
+                    return par;
+                };
+                for (const niva of [1, 2, 3]) {
+                    let par = poangVarje(niva);
+                    if (!par.length) par = poangIhop(niva);
+                    if (par.length) { hittade = sokBasta(par); break; }
+                }
+                liknande = hittade.length > 0;
+                // Sista utväg: artiklar som matchar alla ord utom ett (aldrig ett nummer som inte stämmer)
+                if (!hittade.length && ordLista.length >= 2) {
+                    const par = [];
+                    lagerData.forEach(item => {
+                        let saknas = 0, sum = 0;
+                        for (let k = 0; k < ordLista.length; k++) {
+                            if (sokOrdTraff(item, ordLista[k])) continue;
+                            const pk = /\d/.test(ordLista[k]) ? Infinity : sokOrdPoang(item, ordLista[k], stammar[k], 3);
+                            if (pk === Infinity) { saknas++; if (saknas > 1 || /\d/.test(ordLista[k])) { sum = Infinity; break; } sum += 10; }
+                            else sum += pk;
+                        }
+                        if (sum !== Infinity && saknas === 1) par.push([item, sum]);
+                    });
+                    const bra = sokBasta(par);
+                    if (bra.length && bra.length <= 80) { hittade = bra; liknande = 'delvis'; }
+                }
+            }
+
+            // Träffkälla räknas före filtret, annars ljuger den när en typ är avstängd
+            const harArtikel = hittade.some(i => !ärGaller(i.plats));
+            const harGaller = hittade.some(i => ärGaller(i.plats));
+            const traffKalla = !hittade.length ? 'utan' : (harArtikel && harGaller) ? 'båda' : harArtikel ? 'artikel' : 'galler';
+
+            hittade = hittade.filter(i => aktivaTyper[ärGaller(i.plats) ? 'galler' : 'forbruk']);
+
+            const coll = (x, y) => x.localeCompare(y, 'sv', { numeric: true, sensitivity: 'base' });
+            const dir = fallande ? -1 : 1;
+            const saknas = v => !v || v === '-';
+
+            hittade.sort((a, b) => {
+                if (sortVal === 'plats') {
+                    // Förbrukning (A-01-01-01) först, därefter gallren (hylla:fack), sist okända platser
+                    const grp = p => ärRiktigPlats(p) ? 0 : (ärGaller(p) ? 1 : 2);
+                    const ga = grp(a.plats), gb = grp(b.plats);
+                    if (ga !== gb) return ga - gb;
+                    let c;
+                    if (ga === 1) {
+                        const [a1, a2] = a.plats.split(':').map(Number);
+                        const [b1, b2] = b.plats.split(':').map(Number);
+                        c = (a1 - b1) || (a2 - b2);
+                    } else {
+                        c = coll(a.plats, b.plats);
+                    }
+                    return (c * dir) || coll(a.namn, b.namn);
+                }
+                if (sortVal === 'namn') return coll(a.namn, b.namn) * dir;
+                // Art.nr / Lev.nr: artiklar utan nummer (instrumentgaller) hamnar alltid sist
+                const sa = saknas(a[sortVal]), sb = saknas(b[sortVal]);
+                if (sa !== sb) return sa ? 1 : -1;
+                if (sa && sb) return coll(a.namn, b.namn);
+                return (coll(a[sortVal], b[sortVal]) * dir) || coll(a.namn, b.namn);
+            });
+
+            if (hittade.length > 0) {
+                let tabellHtml = `<div class="table-responsive"><table class="result-table"><thead><tr><th>Produktinformation</th><th style="text-align: center; padding: 0 12px 4px 4px;">Plats</th></tr></thead><tbody>`;
+                hittade.forEach(artikel => {
+                    const gallerPlats = /^\d+:\d+$/.test(artikel.plats);
+                    const artInfo = gallerPlats ? '' : `<div class="art-info-block"><span class="art-no-wrap">Art. Nr: ${esc(artikel.artnr)}</span><span class="art-no-wrap">Lev. Art Nr: ${esc(artikel.lev_artnr)}</span></div>`;
+                    const typ = gallerPlats ? 'galler' : 'forbruk';
+                    const typText = gallerPlats ? 'Instrumentgaller' : 'Fabrikssterilt';
+                    tabellHtml += `<tr class="${typ}"><td><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
+                });
+                tabellHtml += `</tbody></table></div>`;
+                resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
+            } else {
+                resultatOmråde.innerHTML = "<div class='error'>🔍 Inga artiklar matchade din sökning i sterilförrådet.</div>";
+            }
+
+            statLogga(document.getElementById('searchInput').value, hittade.length, !!liknande, traffKalla);
+
+            // Mät tid tills svaret är ritat på skärmen
+            requestAnimationFrame(() => setTimeout(() => {
+                const sek = (performance.now() - t0) / 1000;
+                document.getElementById('söktid').textContent =
+                    `Svaret lästes in på ${sek.toFixed(3).replace('.', ',')} sekunder`;
+            }, 0));
+        }
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sökLager();
+        });
+    </script>
+    <script>
+        // ======================= KAMERALÄGE =======================
+        // Läser texten på förpackningen med kameran och letar efter ett nummer som finns i databasen
+        // (leverantörens artikelnummer, "REF", eller vårt eget artikelnummer). Textläsaren (Tesseract.js)
+        // hämtas först när man trycker på kameraknappen, ligger mappen tesseract bredvid sidan används den, annars behövs nät första gången (ca 8 MB).
+        const TESS_JS = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+        const TESS_SPRAK = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int';
+        let kamNummerIndex = null;
+        let kamStrom = null, kamWorker = null, kamWorkerLovar = null;
+        let kamAktiv = false, kamVarv = 0;
+
+        function kamNorm(t) {
+            return String(t || '').toUpperCase().replace(',', '.').replace(/^[^A-Z0-9]+|[^A-Z0-9]+$/g, '');
+        }
+        // Tecken som textläsaren ofta förväxlar
+        function kamFuzz(t) {
+            return t.replace(/[OQD]/g, '0').replace(/[IL]/g, '1').replace(/S/g, '5').replace(/[B3]/g, '8').replace(/Z/g, '2');
+        }
+        function kamByggIndex() {
+            const exakt = new Map(), fuzz = new Map(), slim = new Map();
+            const lagg = (m, nyckel, art) => { if (!m.has(nyckel)) m.set(nyckel, []); m.get(nyckel).push(art); };
+            (typeof lagerData !== 'undefined' ? lagerData : []).forEach(a => {
+                [a.artnr, a.lev_artnr].forEach(v => {
+                    const n = kamNorm(v);
+                    if (n.length < 4 || n === '-') return;
+                    // Vissa nummer är registrerade med prefix och mellanslag, t.ex. "PN 470500".
+                    // Då räcker det att numret efter mellanslaget, eller hela utan mellanslag, hittas.
+                    const nycklar = new Set([n, n.replace(/\s+/g, '')]);
+                    const ord = n.split(/\s+/);
+                    if (ord.length > 1 && ord[ord.length - 1].length >= 4) nycklar.add(ord[ord.length - 1]);
+                    nycklar.forEach(k => {
+                        if (k.length < 4) return;
+                        lagg(exakt, k, a); lagg(fuzz, kamFuzz(k), { n: k, a });
+                        // Utan bindestreck, punkt och snedstreck, så att "AB-123" på förpackningen hittar "AB123" i databasen och tvärtom
+                        const sl = k.replace(/[-./]/g, '');
+                        if (sl !== k && sl.length >= 5) { if (!slim.has(sl)) slim.set(sl, new Set()); slim.get(sl).add(k); }
+                        else if (sl === k && sl.length >= 5) { if (!slim.has(sl)) slim.set(sl, new Set()); slim.get(sl).add(k); }
+                    });
+                });
+            });
+            kamNummerIndex = { exakt, fuzz, slim };
+        }
+        // text -> { exakta: [nummer], osakra: [nummer] }
+        function kameraHittaNummer(text) {
+            if (!kamNummerIndex) kamByggIndex();
+            const { exakt, fuzz, slim } = kamNummerIndex;
+            const exakta = new Set(), osakra = new Set();
+            const ord = String(text || '').split(/[\s:;()\[\]*"'<>=_]+/).filter(Boolean);
+            // Träff på ett nummer som bara skiljer sig i bindestreck, punkt eller snedstreck. Ger databasens egen stavning.
+            const slimTraff = (v) => {
+                const sl = v.replace(/[-./]/g, '');
+                if (sl.length < 5 || !/\d/.test(sl)) return false;
+                const m = slim.get(sl);
+                if (!m || m.size > 3) return false;
+                let ok = false;
+                m.forEach(x => { if (exakt.has(x)) { exakta.add(x); ok = true; } });
+                return ok;
+            };
+            for (let i = 0; i + 1 < ord.length; i++) {       // två ord i följd, t.ex. "DAR 630" eller "REF 852.01"
+                const par = kamNorm(ord[i]) + kamNorm(ord[i + 1]);
+                if (par.length >= 4 && exakt.has(par)) exakta.add(par);
+                else slimTraff(par);
+            }
+            ord.forEach(o => {
+                const n = kamNorm(o);
+                if (n.length < 4) return;
+                const varianter = [n, n.replace(/-\d{1,2}$/, '')];                  // Intuitive skriver "470015-08"
+                if (/^[|!]/.test(o)) varianter.push('I' + n);                        // litet i läses ofta som |
+                if (/^REF./.test(n)) varianter.push(n.slice(3));                     // "REF470015"
+                let traff = false;
+                varianter.forEach(v => { if (v.length >= 4 && exakt.has(v)) { exakta.add(v); traff = true; } });
+                if (!traff) varianter.forEach(v => { if (slimTraff(v)) traff = true; });
+                if (!traff && /\d/.test(n) && n.length >= 5) {
+                    varianter.forEach(v => { const f = fuzz.get(kamFuzz(v)); if (f && v.length >= 5) f.forEach(x => osakra.add(x.n)); });
+                }
+            });
+            exakta.forEach(x => osakra.delete(x));
+            return { exakta: [...exakta], osakra: [...osakra] };
+        }
+
+        function kamStatus(t) { document.getElementById('kameraStatus').textContent = t; }
+        function kamBotten(html) { document.getElementById('kameraBotten').innerHTML = html || ''; }
+
+        // Textläsaren ligger helst i mappen "tesseract" bredvid index.html (då behövs inget internet och inget kan blockeras).
+        // Saknas mappen hämtas den från internet som reserv.
+        function kamLaddaSkript(src) {
+            return new Promise((ok, fel) => {
+                const sc = document.createElement('script');
+                sc.src = src; sc.onload = ok; sc.onerror = () => { sc.remove(); fel(new Error('nät')); };
+                document.head.appendChild(sc);
+            });
+        }
+        function laddaTesseract() {
+            if (kamWorkerLovar) return kamWorkerLovar;
+            kamWorkerLovar = (async () => {
+                let lokal = false;
+                if (!window.Tesseract) {
+                    try { await kamLaddaSkript('tesseract/tesseract.min.js'); lokal = true; }
+                    catch (e) { await kamLaddaSkript(TESS_JS); }
+                }
+                if (lokal) {
+                    const bas = new URL('tesseract/', location.href).href;   // måste vara fullständiga adresser (arbetaren startas från en blob)
+                    try {
+                        kamWorker = await Tesseract.createWorker('eng', 1, { workerPath: bas + 'worker.min.js', corePath: bas, langPath: bas + 'lang', gzip: true });
+                    } catch (e) { kamWorker = null; }       // filer saknas eller är trasiga: använd internet i stället
+                }
+                if (!kamWorker) kamWorker = await Tesseract.createWorker('eng', 1, { langPath: TESS_SPRAK, gzip: true });
+                try { localStorage.setItem('kamAnvand', '1'); } catch (e) {}
+                return kamWorker;
+            })().catch(e => { kamWorkerLovar = null; throw e; });
+            return kamWorkerLovar;
+        }
+
+        // Gör bilden gråskala och drar ut kontrasten, det gör det lättare att läsa grå text på vitt papper
+        function kamForbattra(canvas) {
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            const bild = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const d = bild.data, hist = new Uint32Array(256);
+            for (let i = 0; i < d.length; i += 4) { const g = (d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114) | 0; d[i] = g; hist[g]++; }
+            const tot = d.length / 4;
+            let lag = 0, hog = 255, sum = 0;
+            for (let v = 0; v < 256; v++) { sum += hist[v]; if (sum >= tot * 0.02) { lag = v; break; } }
+            sum = 0;
+            for (let v = 255; v >= 0; v--) { sum += hist[v]; if (sum >= tot * 0.02) { hog = v; break; } }
+            const spann = Math.max(hog - lag, 40);
+            for (let i = 0; i < d.length; i += 4) {
+                const g = Math.max(0, Math.min(255, ((d[i] - lag) * 255 / spann) | 0));
+                d[i] = d[i + 1] = d[i + 2] = g;
+            }
+            ctx.putImageData(bild, 0, 0);
+            return canvas;
+        }
+
+        // Tar en bild ur videon. hel=true: hela bilden, annars bara rutan på skärmen.
+        function kamTaBild(hel) {
+            const v = document.getElementById('kameraVideo');
+            const vw = v.videoWidth, vh = v.videoHeight;
+            if (!vw || !vh) return null;
+            let sx = 0, sy = 0, sw = vw, sh = vh;
+            if (!hel) {
+                // Rutan på skärmen omräknad till bildpunkter i videon (videon fyller skärmen med object-fit: cover)
+                const ram = document.querySelector('.kamera-ram').getBoundingClientRect();
+                const vr = v.getBoundingClientRect();
+                const skala = Math.max(vr.width / vw, vr.height / vh);
+                const offX = (vr.width - vw * skala) / 2, offY = (vr.height - vh * skala) / 2;
+                sx = Math.max(0, (ram.left - vr.left - offX) / skala);
+                sy = Math.max(0, (ram.top - vr.top - offY) / skala);
+                sw = Math.min(vw - sx, ram.width / skala);
+                sh = Math.min(vh - sy, ram.height / skala);
+            }
+            const mal = Math.min(1, (hel ? 1100 : 900) / Math.max(sw, sh));   // mindre bild går snabbare att läsa
+            const c = document.createElement('canvas');
+            c.width = Math.max(1, Math.round(sw * mal)); c.height = Math.max(1, Math.round(sh * mal));
+            c.getContext('2d').drawImage(v, sx, sy, sw, sh, 0, 0, c.width, c.height);
+            return kamForbattra(c);
+        }
+
+        async function kamLas(canvas, psm) {
+            await kamWorker.setParameters({ tessedit_pageseg_mode: String(psm) });
+            const { data } = await kamWorker.recognize(canvas);
+            return data.text || '';
+        }
+
+        function kamVisaVal(exakta, osakra) {
+            const rad = (nr, osaker) => {
+                const art = (kamNummerIndex.exakt.get(nr) || [])[0];
+                return `<button type="button" class="kamera-val" data-nr="${esc(nr)}">${esc(nr)}${art ? `<small>${esc(art.namn)} · ${esc(art.plats)}</small>` : ''}</button>`;
+            };
+            kamStatus(exakta.length ? 'Flera träffar, välj rätt' : 'Menade du något av dessa?');
+            kamBotten(exakta.map(n => rad(n)).concat(osakra.filter(n => kamNummerIndex.exakt.has(n)).map(n => rad(n))).join('') +
+                '<button type="button" class="kamera-igen" onclick="kamStart()">Läs av igen</button>');
+            document.querySelectorAll('.kamera-val').forEach(b => b.onclick = () => kamValj(b.dataset.nr));
+        }
+
+        function kamValj(nr) {
+            stangKamera();
+            const inp = document.getElementById('searchInput');
+            inp.value = nr;
+            toggleClearButton();
+            statKalla = 1; statSist = '';
+            sökLager();
+            try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
+        }
+
+        // Tar emot text och avgör vad som ska hända. Ger true om vi är klara.
+        // Osäkra träffar (t.ex. 3 som lästs i stället för 8) samlas och visas först om inget säkert nummer dyker upp.
+        let kamOsakra = new Set();
+        function kamHantera(text, slutgiltig) {
+            const r = kameraHittaNummer(text);
+            // Står både artikelnummer och leverantörens nummer på etiketten ger de två träffar på samma artikel. Då är det ingen fråga om val.
+            if (r.exakta.length > 1) {
+                const nyckel = nr => (kamNummerIndex.exakt.get(nr) || []).map(a => a.artnr + '|' + a.lev_artnr + '|' + a.plats).sort().join(';');
+                const k0 = nyckel(r.exakta[0]);
+                if (k0 && r.exakta.every(nr => nyckel(nr) === k0)) r.exakta = [r.exakta[0]];
+            }
+            if (r.exakta.length === 1) { kamValj(r.exakta[0]); return true; }
+            if (r.exakta.length > 1) { kamAktiv = false; kamVisaVal(r.exakta, []); return true; }
+            r.osakra.forEach(n => kamOsakra.add(n));
+            if (kamOsakra.size && slutgiltig) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return true; }
+            return false;
+        }
+
+        async function kamStart() {
+            kamAktiv = true; kamVarv = 0; kamOsakra = new Set();
+            kamBotten('');
+            kamStatus('Håll REF-numret i rutan');
+            const klart = Date.now() + 60000;
+            // Oftast bara rutan (snabbast), varannan gång hela bilden ifall numret står utanför rutan
+            const upplagg = [[false, 6], [true, 11], [false, 11], [true, 6], [false, 6], [false, 11]];
+            while (kamAktiv && Date.now() < klart) {
+                const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
+                const bild = kamTaBild(hel);
+                if (!bild) { await new Promise(r => setTimeout(r, 300)); continue; }
+                let text = '';
+                try { text = await kamLas(bild, psm); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
+                if (!kamAktiv) return;
+                if (kamHantera(text, false)) return;
+                if (kamAktiv && kamVarv >= 12 && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
+                await new Promise(r => setTimeout(r, 20));
+            }
+            if (kamAktiv && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
+            if (kamAktiv) {
+                kamAktiv = false;
+                kamStatus('Hittade inget nummer som finns i databasen');
+                kamBotten('<button type="button" class="kamera-igen" onclick="kamStart()">Försök igen</button>');
+            }
+        }
+
+        // Försöker låsa skärmen i stående läge medan kameran är öppen (fungerar på Android; iPhone tillåter det inte i webbläsare)
+        async function kamLasSkarm() {
+            try {
+                const o = screen.orientation;
+                if (!o || !o.lock) return;
+                try { await o.lock('portrait'); kamLast = true; return; } catch (e) {}
+                // Chrome på Android kräver ofta helskärm för att få låsa
+                const el = document.documentElement;
+                if (el.requestFullscreen && !document.fullscreenElement) {
+                    await el.requestFullscreen(); kamHelskarm = true;
+                    await o.lock('portrait'); kamLast = true;
+                }
+            } catch (e) {}
+        }
+        let kamLast = false, kamHelskarm = false;
+        function kamLosSkarm() {
+            try { if (kamLast) screen.orientation.unlock(); } catch (e) {}
+            try { if (kamHelskarm && document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+            kamLast = false; kamHelskarm = false;
+        }
+
+        async function oppnaKamera() {
+            const lager = document.getElementById('kameraLager');
+            lager.hidden = false;
+            kamLasSkarm();
+            kamBotten('');
+            kamStatus('Startar kameran...');
+            try {
+                kamStrom = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } } });
+            } catch (e) {
+                kamStatus('Kameran kunde inte startas. Tillåt kameran för sidan i webbläsarens inställningar.');
+                kamBotten('<button type="button" class="kamera-igen" onclick="document.getElementById(\'kameraFil\').click()">Ta en bild istället</button>');
+                return;
+            }
+            const video = document.getElementById('kameraVideo');
+            video.srcObject = kamStrom;
+            try { await video.play(); } catch (e) {}
+            try { const sp = kamStrom.getVideoTracks()[0]; sp.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(() => {}); } catch (e) {}
+            kamStatus('Hämtar textläsaren... (första gången tar det en stund)');
+            try { await laddaTesseract(); }
+            catch (e) {
+                kamStatus('Kunde inte hämta textläsaren. Kontrollera nätet och försök igen.');
+                kamBotten('<button type="button" class="kamera-igen" onclick="oppnaKamera()">Försök igen</button>');
+                return;
+            }
+            if (document.getElementById('kameraLager').hidden) return;
+            statKameraOppnad();
+            kamStart();
+        }
+
+        function stangKamera() {
+            kamAktiv = false;
+            document.getElementById('kameraLager').hidden = true;
+            kamLosSkarm();
+            if (kamStrom) { kamStrom.getTracks().forEach(t => t.stop()); kamStrom = null; }
+            const v = document.getElementById('kameraVideo'); if (v) v.srcObject = null;
+        }
+
+        // Reserv: en vanlig bild från kameraappen (om live-kameran inte går att använda)
+        document.getElementById('kameraFil').addEventListener('change', async (e) => {
+            const fil = e.target.files && e.target.files[0];
+            e.target.value = '';
+            if (!fil) return;
+            kamStatus('Läser bilden...');
+            try {
+                await laddaTesseract();
+                const bm = await createImageBitmap(fil);
+                const mal = Math.min(1, 1800 / Math.max(bm.width, bm.height));
+                const c = document.createElement('canvas');
+                c.width = Math.round(bm.width * mal); c.height = Math.round(bm.height * mal);
+                c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height);
+                kamForbattra(c);
+                kamOsakra = new Set();
+                for (const psm of [11, 6]) { if (kamHantera(await kamLas(c, psm), psm === 6)) return; }
+                kamStatus('Hittade inget nummer som finns i databasen');
+                kamBotten('<button type="button" class="kamera-igen" onclick="document.getElementById(\'kameraFil\').click()">Ta en ny bild</button>');
+            } catch (err) { kamStatus('Kunde inte läsa bilden'); }
+        });
+
+        document.addEventListener('visibilitychange', () => { if (document.hidden) stangKamera(); });
+
+        // Knappen visas bara på enheter med kamera och pekskärm (alltså inte på vanliga datorer)
+        (function () {
+            try {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.matchMedia('(pointer: coarse)').matches) {
+                    document.getElementById('kameraKnapp').classList.add('finns');
+                    // Har kameran använts förut ligger textläsaren redan sparad. Då förbereds den i bakgrunden så att kameran startar fortare.
+                    let anvand = false; try { anvand = localStorage.getItem('kamAnvand') === '1'; } catch (e) {}
+                    if (anvand) setTimeout(() => { laddaTesseract().catch(() => {}); }, 2500);
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <script>
+        // ======================= MUSIKKNAPPAR =======================
+        // Små knappar längst ner som bara syns vissa dagar. Ett tryck spelar ljudet från en länk (YouTube, SoundCloud, archive.org eller en mp3-fil)
+        // utan att visa något (ingen spelare, inga reglage). Nästa tryck stoppar. Bara en spelar åt gången.
+        (function () {
+            // ---- Inställningar ----
+            const GUNILLA_LJUD = 'https://soundcloud.com/plastpappa/gunilla-persson-i-wont-shake-la-la-gunilla-epa-remix';
+            const MAROCKO_LJUD = 'https://archive.org/details/jil-jilala-nakar-lahsane/%D8%A7%D9%84%D8%B4%D9%85%D8%B9%D8%A9+.mp3';   // Jil Jilala – Chamaa (archive.org)
+            const knappar = [
+                { id: 'fredagKnapp', ljud: GUNILLA_LJUD, syns: d => d.getDay() === 5 },                       // fredagar
+                { id: 'marockoKnapp', ljud: MAROCKO_LJUD, syns: d => d.getMonth() === 6 && d.getDate() === 30 } // 30 juli
+            ];
+            // ---- Slut på inställningar ----
+
+            let aktiv = null;                                  // { knapp, ram }
+            function stoppa() {
+                if (!aktiv) return;
+                if (aktiv.ram.pause) { try { aktiv.ram.pause(); aktiv.ram.removeAttribute('src'); aktiv.ram.load(); } catch (e) {} }
+                else aktiv.ram.remove();                       // tar man bort spelaren tystnar ljudet direkt
+                aktiv.knapp.classList.remove('spelar');
+                aktiv = null;
+            }
+            function skicka(ram, m) { try { ram.contentWindow.postMessage(JSON.stringify(m), '*'); } catch (e) {} }
+            // archive.org/details/ID/FIL.mp3 -> direktlänk till filen
+            function ljudFil(url) {
+                const m = String(url).match(/archive\.org\/(?:details|download)\/([^/?#]+)\/([^?#]+)/);
+                if (m) { let f = m[2].replace(/\+/g, ' '); try { f = decodeURIComponent(f); } catch (e) {} return 'https://archive.org/download/' + m[1] + '/' + encodeURIComponent(f); }
+                return /\.(mp3|m4a|ogg|wav)(\?|#|$)/i.test(url) ? url : null;
+            }
+            function skapaLjud(fil, el) {
+                const a = new Audio();
+                a.preload = 'auto';
+                a.src = fil;
+                a.addEventListener('ended', () => { if (aktiv && aktiv.ram === a) stoppa(); });
+                a.addEventListener('error', () => { if (aktiv && aktiv.ram === a) stoppa(); });
+                const lofte = a.play();                        // måste ske direkt vid trycket, annars blockerar iPhone det
+                if (lofte && lofte.catch) lofte.catch(() => { if (aktiv && aktiv.ram === a) stoppa(); });
+                return a;
+            }
+            function skapaRam(url) {
+                const yt = String(url).match(/(?:youtu\.be\/|[?&]v=|\/embed\/)([\w-]{11})/);
+                const ram = document.createElement('iframe');
+                let typ;
+                if (yt) {
+                    typ = 'yt';
+                    ram.src = 'https://www.youtube.com/embed/' + yt[1] + '?autoplay=1&playsinline=1&controls=0&enablejsapi=1&rel=0&origin=' + encodeURIComponent(location.origin);
+                    ram.allow = 'autoplay; encrypted-media';
+                } else if (/soundcloud\.com/.test(url)) {
+                    typ = 'sc';
+                    ram.src = 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(url) +
+                        '&auto_play=true&visual=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&buying=false&sharing=false&download=false';
+                    ram.allow = 'autoplay';
+                } else return null;
+                ram.title = '';
+                ram.setAttribute('aria-hidden', 'true');
+                ram.tabIndex = -1;
+                // Utanför bild men inte display:none, annars startar inte uppspelningen i alla webbläsare
+                ram.style.cssText = 'position:fixed;left:-400px;top:0;width:300px;height:200px;border:0;opacity:0;pointer-events:none;';
+                ram.addEventListener('load', () => {
+                    if (typ === 'yt') skicka(ram, { event: 'listening', id: 1, channel: 'widget' });
+                    else { skicka(ram, { method: 'addEventListener', value: 'finish' }); skicka(ram, { method: 'play' }); }
+                });
+                return ram;
+            }
+            function visa() {
+                const nu = new Date();
+                knappar.forEach(k => { const el = document.getElementById(k.id); if (el) el.classList.toggle('finns', k.syns(nu)); });
+            }
+            knappar.forEach(k => {
+                const el = document.getElementById(k.id);
+                if (!el) return;
+                el.addEventListener('click', () => {
+                    if (aktiv && aktiv.knapp === el) { stoppa(); return; }
+                    stoppa();
+                    if (!k.ljud) return;                       // ingen länk inlagd ännu
+                    const fil = ljudFil(k.ljud);
+                    if (fil) { aktiv = { knapp: el, ram: null }; const a = skapaLjud(fil, el); aktiv.ram = a; el.classList.add('spelar'); return; }
+                    const ram = skapaRam(k.ljud);
+                    if (!ram) return;
+                    document.body.appendChild(ram);
+                    el.classList.add('spelar');
+                    aktiv = { knapp: el, ram };
+                });
+            });
+            // När låten är slut går knappen tillbaka till startläget
+            window.addEventListener('message', (e) => {
+                if (!aktiv || !aktiv.ram || !aktiv.ram.contentWindow || e.source !== aktiv.ram.contentWindow) return;
+                try {
+                    const d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+                    if (!d) return;
+                    if (d.method === 'ready') { skicka(aktiv.ram, { method: 'addEventListener', value: 'finish' }); skicka(aktiv.ram, { method: 'play' }); }
+                    if (d.method === 'finish' || (d.event === 'onStateChange' && d.info === 0)) stoppa();
+                } catch (x) {}
+            });
+            visa();
+            document.addEventListener('visibilitychange', () => { if (!document.hidden) visa(); });
+        })();
+    </script>
+    <script>
+        // ======================= HJÄLP =======================
+        // Visar hjälp som passar enheten: telefon/platta (pekskärm) eller dator.
+        function hjalpArTelefon() {
+            try { return window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; }
+        }
+        function hjalpArIphone() {
+            const ua = navigator.userAgent || '';
+            return /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        }
+        function hjalpText() {
+            const telefon = hjalpArTelefon();
+            const harKamera = !!document.getElementById('kameraKnapp') && document.getElementById('kameraKnapp').classList.contains('finns');
+            const dot = (farg) => `<span class="prick" style="background:${farg}"></span>`;
+            let h = '';
+            h += `<h3>Så söker du</h3>
+                <p>Skriv produktens namn, vårt artikelnummer eller leverantörens artikelnummer (REF) i sökfältet och tryck ${telefon ? 'på <b>Sök</b>' : 'på <b>Sök</b> eller Enter'}. Skriver du flera ord måste alla finnas i artikeln.</p>
+                <ul>
+                  <li>Det går bra att skriva med eller utan å, ä och ö, och bindestreck i artikelnummer spelar ingen roll.</li>
+                  <li>Vill du se allt som står på en hylla skriver du platsen eller bara början på den, till exempel <b>E-05</b> (hela hyllraden), <b>E-05-04</b> eller <b>12:</b> för alla galler på hylla 12. Bulkplatser fungerar på samma sätt: skriv till exempel <b>BG5</b>, <b>BG-05</b> eller <b>BPA-27</b> så visas allt som står på den bulkplatsen. Det går bra med eller utan bindestreck och nolla.</li>
+                  <li>Om du stavat lite fel eller skrivit en böjd form (handskar i stället för handske) visas liknande artiklar i en <b>gul ruta</b>. Kontrollera då att det är rätt produkt.</li>
+                  <li>Siffror måste vara helt rätt. Ett artikelnummer med en siffra fel ger inga träffar, för att du inte ska få fel produkt.</li>
+                  <li>Under träfflistan står hur snabbt svaret kom.</li>
+                </ul>`;
+            h += `<h3>Visa och sortera</h3>
+                <p><b>Visa</b> väljer om du vill se Fabrikssterilt, Instrumentgaller eller båda. Minst en måste vara vald. <b>Sortera</b> ordnar träffarna efter plats, namn, artikelnummer eller leverantörens nummer.</p>`;
+            h += `<h3>Platsrutorna</h3>
+                <ul>
+                  <li>${dot('#7fb046')}<b>Grön</b>: fabrikssterilt, med hyllplats som <b>E-05-04-01</b>.</li>
+                  <li>${dot('#4687b0')}<b>Blå</b>: instrumentgaller, med plats som <b>12:3</b> (hylla:fack).</li>
+                  <li>${dot('#b04671')}<b>Rosa, märkt BULK</b>: bulkplats. Den visas alltid bredvid hyllplatsen när artikeln också finns i bulk.</li>
+                </ul>`;
+            if (telefon && harKamera) {
+                h += `<h3>Läsa av en förpackning med kameran</h3>
+                <ol>
+                  <li>Tryck på kameraknappen 📷 bredvid Sök. Första gången frågar telefonen om kameran får användas.</li>
+                  <li>Håll telefonen stilla en bit från paketet eller hyllskylten så att numret hamnar i den vita rutan. Det kan vara numret efter <b>REF</b>, <b>Artnr</b> eller <b>Lev.artnr</b>.</li>
+                  <li>Skärmen låses i stående läge medan kameran är öppen (Android). På iPhone kan webbläsaren inte låsa skärmen, så där kan du slå på <b>Lås stående riktning</b> i Kontrollcenter. Håll paketet så att texten går någorlunda vågrätt, lite sned går bra.</li>
+                  <li>Appen läser texten flera gånger i sekunden. När den hittar ett nummer som finns i databasen söker den direkt. Står både artikelnumret och leverantörens nummer på etiketten går den direkt till artikeln. Hittas flera olika artiklar, eller något som bara liknar, väljer du rätt.</li>
+                </ol>
+                <p>Tänk på: första gången hämtas textläsaren (cirka 8 MB), så det behövs nät. Det går bäst med bra ljus och en skarp bild. Streckkoder läses inte, bara tryckt text. Om kameran inte startar kan du välja <b>Ta en bild istället</b>.</p>`;
+            }
+            if (telefon) {
+                if (hjalpArIphone()) {
+                    h += `<h3>Lägg appen på hemskärmen (iPhone)</h3>
+                    <p>Öppna sidan i Safari, tryck på dela-ikonen (rutan med pilen uppåt) och välj <b>Lägg till på hemskärmen</b>. Då startar den som en vanlig app.</p>`;
+                } else {
+                    h += `<h3>Lägg appen på startskärmen (Android)</h3>
+                    <p>Öppna sidan i Chrome, tryck på menyn (tre punkter) och välj <b>Lägg till på startskärmen</b> eller <b>Installera app</b>. Då startar den som en vanlig app.</p>`;
+                }
+            } else {
+                h += `<h3>Kameran</h3>
+                <p>Kameraknappen finns bara på telefoner och plattor, så du ser den inte på datorn.</p>
+                <h3>Installera på datorn</h3>
+                <p>I Chrome eller Edge kan du trycka på installationsikonen längst till höger i adressfältet för att få en egen ikon för appen.</p>`;
+            }
+            h += `<h3>Färgteman</h3>
+                <p>Knappen med färgpaletten uppe till höger växlar mellan olika färgteman. Valet sparas på den här ${telefon ? 'telefonen' : 'datorn'}.</p>
+                <h3>Start, uppdateringar och utan nät</h3>
+                <p>När appen startar visas en startbild en kort stund. Appen sparar sig själv och databasen, startar direkt från den sparade kopian och fungerar även utan täckning efter första besöket. Nyare version och ny databas hämtas i bakgrunden, och sidan laddas om av sig själv om du inte har börjat söka. Längst ner står när databasen senast uppdaterades.</p>`;
+            return h;
+        }
+        function visaHjalp() {
+            document.getElementById('hjalpInnehall').innerHTML = hjalpText();
+            document.getElementById('hjalpLager').hidden = false;
+            document.querySelector('.hjalp-ruta').scrollTop = 0;
+        }
+        function stangHjalp() { document.getElementById('hjalpLager').hidden = true; }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') stangHjalp(); });
+    </script>
+    <script>
+        // Offline-stöd: sparar sidan och databasen i telefonen/datorn.
+        if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+            // Appen startar direkt från sparad kopia; när en nyare version hämtats laddas sidan om om man inte håller på att söka.
+            navigator.serviceWorker.addEventListener('message', e => {
+                if (e.data !== 'ny-version') return;
+                const f = document.getElementById('searchInput');
+                const kam = document.getElementById('kameraLager');
+                if (f && f.value === '' && !(kam && !kam.hidden)) location.reload();
+            });
+        }
+    </script>
+</body>
+</html>
