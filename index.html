@@ -867,7 +867,7 @@
             try { fetch(STAT_URL.replace(/\/$/, '') + '/log', { method: 'POST', body: JSON.stringify(Object.assign(data, statEnhet())), keepalive: true, mode: 'cors' }).catch(() => {}); } catch (e) {}
         }
         function statKameraOppnad() { statSkicka({ q: 'kamera', n: 0, l: 0, k: 2 }); }
-        function statLogga(fraga, antal, liknande) {
+        function statLogga(fraga, antal, liknande, traffKalla) {
             const kalla = statKalla; statKalla = 0;
             if (!STAT_URL) return;
             clearTimeout(statTimer);
@@ -875,7 +875,8 @@
             if (fraga.length < 2 || fraga.toLowerCase() === statSist) return;
             statTimer = setTimeout(() => {          // skickas först när man slutat skriva en stund
                 statSist = fraga.toLowerCase();
-                statSkicka({ q: fraga.slice(0, 60), n: antal, l: liknande ? 1 : 0, k: kalla });
+                // s = träffkälla: "artikel" | "galler" | "båda" | "utan"
+                statSkicka({ q: fraga.slice(0, 60), n: antal, l: liknande ? 1 : 0, k: kalla, s: traffKalla || 'utan' });
             }, 2500);
         }
 
@@ -944,6 +945,11 @@
                 }
             }
 
+            // Träffkälla räknas före filtret, annars ljuger den när en typ är avstängd
+            const harArtikel = hittade.some(i => !ärGaller(i.plats));
+            const harGaller = hittade.some(i => ärGaller(i.plats));
+            const traffKalla = !hittade.length ? 'utan' : (harArtikel && harGaller) ? 'båda' : harArtikel ? 'artikel' : 'galler';
+
             hittade = hittade.filter(i => aktivaTyper[ärGaller(i.plats) ? 'galler' : 'forbruk']);
 
             const coll = (x, y) => x.localeCompare(y, 'sv', { numeric: true, sensitivity: 'base' });
@@ -989,7 +995,7 @@
                 resultatOmråde.innerHTML = "<div class='error'>🔍 Inga artiklar matchade din sökning i sterilförrådet.</div>";
             }
 
-            statLogga(document.getElementById('searchInput').value, hittade.length, !!liknande);
+            statLogga(document.getElementById('searchInput').value, hittade.length, !!liknande, traffKalla);
 
             // Mät tid tills svaret är ritat på skärmen
             requestAnimationFrame(() => setTimeout(() => {
