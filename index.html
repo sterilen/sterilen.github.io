@@ -66,44 +66,22 @@
         button.search-btn:active { transform: scale(0.98); }
 
         .sort-container { display: flex; justify-content: center; width: 100%; margin-bottom: 20px; }
-        .sort-box { display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 10px 16px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; justify-content: center; }
+        .sort-box { display: flex; flex-direction: column; align-items: center; gap: 10px; background: #f8fafc; padding: 12px 10px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; }
         .sort-box label { font-size: 15px; font-weight: 700; color: #475569; white-space: nowrap; }
         .sort-box select { padding: 6px 12px; font-size: 15px; font-weight: 600; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; background-color: #ffffff; color: #0f172a; max-width: 65%; }
 
-        .sort-box { flex-direction: column; align-items: stretch; gap: 10px; }
-        .chip-rad { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-        .chip-rubrik { font-size: 13px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; width: 62px; flex-shrink: 0; text-align: left; }
-        .chip { padding: 8px 13px; font-size: 14px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 999px; cursor: pointer; }
+        .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: center; width: 100%; }
+        .chip-rubrik { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .chip-rad { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 6px; width: 100%; }
+        .chip { flex: 1 1 auto; min-width: 0; white-space: nowrap; text-align: center; padding: 8px 10px; font-size: 14px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 999px; cursor: pointer; }
         .chip:active { transform: scale(0.97); }
         .chip.aktiv { background: #0f172a; color: #ffffff; border-color: #0f172a; }
         .chip[data-filter="forbruk"].aktiv { background: #7fb046; border-color: #7fb046; }
         .chip[data-filter="galler"].aktiv { background: #4687b0; border-color: #4687b0; }
-        .chip.riktning { margin-left: auto; background: #f1f5f9; }
-
-        /* Alla knappar på en rad vardera, även på smala skärmar */
-        .sort-box { padding: 10px 8px; }
-        .chip-rad { flex-wrap: nowrap; gap: 4px; }
-        .chip-rubrik { font-size: 11px; letter-spacing: 0.5px; width: 50px; }
-        .chip { flex: 0 1 auto; min-width: 0; white-space: nowrap; padding: 7px 8px; font-size: 13px; }
-        .chip.riktning { margin-left: auto; }
+        .chip.riktning { flex: 0 0 auto; margin-left: 0; background: #f1f5f9; }
         @media (max-width: 380px) {
-            .chip-rubrik { width: 42px; font-size: 10px; letter-spacing: 0; }
-            .chip { padding: 7px 6px; font-size: 12px; }
+            .chip { font-size: 13px; padding: 8px 6px; }
         }
-
-        /* Rubrik ovanför knapparna, knapparna på en rad */
-        .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: stretch; }
-        .chip-rubrik { width: auto !important; text-align: left; font-size: 12px !important; letter-spacing: 1px !important; }
-        .chip-rad { flex-wrap: nowrap; }
-        .chip { flex: 1 1 auto; text-align: center; font-size: 14px; padding: 8px 6px; }
-        .chip.riktning { flex: 0 0 auto; margin-left: 0; }
-        @media (max-width: 380px) { .chip { font-size: 13px; padding: 8px 4px; } }
-
-        /* Centrerade rubriker och knappar */
-        .chip-grupp { align-items: center; }
-        .chip-rubrik { text-align: center !important; }
-        .chip-rad { justify-content: center; }
-        .chip { flex: 0 1 auto; }
 
         .logo-container { height: auto !important; }
         .logo-img { display: block; width: 100%; max-width: 110px; height: auto; }
@@ -510,7 +488,7 @@
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
-    <script src="data.js"></script>
+    <script src="data.js?v=" + Date.now()></script>
     <!-- ================================================================== -->
     <!-- =======================  DATABAS SLUTAR HÄR  ======================= -->
     <!-- Allt nedanför är programkoden, ändra inte om du bara byter data.     -->
@@ -1388,6 +1366,7 @@
     <script>
         // ======================= HJÄLP =======================
         // Visar hjälp som passar enheten: telefon/platta (pekskärm) eller dator.
+        function debounce(fn, ms){ let t; return function(...a){ clearTimeout(t); t=setTimeout(()=>fn.apply(this,a), ms); }; }
         function hjalpArTelefon() {
             try { return window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; }
         }
@@ -1456,9 +1435,23 @@
         document.addEventListener('keydown', e => { if (e.key === 'Escape') stangHjalp(); });
     </script>
     <script>
+        // Debounce sökningen för bättre prestanda på äldre telefoner
+        try {
+            const origSearch = window.sok || window.search;
+            if (typeof origSearch === 'function') {
+                const debounced = debounce(origSearch, 250);
+                const inp = document.getElementById('searchInput');
+                if (inp) {
+                    inp.removeEventListener('input', origSearch);
+                    inp.addEventListener('input', debounced);
+                }
+            }
+        } catch(e) {}
+    </script>
+    <script>
         // Offline-stöd: sparar sidan och databasen i telefonen/datorn.
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js?v=2').catch(() => {}); });
             // Appen startar direkt från sparad kopia; när en nyare version hämtats laddas sidan om om man inte håller på att söka.
             navigator.serviceWorker.addEventListener('message', e => {
                 if (e.data !== 'ny-version') return;
