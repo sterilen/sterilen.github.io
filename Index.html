@@ -1519,7 +1519,16 @@
                   <li>Skärmen låses i stående läge medan kameran är öppen (Android). På iPhone kan webbläsaren inte låsa skärmen, så där kan du slå på <b>Lås stående riktning</b> i Kontrollcenter. Håll paketet så att texten går någorlunda vågrätt, lite sned går bra.</li>
                   <li>Appen läser texten flera gånger i sekunden. När den hittar ett nummer som finns i databasen söker den direkt. Står både artikelnumret och leverantörens nummer på etiketten går den direkt till artikeln. Hittas flera olika artiklar, eller något som bara liknar, väljer du rätt.</li>
                 </ol>
-                <p>Tänk på: första gången hämtas textläsaren (cirka 8 MB), så det behövs nät. Det går bäst med bra ljus och en skarp bild. Streckkoder läses inte, bara tryckt text. Om kameran inte startar kan du välja <b>Ta en bild istället</b>.</p>`;
+                <p>Tänk på: första gången hämtas textläsaren (cirka 8 MB), så det behövs nät. Det går bäst med bra ljus och en skarp bild. Streckkoder läses inte, bara tryckt text. Om kameran inte startar kan du välja <b>Ta en bild istället</b>.</p>
+                <h3>Städning – scanna QR på raden</h3>
+                <ol>
+                  <li>På utsidan av varje rad sitter en lapp märkt <b>STÄDNING</b> och radens namn, t.ex. <b>A</b>, <b>BG</b>.</li>
+                  <li>Tryck på samma kameraknapp 📷 som för artikelnummer och håll mot QR-koden på lappen.</li>
+                  <li>Appen känner automatiskt igen att det är en städ-QR (den innehåller <b>rad=E</b> eller <b>STÄDNING</b>) och frågar <b>Vem städade?</b></li>
+                  <li>Välj ditt namn och tryck OK – raden markeras som städad denna vecka. Namnet sparas till nästa gång.</li>
+                  <li>I Admin under fliken STÄDNING blir raden grön direkt.</li>
+                </ol>
+                <p>Tips: Du behöver inte öppna stad.html separat – Lagersök-appens kamera klarar både artikelnummer och städning.</p>`;
             }
             if (telefon) {
                 if (hjalpArIphone()) {
