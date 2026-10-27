@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#7fb046">
+<title>STÄDNING – Sterilförrådet</title>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif}
+body{background:#f8fafc;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.wrap{width:100%;max-width:420px}
+.kort{background:#fff;border-radius:20px;padding:22px;box-shadow:0 10px 25px rgba(0,0,0,.06),0 0 0 1px rgba(0,0,0,.03)}
+.top{font-size:12px;font-weight:800;letter-spacing:1.5px;color:#64748b;text-align:center}
+.rad{font-size:64px;font-weight:900;text-align:center;color:#0f172a;margin:8px 0 2px;line-height:1}
+.meta{text-align:center;margin-bottom:14px}
+.badge{display:inline-block;background:#f1f5f9;padding:6px 10px;border-radius:8px;font-size:13px;font-weight:700;color:#334155}
+.label{font-size:13px;font-weight:700;color:#475569;margin:14px 0 6px}
+.input{width:100%;padding:14px 14px;border:2px solid #e2e8f0;border-radius:12px;font-size:17px;background:#f8fafc;outline:none}
+.input:focus{border-color:#7fb046;background:#fff;box-shadow:0 0 0 3px rgba(127,176,70,.2)}
+.btn{width:100%;padding:14px;border:0;border-radius:12px;font-size:17px;font-weight:800;cursor:pointer}
+.btn.gron{background:#7fb046;color:#fff;margin-top:14px}
+.btn.gron:disabled{background:#cbd5e1}
+.btn.sec{background:#e2e8f0;color:#334155;margin-top:8px}
+.ok{display:none;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;padding:12px;border-radius:10px;margin-top:12px;text-align:center;font-weight:700}
+.err{display:none;background:#fef2f2;border:1px solid #fecaca;color:#7f1d1d;padding:12px;border-radius:10px;margin-top:12px;text-align:center}
+.small{font-size:11px;color:#94a3b8;text-align:center;margin-top:12px}
+#reader{width:100%;border-radius:12px;overflow:hidden;display:none;margin-top:12px}
+.row{display:flex;gap:8px;margin-top:12px}
+.row .btn{flex:1;margin-top:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kort">
+    <div class="top">STÄDNING</div>
+    <div class="rad" id="radVis">–</div>
+    <div class="meta"><span class="badge" id="veckaVis">–</span> <span id="datumVis" style="font-size:12px;color:#64748b"></span></div>
+
+    <div class="row">
+      <button class="btn sec" id="btnScan">📷 Scanna QR</button>
+      <button class="btn sec" id="btnMan">⌨️ Välj rad</button>
+    </div>
+    <div id="reader"></div>
+
+    <div class="label">Vem städade?</div>
+    <input id="vem" class="input" list="namnLista" placeholder="T.ex. Anna" autocomplete="name">
+    <datalist id="namnLista"></datalist>
+
+    <button class="btn gron" id="btn">✓ Markera som städad</button>
+    <div class="ok" id="ok"></div>
+    <div class="err" id="err"></div>
+    <div class="small">QR sitter på utsidan av varje rad. Samma kamera som i Lagersök-appen. En rad per vecka.</div>
+  </div>
+</div>
+<script>
+const STAT_URL = "https://sterilsok-stat.pelle-holmstrom.workers.dev";
+const KANDA = ["A","B","C","D","E","F","G","H","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","BG","BPA","GALLER"];
+const params = new URLSearchParams(location.search);
+let rad = (params.get("rad")||"").toUpperCase().trim();
+const radVis = document.getElementById("radVis");
+function setRad(r){
+  rad = r.toUpperCase().trim();
+  radVis.textContent = rad || "–";
+}
+setRad(rad);
+
+function isoVecka(d){
+  const date = new Date(d);
+  date.setHours(0,0,0,0);
+  date.setDate(date.getDate() + 3 - (date.getDay()+6)%7);
+  const week1 = new Date(date.getFullYear(),0,4);
+  const week = 1 + Math.round(((date - week1)/86400000 -3 + (week1.getDay()+6)%7)/7);
+  return date.getFullYear()+"-W"+String(week).padStart(2,"0");
+}
+const now = new Date();
+document.getElementById("veckaVis").textContent = isoVecka(now);
+document.getElementById("datumVis").textContent = now.toLocaleDateString("sv-SE");
+const VECKA = isoVecka(now);
+
+try{
+  const namn = JSON.parse(localStorage.getItem("stad_namn")||"[]");
+  const dl = document.getElementById("namnLista");
+  namn.forEach(n=>{ const o=document.createElement("option"); o.value=n; dl.appendChild(o); });
+  const sen = localStorage.getItem("stad_senaste_namn")||"";
+  if(sen) document.getElementById("vem").value = sen;
+}catch(e){}
+
+function parseQR(txt){
+  if(!txt) return null;
+  txt=String(txt).trim();
+  let m = txt.match(/[?&]rad=([A-Z0-9]+)/i);
+  if(m) return m[1].toUpperCase();
+  m = txt.match(/STÄDNING[:\s]*([A-Z0-9]+)/i);
+  if(m) return m[1].toUpperCase();
+  if(KANDA.includes(txt.toUpperCase())) return txt.toUpperCase();
+  try{ const u=new URL(txt); const r=u.searchParams.get("rad"); if(r) return r.toUpperCase(); }catch(e){}
+  const t2 = txt.replace(/[^A-Z0-9]/gi,'').toUpperCase();
+  if(KANDA.includes(t2)) return t2;
+  return null;
+}
+
+let scanner=null;
+document.getElementById("btnScan").onclick = async ()=>{
+  const reader = document.getElementById("reader");
+  if(scanner){
+    try{ await scanner.stop(); }catch(e){}
+    scanner.clear(); scanner=null;
+    reader.style.display="none";
+    document.getElementById("btnScan").textContent="📷 Scanna QR";
+    return;
+  }
+  reader.style.display="block";
+  document.getElementById("btnScan").textContent="✕ Stäng kamera";
+  scanner = new Html5Qrcode("reader");
+  scanner.start({facingMode:"environment"},{fps:10,qrbox:{width:250,height:250}},(dec)=>{
+    const r = parseQR(dec);
+    if(r){
+      setRad(r);
+      document.getElementById("ok").style.display="block";
+      document.getElementById("ok").textContent="QR avläst: Rad "+r+" – fyll i namn och spara.";
+      scanner.stop().then(()=>{ reader.style.display="none"; document.getElementById("btnScan").textContent="📷 Scanna QR"; });
+      if(navigator.vibrate) navigator.vibrate(100);
+    }
+  },()=>{}).catch(e=>{
+    document.getElementById("err").style.display="block";
+    document.getElementById("err").textContent="Kunde inte starta kamera: "+e;
+  });
+};
+
+document.getElementById("btnMan").onclick = ()=>{
+  const r = prompt("Ange rad (A, B, BG, GALLER...):", rad||"");
+  if(r) setRad(r);
+};
+
+async function skicka(){
+  const vem = document.getElementById("vem").value.trim();
+  const okEl = document.getElementById("ok");
+  const errEl = document.getElementById("err");
+  const btn = document.getElementById("btn");
+  if(!rad){ errEl.textContent="Ingen rad – scanna QR eller välj manuellt."; errEl.style.display="block"; return; }
+  if(!vem){ errEl.textContent="Fyll i ditt namn"; errEl.style.display="block"; return; }
+  btn.disabled=true; btn.textContent="Sparar..."; errEl.style.display="none";
+  try{
+    const payload = {rad: rad, plats: rad, vem: vem, vecka: VECKA, tid: new Date().toISOString(), kalla:"stad-fristående-snygg"};
+    const res = await fetch(STAT_URL+"/stad",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    if(!res.ok) throw new Error(await res.text());
+    try{
+      let list = JSON.parse(localStorage.getItem("stad_namn")||"[]");
+      list = [vem, ...list.filter(x=>x!==vem)].slice(0,10);
+      localStorage.setItem("stad_namn", JSON.stringify(list));
+      localStorage.setItem("stad_senaste_namn", vem);
+    }catch(e){}
+    okEl.textContent=`Klart! Rad ${rad} städad vecka ${VECKA} av ${vem}`;
+    okEl.style.display="block";
+    btn.textContent="Klar ✓";
+    if(navigator.vibrate) navigator.vibrate([100,50,100]);
+  }catch(e){
+    errEl.textContent="Kunde inte spara: "+e.message;
+    errEl.style.display="block";
+    btn.disabled=false; btn.textContent="✓ Markera som städad";
+  }
+}
+document.getElementById("btn").onclick = skicka;
+document.getElementById("vem").addEventListener("keydown", e=>{ if(e.key==="Enter") skicka(); });
+</script>
+</body>
+</html>
