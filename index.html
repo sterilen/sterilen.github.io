@@ -72,8 +72,8 @@
 
         .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: center; width: 100%; }
         .chip-rubrik { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        .chip-rad { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 6px; width: 100%; }
-        .chip { flex: 1 1 auto; min-width: 0; white-space: nowrap; text-align: center; padding: 8px 10px; font-size: 14px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 999px; cursor: pointer; }
+        .chip-rad { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; width: 100%; }
+        .chip { flex: 0 0 auto; min-width: 0; white-space: nowrap; text-align: center; padding: 8px 14px; font-size: 14px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 999px; cursor: pointer; }
         .chip:active { transform: scale(0.97); }
         .chip.aktiv { background: #0f172a; color: #ffffff; border-color: #0f172a; }
         .chip[data-filter="forbruk"].aktiv { background: #7fb046; border-color: #7fb046; }
@@ -364,17 +364,21 @@
         @keyframes sbSol { from { transform: scale(1); } to { transform: scale(1.06); } }
         @keyframes sbRad { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
 
-        /* Sökhistorik */
-        .hist-box { width:100%; margin-bottom:14px; }
-        .hist-head { display:flex; align-items:center; justify-content:space-between; margin:8px 2px 6px; }
-        .hist-titel { font-size:12px; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:1px; }
-        .hist-rensa { font-size:11px; color:#94a3b8; background:none; border:none; cursor:pointer; text-decoration:underline; }
+        /* Sökhistorik – egen fällbar ruta */
+        .hist-box { width:100%; margin-bottom:16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; }
+        .hist-box-head { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; }
+        .hist-box-head:hover { background:#f1f5f9; }
+        .hist-titel { font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px; }
+        .hist-box-pill { font-size:11px; background:#e2e8f0; color:#475569; padding:2px 8px; border-radius:999px; }
+        .hist-rensa { font-size:11px; color:#94a3b8; background:none; border:none; cursor:pointer; text-decoration:underline; margin-left:8px; }
+        .hist-box-body { display:none; padding:10px 12px 12px; border-top:1px solid #e2e8f0; background:#fff; }
+        .hist-box.open .hist-box-body { display:block; }
+        .hist-box.open .hist-pil { transform: rotate(180deg); }
+        .hist-pil { transition: transform .2s; font-size:12px; color:#94a3b8; }
         .hist-chips { display:flex; flex-wrap:wrap; gap:6px; }
-        .hist-chip { padding:7px 12px; font-size:13px; font-weight:600; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; cursor:pointer; display:inline-flex; align-items:center; gap:6px; max-width:100%; }
+        .hist-chip { padding:7px 12px; font-size:13px; font-weight:600; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; cursor:pointer; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .hist-chip:hover { background:#e2e8f0; }
-        .hist-chip .q { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
-        .hist-chip .meta { font-size:11px; color:#64748b; }
-        .hist-grupp { margin-top:10px; }
+        .hist-grupp { margin-top:12px; }
         .hist-grupp-head { display:flex; align-items:center; gap:6px; cursor:pointer; padding:4px 2px; }
         .hist-grupp-head b { font-size:12px; color:#475569; }
         .hist-grupp-head span { font-size:11px; color:#94a3b8; }
@@ -483,11 +487,16 @@
                     </div>
 
         <div id="histBox" class="hist-box" hidden>
-          <div class="hist-head"><div class="hist-titel">🕓 Senaste sökningar</div><button class="hist-rensa" onclick="rensaHistorik()">Rensa</button></div>
-          <div id="histChips" class="hist-chips"></div>
-          <div class="hist-grupp open" id="histGruppIdag"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Idag</b><span id="histCountIdag"></span></div><div class="hist-grupp-list" id="histListIdag"></div></div>
-          <div class="hist-grupp" id="histGruppIgar"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Igår</b><span id="histCountIgar"></span></div><div class="hist-grupp-list" id="histListIgar"></div></div>
-          <div class="hist-grupp" id="histGruppVecka"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Senaste 7 dagarna</b><span id="histCountVecka"></span></div><div class="hist-grupp-list" id="histListVecka"></div></div>
+          <div class="hist-box-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="hist-titel">🕓 Sökhistorik <span id="histTotalPill" class="hist-box-pill"></span></div>
+            <div style="display:flex;align-items:center;gap:8px"><button class="hist-rensa" onclick="event.stopPropagation(); rensaHistorik()">Rensa</button><span class="hist-pil">▼</span></div>
+          </div>
+          <div class="hist-box-body">
+            <div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:4px">Senaste 5</div><div id="histChips" class="hist-chips"></div></div>
+            <div class="hist-grupp open" id="histGruppIdag"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Idag</b><span id="histCountIdag"></span></div><div class="hist-grupp-list" id="histListIdag"></div></div>
+            <div class="hist-grupp" id="histGruppIgar"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Igår</b><span id="histCountIgar"></span></div><div class="hist-grupp-list" id="histListIgar"></div></div>
+            <div class="hist-grupp" id="histGruppVecka"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Senaste 7 dagarna</b><span id="histCountVecka"></span></div><div class="hist-grupp-list" id="histListVecka"></div></div>
+          </div>
         </div>
 
                 </div>
@@ -908,6 +917,7 @@
           const h = getHist();
           if(!h.length){ box.hidden=true; return; }
           box.hidden=false;
+          const pill = document.getElementById('histTotalPill'); if(pill) pill.textContent = h.length + ' st';
           // 5 senaste
           const chips = document.getElementById('histChips');
           chips.innerHTML='';
@@ -915,7 +925,7 @@
             const el = document.createElement('button');
             el.className='hist-chip';
             el.title = new Date(item.t).toLocaleString('sv-SE');
-            el.innerHTML = '<span class="q">'+esc(item.q)+'</span>' + (item.c!==null?'<span class="meta">'+item.c+' träff</span>':'') + '<span class="meta">'+fmtTid(item.t)+'</span>';
+            el.textContent = item.q;
             el.onclick=()=>anvandHist(item.q);
             chips.appendChild(el);
           });
@@ -936,7 +946,7 @@
             arr.slice(0,20).forEach(item=>{
               const el = document.createElement('button');
               el.className='hist-chip';
-              el.innerHTML = '<span class="q">'+esc(item.q)+'</span>' + (item.c!==null?'<span class="meta">'+item.c+'</span>':'') + '<span class="meta">'+fmtTid(item.t)+'</span>';
+              el.textContent = item.q;
               el.onclick=()=>anvandHist(item.q);
               list.appendChild(el);
             });
@@ -945,31 +955,7 @@
           fill('histListIgar','histCountIgar',igar);
           fill('histListVecka','histCountVecka',vecka);
         }
-
-        
-        function logSearchStat(q, antal, ms){
-          try{
-            if(!q || q.length<2) return;
-            const ts = Date.now();
-            const hasHit = (antal||0) > 0;
-            const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'Mobil' : 'Dator';
-            const isPWA = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ? true : false;
-            let os = 'Okänd'; const ua = navigator.userAgent;
-            if(/Windows/i.test(ua)) os='Windows'; else if(/Android/i.test(ua)) os='Android'; else if(/iPhone|iPad/i.test(ua)) os='iOS'; else if(/Mac/i.test(ua)) os='macOS';
-            let browser = 'Okänd'; if(/Chrome/i.test(ua) && !/Edg/i.test(ua)) browser='Chrome'; else if(/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser='Safari'; else if(/Edg/i.test(ua)) browser='Edge'; else if(/Firefox/i.test(ua)) browser='Firefox';
-            // Format som Admin förväntar sig: [ts, q, hasHit, _, device, os, isPWA, browser, 0]
-            const arr = [ts, q.slice(0,80), hasHit, null, isMobile, os, isPWA, browser, 0];
-            // Skicka både som array och som objekt för kompatibilitet
-            const payload = arr;
-            if(navigator.sendBeacon){
-              try{ navigator.sendBeacon(STAT_URL+'/log', JSON.stringify(payload)); return; }catch(e){}
-            }
-            fetch(STAT_URL+'/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload), keepalive:true}).catch(()=>{});
-          }catch(e){}
-        }
-
-
-                // Visa historik vid start
+        // Visa historik vid start
         document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(renderHist, 300); });
 
 
@@ -1086,12 +1072,11 @@
             // Spara i historik
             try{ addHist(document.getElementById('searchInput').value.trim(), hittade.length); }catch(e){}
 
-            // Mät tid tills svaret är ritat på skärmen + logga statistik
+            // Mät tid tills svaret är ritat på skärmen
             requestAnimationFrame(() => setTimeout(() => {
                 const sek = (performance.now() - t0) / 1000;
                 document.getElementById('söktid').textContent =
                     `Svaret lästes in på ${sek.toFixed(3).replace('.', ',')} sekunder`;
-                try{ logSearchStat(document.getElementById('searchInput').value.trim(), hittade.length, sek*1000); }catch(e){}
             }, 0));
         }
 
