@@ -376,7 +376,9 @@
         .hist-box.open .hist-pil { transform: rotate(180deg); }
         .hist-pil { transition: transform .2s; font-size:12px; color:#94a3b8; }
         .hist-chips { display:flex; flex-wrap:wrap; gap:6px; }
-        .hist-chip { padding:7px 12px; font-size:13px; font-weight:600; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; cursor:pointer; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .hist-chip { padding:7px 10px 7px 12px; font-size:13px; font-weight:600; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; cursor:pointer; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-flex; align-items:center; gap:6px; }
+        .hist-chip-x { width:18px; height:18px; border-radius:50%; background:#cbd5e1; color:#fff; border:none; font-size:10px; font-weight:700; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:0 0 18px; }
+        .hist-chip-x:hover { background:#94a3b8; }
         .hist-chip:hover { background:#e2e8f0; }
         .hist-grupp { margin-top:12px; }
         .hist-grupp-head { display:flex; align-items:center; gap:6px; cursor:pointer; padding:4px 2px; }
@@ -903,6 +905,14 @@
           try{ localStorage.removeItem(HIST_KEY); }catch(e){}
           renderHist();
         }
+        function taBortHistItem(ts){
+          try{
+            let h = getHist();
+            h = h.filter(x=> x.t !== ts);
+            saveHist(h);
+            renderHist();
+          }catch(e){}
+        }
         function anvandHist(q){
           const inp = document.getElementById('searchInput');
           if(inp){ inp.value=q; toggleClearButton(); sökLager(); inp.focus(); }
@@ -922,11 +932,20 @@
           const chips = document.getElementById('histChips');
           chips.innerHTML='';
           h.slice(0,5).forEach(item=>{
-            const el = document.createElement('button');
+            const el = document.createElement('div');
             el.className='hist-chip';
             el.title = new Date(item.t).toLocaleString('sv-SE');
-            el.textContent = item.q;
-            el.onclick=()=>anvandHist(item.q);
+            const txtSpan = document.createElement('span');
+            txtSpan.textContent = item.q;
+            txtSpan.style.cursor='pointer';
+            txtSpan.onclick=()=>anvandHist(item.q);
+            const xBtn = document.createElement('button');
+            xBtn.className='hist-chip-x';
+            xBtn.textContent='✕';
+            xBtn.title='Ta bort';
+            xBtn.onclick=(e)=>{ e.stopPropagation(); taBortHistItem(item.t); };
+            el.appendChild(txtSpan);
+            el.appendChild(xBtn);
             chips.appendChild(el);
           });
           // Grupper
@@ -943,11 +962,21 @@
             list.innerHTML='';
             if(cnt) cnt.textContent = arr.length?`· ${arr.length} st`:'';
             if(!arr.length){ list.innerHTML='<div class="hist-tom">Inga sökningar</div>'; return; }
-            arr.slice(0,20).forEach(item=>{
-              const el = document.createElement('button');
+                        arr.slice(0,20).forEach(item=>{
+              const el = document.createElement('div');
               el.className='hist-chip';
-                          el.textContent = item.q;
-              el.onclick=()=>anvandHist(item.q);
+              el.title = new Date(item.t).toLocaleString('sv-SE');
+              const txtSpan = document.createElement('span');
+              txtSpan.textContent = item.q;
+              txtSpan.style.cursor='pointer';
+              txtSpan.onclick=()=>anvandHist(item.q);
+              const xBtn = document.createElement('button');
+              xBtn.className='hist-chip-x';
+              xBtn.textContent='✕';
+              xBtn.title='Ta bort';
+              xBtn.onclick=(e)=>{ e.stopPropagation(); taBortHistItem(item.t); };
+              el.appendChild(txtSpan);
+              el.appendChild(xBtn);
               list.appendChild(el);
             });
           }
