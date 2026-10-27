@@ -94,8 +94,8 @@
         /* Rubrik ovanför knapparna, knapparna på en rad */
         .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: stretch; }
         .chip-rubrik { width: auto !important; text-align: left; font-size: 12px !important; letter-spacing: 1px !important; }
-        .chip-rad { flex-wrap: wrap; justify-content: center; }
-        .chip { flex: 0 0 auto; text-align: center; font-size: 14px; padding: 8px 14px; }
+        .chip-rad { flex-wrap: nowrap; }
+        .chip { flex: 1 1 auto; text-align: center; font-size: 14px; padding: 8px 6px; }
         .chip.riktning { flex: 0 0 auto; margin-left: 0; }
         @media (max-width: 380px) { .chip { font-size: 13px; padding: 8px 4px; } }
 
@@ -344,30 +344,24 @@
         @media (prefers-reduced-motion:reduce) { .tema-val,.tema-knapp,.header-block { transition:none !important; } .tema-val { transition-delay:0ms; } }
 
     
-        /* Sökhistorik – egen fällbar ruta */
-        .hist-box { width:100%; margin:12px 0; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; }
-        .hist-box-head { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; }
-        .hist-box-head:hover { background:#f1f5f9; }
-        .hist-titel { font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px; }
-        .hist-box-pill { font-size:11px; background:#e2e8f0; color:#475569; padding:2px 8px; border-radius:999px; }
-        .hist-rensa { font-size:11px; color:#94a3b8; background:none; border:none; cursor:pointer; text-decoration:underline; margin-left:8px; }
-        .hist-box-body { display:none; padding:10px 12px 12px; border-top:1px solid #e2e8f0; background:#fff; }
-        .hist-box.open .hist-box-body { display:block; }
-        .hist-box.open .hist-pil { transform: rotate(180deg); }
-        .hist-pil { transition: transform .2s; font-size:12px; color:#94a3b8; }
-        .hist-chips { display:flex; flex-wrap:wrap; gap:6px; }
-        .hist-chip { padding:7px 10px 7px 12px; font-size:13px; font-weight:600; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-flex; align-items:center; gap:6px; }
-        .hist-chip:hover { background:#dbeafe; border-color:#93c5fd; }
-        .hist-chip:hover .hist-chip-x { background:#64748b; }
-        .hist-chip-x { width:18px; height:18px; border-radius:50%; background:#cbd5e1; color:#fff; border:none; font-size:10px; font-weight:700; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:0 0 18px; }
-        .hist-chip-x:hover { background:#ef4444 !important; color:#fff; }
-        .hist-grupp { margin-top:12px; }
-        .hist-grupp-head { display:flex; align-items:center; gap:6px; cursor:pointer; padding:4px 2px; }
-        .hist-grupp-head b { font-size:12px; color:#475569; }
-        .hist-grupp-head span { font-size:11px; color:#94a3b8; }
-        .hist-grupp-list { display:none; flex-wrap:wrap; gap:6px; margin:6px 0 0; }
-        .hist-grupp.open .hist-grupp-list { display:flex; }
-        .hist-tom { font-size:13px; color:#94a3b8; text-align:center; padding:8px; }
+        /* STÄDNING – snygg ruta som ploppar upp efter QR-scan */
+        .stad-lager { position:fixed; inset:0; z-index:1200; background:rgba(15,23,42,0.6); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:16px; }
+        .stad-lager[hidden] { display:none; }
+        .stad-ruta { width:100%; max-width:380px; background:#fff; border:5px solid #111; border-radius:18px; padding:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+        .stad-top { font-size:11px; font-weight:800; letter-spacing:1.5px; color:#8a8a8a; text-align:center; }
+        .stad-rad { font-size:64px; font-weight:900; text-align:center; color:#111; margin:8px 0 4px; line-height:1; letter-spacing:-2px; }
+        .stad-meta { text-align:center; margin-bottom:16px; }
+        .stad-badge { display:inline-block; background:#f1f5f9; border:2px solid #111; padding:6px 12px; border-radius:10px; font-size:13px; font-weight:800; }
+        .stad-label { font-size:13px; font-weight:700; color:#334155; margin:12px 0 6px; display:block; }
+        .stad-input { width:100%; padding:14px; border:3px solid #111; border-radius:12px; font-size:17px; background:#fff; outline:none; }
+        .stad-input:focus { box-shadow:0 0 0 3px rgba(0,0,0,0.15); }
+        .stad-btn { width:100%; padding:14px; border:3px solid #111; border-radius:12px; font-size:16px; font-weight:800; cursor:pointer; margin-top:10px; }
+        .stad-btn.gron { background:#111; color:#fff; }
+        .stad-btn.gron:disabled { opacity:0.3; }
+        .stad-btn.sec { background:#fff; color:#111; }
+        .stad-ok { display:none; background:#111; color:#fff; padding:12px; border-radius:12px; margin-top:12px; text-align:center; font-weight:800; }
+        .stad-err { display:none; background:#fee2e2; border:2px solid #111; color:#7f1d1d; padding:10px; border-radius:12px; margin-top:10px; text-align:center; font-weight:600; }
+        #stadReader { width:100%; border-radius:12px; overflow:hidden; display:none; margin:10px 0; border:3px solid #111; }
 
         </style>
     <style>
@@ -394,32 +388,27 @@
         @keyframes sbRad { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
         @media (prefers-reduced-motion: reduce) { #startbild .rok, #startbild .ang, #startbild .glod, #startbild .sol, #startbild .sb-rad b { animation: none; } #startbild { transition: none; } }
     
-        /* Sökhistorik – egen fällbar ruta */
-        .hist-box { width:100%; margin:12px 0; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; }
-        .hist-box-head { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; }
-        .hist-box-head:hover { background:#f1f5f9; }
-        .hist-titel { font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px; }
-        .hist-box-pill { font-size:11px; background:#e2e8f0; color:#475569; padding:2px 8px; border-radius:999px; }
-        .hist-rensa { font-size:11px; color:#94a3b8; background:none; border:none; cursor:pointer; text-decoration:underline; margin-left:8px; }
-        .hist-box-body { display:none; padding:10px 12px 12px; border-top:1px solid #e2e8f0; background:#fff; }
-        .hist-box.open .hist-box-body { display:block; }
-        .hist-box.open .hist-pil { transform: rotate(180deg); }
-        .hist-pil { transition: transform .2s; font-size:12px; color:#94a3b8; }
-        .hist-chips { display:flex; flex-wrap:wrap; gap:6px; }
-        .hist-chip { padding:7px 10px 7px 12px; font-size:13px; font-weight:600; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-flex; align-items:center; gap:6px; }
-        .hist-chip:hover { background:#dbeafe; border-color:#93c5fd; }
-        .hist-chip:hover .hist-chip-x { background:#64748b; }
-        .hist-chip-x { width:18px; height:18px; border-radius:50%; background:#cbd5e1; color:#fff; border:none; font-size:10px; font-weight:700; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:0 0 18px; }
-        .hist-chip-x:hover { background:#ef4444 !important; color:#fff; }
-        .hist-grupp { margin-top:12px; }
-        .hist-grupp-head { display:flex; align-items:center; gap:6px; cursor:pointer; padding:4px 2px; }
-        .hist-grupp-head b { font-size:12px; color:#475569; }
-        .hist-grupp-head span { font-size:11px; color:#94a3b8; }
-        .hist-grupp-list { display:none; flex-wrap:wrap; gap:6px; margin:6px 0 0; }
-        .hist-grupp.open .hist-grupp-list { display:flex; }
-        .hist-tom { font-size:13px; color:#94a3b8; text-align:center; padding:8px; }
+        /* STÄDNING – snygg ruta som ploppar upp efter QR-scan */
+        .stad-lager { position:fixed; inset:0; z-index:1200; background:rgba(15,23,42,0.6); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:16px; }
+        .stad-lager[hidden] { display:none; }
+        .stad-ruta { width:100%; max-width:380px; background:#fff; border:5px solid #111; border-radius:18px; padding:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+        .stad-top { font-size:11px; font-weight:800; letter-spacing:1.5px; color:#8a8a8a; text-align:center; }
+        .stad-rad { font-size:64px; font-weight:900; text-align:center; color:#111; margin:8px 0 4px; line-height:1; letter-spacing:-2px; }
+        .stad-meta { text-align:center; margin-bottom:16px; }
+        .stad-badge { display:inline-block; background:#f1f5f9; border:2px solid #111; padding:6px 12px; border-radius:10px; font-size:13px; font-weight:800; }
+        .stad-label { font-size:13px; font-weight:700; color:#334155; margin:12px 0 6px; display:block; }
+        .stad-input { width:100%; padding:14px; border:3px solid #111; border-radius:12px; font-size:17px; background:#fff; outline:none; }
+        .stad-input:focus { box-shadow:0 0 0 3px rgba(0,0,0,0.15); }
+        .stad-btn { width:100%; padding:14px; border:3px solid #111; border-radius:12px; font-size:16px; font-weight:800; cursor:pointer; margin-top:10px; }
+        .stad-btn.gron { background:#111; color:#fff; }
+        .stad-btn.gron:disabled { opacity:0.3; }
+        .stad-btn.sec { background:#fff; color:#111; }
+        .stad-ok { display:none; background:#111; color:#fff; padding:12px; border-radius:12px; margin-top:12px; text-align:center; font-weight:800; }
+        .stad-err { display:none; background:#fee2e2; border:2px solid #111; color:#7f1d1d; padding:10px; border-radius:12px; margin-top:10px; text-align:center; font-weight:600; }
+        #stadReader { width:100%; border-radius:12px; overflow:hidden; display:none; margin:10px 0; border:3px solid #111; }
 
         </style>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body>
     <div id="startbild" role="status" aria-live="polite">
@@ -518,20 +507,6 @@
                     <button type="button" class="chip aktiv" data-filter="galler" onclick="valjFilter('galler')">Instrumentgaller</button>
                     </div>
                 </div>
-
-        <div id="histBox" class="hist-box" hidden>
-          <div class="hist-box-head" onclick="this.parentElement.classList.toggle('open')">
-            <div class="hist-titel">🕓 Sökhistorik <span id="histTotalPill" class="hist-box-pill"></span></div>
-            <div style="display:flex;align-items:center;gap:8px"><button class="hist-rensa" onclick="event.stopPropagation(); rensaHistorik()">Rensa</button><span class="hist-pil">▼</span></div>
-          </div>
-          <div class="hist-box-body">
-            <div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:4px">Senaste 5</div><div id="histChips" class="hist-chips"></div></div>
-            <div class="hist-grupp open" id="histGruppIdag"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Idag</b><span id="histCountIdag"></span></div><div class="hist-grupp-list" id="histListIdag"></div></div>
-            <div class="hist-grupp" id="histGruppIgar"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Igår</b><span id="histCountIgar"></span></div><div class="hist-grupp-list" id="histListIgar"></div></div>
-            <div class="hist-grupp" id="histGruppVecka"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Senaste 7 dagarna</b><span id="histCountVecka"></span></div><div class="hist-grupp-list" id="histListVecka"></div></div>
-          </div>
-        </div>
-
                 <div class="chip-grupp">
                     <span class="chip-rubrik">Sortera</span>
                     <div class="chip-rad">
@@ -557,6 +532,24 @@
         </div>
         <div id="kameraBotten" class="kamera-botten"></div>
     </div>
+
+    <div id="stadLager" class="stad-lager" hidden>
+      <div class="stad-ruta">
+        <div class="stad-top">STÄDNING</div>
+        <div class="stad-rad" id="stadRadVis">–</div>
+        <div class="stad-meta"><span class="stad-badge" id="stadVeckaVis">–</span> <span id="stadDatumVis" style="font-size:12px;color:#64748b;margin-left:6px"></span></div>
+        <div id="stadReader"></div>
+        <label class="stad-label" for="stadVem">Vem städade?</label>
+        <input id="stadVem" class="stad-input" list="stadNamnLista" placeholder="T.ex. Anna" autocomplete="name">
+        <datalist id="stadNamnLista"></datalist>
+        <button class="stad-btn gron" id="stadSparaBtn" onclick="sparaStadning()">✓ Bekräfta</button>
+        <button class="stad-btn sec" onclick="stangStadLager()">Avbryt</button>
+        <div class="stad-ok" id="stadOk"></div>
+        <div class="stad-err" id="stadErr"></div>
+        <div style="font-size:10px;color:#8a8a8a;text-align:center;margin-top:10px">Clean QR • 5px ram • En rad per vecka</div>
+      </div>
+    </div>
+
     <div id="hjalpLager" class="hjalp-lager" hidden onclick="if (event.target === this) stangHjalp()">
         <div class="hjalp-ruta" role="dialog" aria-modal="true" aria-labelledby="hjalpRubrik">
             <div class="hjalp-topp"><h2 id="hjalpRubrik">Hjälp</h2><button type="button" class="hjalp-stang" onclick="stangHjalp()" aria-label="Stäng hjälpen">✕</button></div>
@@ -576,7 +569,7 @@
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
-    <script src="data.js?v=4""></script>
+    <script src="data.js"></script>
     <!-- ================================================================== -->
     <!-- =======================  DATABAS SLUTAR HÄR  ======================= -->
     <!-- Allt nedanför är programkoden, ändra inte om du bara byter data.     -->
@@ -912,119 +905,6 @@
             return item._pd.some(pd => pd.length >= delar.length && delar.every((x, i) => pd[i] === x));
         }
 
-        
-        /* ===== SÖKHISTORIK – lokalt på enheten + statistik ===== */
-        const HIST_KEY = 'lagersok_hist_v1';
-        const HIST_MAX = 100;
-        const STAT_URL = "https://sterilsok-stat.pelle-holmstrom.workers.dev";
-        function getHist(){ try{ const a = JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
-        function saveHist(arr){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0,HIST_MAX))); }catch(e){} }
-        function addHist(q, antal){
-          q = String(q||'').trim(); if(!q || q.length<2) return;
-          const now = Date.now();
-          let h = getHist();
-          h = h.filter(x=> !(x.q.toLowerCase()===q.toLowerCase() && (now - x.t)<60000));
-          h.unshift({q:q, t:now, c: (typeof antal==='number'?antal:null)});
-          if(h.length>HIST_MAX) h = h.slice(0,HIST_MAX);
-          saveHist(h);
-          renderHist();
-        }
-        function rensaHistorik(){
-          if(!confirm('Rensa hela sökhistoriken på den här enheten?')) return;
-          try{ localStorage.removeItem(HIST_KEY); }catch(e){}
-          renderHist();
-        }
-        function taBortHistItem(ts){
-          try{
-            let h = getHist();
-            h = h.filter(x=> x.t !== ts);
-            saveHist(h);
-            renderHist();
-          }catch(e){}
-        }
-        function anvandHist(q){
-          const inp = document.getElementById('searchInput');
-          if(inp){ inp.value=q; if(typeof toggleClearButton==='function') toggleClearButton(); if(typeof sökLager==='function') sökLager(); inp.focus(); }
-        }
-        function renderHist(){
-          const box = document.getElementById('histBox');
-          if(!box) return;
-          const h = getHist();
-          if(!h.length){ box.hidden=true; return; }
-          box.hidden=false;
-          const pill = document.getElementById('histTotalPill'); if(pill) pill.textContent = h.length + ' st';
-          const chips = document.getElementById('histChips');
-          chips.innerHTML='';
-          h.slice(0,5).forEach(item=>{
-            const el = document.createElement('div');
-            el.className='hist-chip';
-            el.title = new Date(item.t).toLocaleString('sv-SE');
-            const txtSpan = document.createElement('span');
-            txtSpan.textContent = item.q;
-            txtSpan.style.cursor='pointer';
-            txtSpan.onclick=()=>anvandHist(item.q);
-            const xBtn = document.createElement('button');
-            xBtn.className='hist-chip-x';
-            xBtn.textContent='✕';
-            xBtn.title='Ta bort';
-            xBtn.onclick=(e)=>{ e.stopPropagation(); taBortHistItem(item.t); };
-            el.appendChild(txtSpan);
-            el.appendChild(xBtn);
-            chips.appendChild(el);
-          });
-          const now = new Date(); now.setHours(0,0,0,0);
-          const igarStart = new Date(now); igarStart.setDate(now.getDate()-1);
-          const veckaStart = new Date(now); veckaStart.setDate(now.getDate()-6);
-          const idag = h.filter(x=> x.t >= now.getTime());
-          const igar = h.filter(x=> x.t >= igarStart.getTime() && x.t < now.getTime());
-          const vecka = h.filter(x=> x.t >= veckaStart.getTime() && x.t < igarStart.getTime());
-          function fill(listId, countId, arr){
-            const list = document.getElementById(listId);
-            const cnt = document.getElementById(countId);
-            if(!list) return;
-            list.innerHTML='';
-            if(cnt) cnt.textContent = arr.length?`· ${arr.length} st`:'';
-            if(!arr.length){ list.innerHTML='<div class="hist-tom">Inga sökningar</div>'; return; }
-            arr.slice(0,20).forEach(item=>{
-              const el = document.createElement('div');
-              el.className='hist-chip';
-              el.title = new Date(item.t).toLocaleString('sv-SE');
-              const txtSpan = document.createElement('span');
-              txtSpan.textContent = item.q;
-              txtSpan.style.cursor='pointer';
-              txtSpan.onclick=()=>anvandHist(item.q);
-              const xBtn = document.createElement('button');
-              xBtn.className='hist-chip-x';
-              xBtn.textContent='✕';
-              xBtn.title='Ta bort';
-              xBtn.onclick=(e)=>{ e.stopPropagation(); taBortHistItem(item.t); };
-              el.appendChild(txtSpan);
-              el.appendChild(xBtn);
-              list.appendChild(el);
-            });
-          }
-          fill('histListIdag','histCountIdag',idag);
-          fill('histListIgar','histCountIgar',igar);
-          fill('histListVecka','histCountVecka',vecka);
-        }
-        function logSearchStat(q, antal, ms){
-          try{
-            if(!q || q.length<2) return;
-            const ts = Date.now();
-            const hasHit = (antal||0) > 0;
-            const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'Mobil' : 'Dator';
-            const isPWA = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ? true : false;
-            let os = 'Okänd'; const ua = navigator.userAgent;
-            if(/Windows/i.test(ua)) os='Windows'; else if(/Android/i.test(ua)) os='Android'; else if(/iPhone|iPad/i.test(ua)) os='iOS'; else if(/Mac/i.test(ua)) os='macOS';
-            let browser = 'Okänd'; if(/Chrome/i.test(ua) && !/Edg/i.test(ua)) browser='Chrome'; else if(/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser='Safari'; else if(/Edg/i.test(ua)) browser='Edge'; else if(/Firefox/i.test(ua)) browser='Firefox';
-            const arr = [ts, q.slice(0,80), hasHit, null, isMobile, os, isPWA, browser, 0];
-            if(navigator.sendBeacon){ try{ navigator.sendBeacon(STAT_URL+'/log', JSON.stringify(arr)); return; }catch(e){} }
-            fetch(STAT_URL+'/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(arr), keepalive:true}).catch(()=>{});
-          }catch(e){}
-        }
-        document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(renderHist, 300); });
-
-
         function sökLager() {
             const sökord = document.getElementById('searchInput').value.trim().toLowerCase();
             const ordLista = sökord.split(/\s+/).filter(Boolean);
@@ -1136,10 +1016,8 @@
             }
 
             // Mät tid tills svaret är ritat på skärmen
-                        try{ addHist(document.getElementById('searchInput').value.trim(), hittade.length); }catch(e){}
             requestAnimationFrame(() => setTimeout(() => {
                 const sek = (performance.now() - t0) / 1000;
-                try{ logSearchStat(document.getElementById('searchInput').value.trim(), hittade.length, sek*1000); }catch(e){}
                 document.getElementById('söktid').textContent =
                     `Svaret lästes in på ${sek.toFixed(3).replace('.', ',')} sekunder`;
             }, 0));
@@ -1411,6 +1289,20 @@
                 return;
             }
             const video = document.getElementById('kameraVideo');
+
+            if(window._stadQrInterval) clearInterval(window._stadQrInterval);
+            window._stadQrInterval = setInterval(async ()=>{
+              const v = document.getElementById('kameraVideo');
+              if(!v || document.getElementById('kameraLager').hidden) { clearInterval(window._stadQrInterval); return; }
+              const rad = await forsokStadQRdetektering(v);
+              if(rad){
+                clearInterval(window._stadQrInterval);
+                stangKamera();
+                if(navigator.vibrate) navigator.vibrate(100);
+                oppnaStadLager(rad);
+              }
+            }, 400);
+
             video.srcObject = kamStrom;
             try { await video.play(); } catch (e) {}
             try { const sp = kamStrom.getVideoTracks()[0]; sp.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(() => {}); } catch (e) {}
@@ -1426,6 +1318,7 @@
         }
 
         function stangKamera() {
+            if(window._stadQrInterval){ clearInterval(window._stadQrInterval); window._stadQrInterval=null; }
             kamAktiv = false;
             document.getElementById('kameraLager').hidden = true;
             kamLosSkarm();
@@ -1628,6 +1521,122 @@
                 <p>När appen startar visas en startbild en kort stund. Appen sparar sig själv och databasen, startar direkt från den sparade kopian och fungerar även utan täckning efter första besöket. Nyare version och ny databas hämtas i bakgrunden, och sidan laddas om av sig själv om du inte har börjat söka. Längst ner står när databasen senast uppdaterades.</p>`;
             return h;
         }
+
+        // ======================= STÄDNING – befintlig kamera + snygg ruta =======================
+        const STAT_URL = "https://sterilsok-stat.pelle-holmstrom.workers.dev";
+        const KANDA_RADER = ["A","B","C","D","E","F","G","H","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","BG","BPA","GALLER"];
+        let stadRad = "";
+        let stadScanner = null;
+        let _stadDetector = null;
+        try{ if('BarcodeDetector' in window){ _stadDetector = new BarcodeDetector({formats:['qr_code']}); } }catch(e){}
+
+        function isoVeckaStad(d){
+          const date = new Date(d); date.setHours(0,0,0,0);
+          date.setDate(date.getDate() + 3 - (date.getDay()+6)%7);
+          const week1 = new Date(date.getFullYear(),0,4);
+          const week = 1 + Math.round(((date - week1)/86400000 -3 + (week1.getDay()+6)%7)/7);
+          return date.getFullYear()+"-W"+String(week).padStart(2,"0");
+        }
+        function parseStadQR(text){
+          if(!text) return null;
+          let t = String(text).trim();
+          let m = t.match(/[?&]rad=([A-Z0-9]+)/i);
+          if(m) return m[1].toUpperCase();
+          m = t.match(/STÄDNING[:\s]*([A-Z0-9]+)/i);
+          if(m) return m[1].toUpperCase();
+          if(KANDA_RADER.includes(t.toUpperCase())) return t.toUpperCase();
+          try{ const u=new URL(t); const r=u.searchParams.get("rad"); if(r) return r.toUpperCase(); }catch(e){}
+          const t2 = t.replace(/[^A-Z0-9]/gi,'').toUpperCase();
+          if(KANDA_RADER.includes(t2)) return t2;
+          return null;
+        }
+        function setStadRad(r){
+          stadRad = (r||"").toUpperCase().trim();
+          const el = document.getElementById("stadRadVis");
+          if(el) el.textContent = stadRad || "–";
+          const now = new Date();
+          const v = isoVeckaStad(now);
+          const vEl = document.getElementById("stadVeckaVis");
+          const dEl = document.getElementById("stadDatumVis");
+          if(vEl) vEl.textContent = v;
+          if(dEl) dEl.textContent = now.toLocaleDateString("sv-SE");
+          try{
+            const dl = document.getElementById("stadNamnLista");
+            if(dl){
+              dl.innerHTML="";
+              const namn = JSON.parse(localStorage.getItem("stad_namn")||"[]");
+              namn.forEach(n=>{ const o=document.createElement("option"); o.value=n; dl.appendChild(o); });
+              const sen = localStorage.getItem("stad_senaste_namn")||"";
+              const inp = document.getElementById("stadVem");
+              if(sen && inp && !inp.value) inp.value = sen;
+            }
+          }catch(e){}
+        }
+        function oppnaStadLager(rad){
+          if(rad) setStadRad(rad);
+          const lager = document.getElementById("stadLager");
+          if(lager) lager.hidden = false;
+          const ok = document.getElementById("stadOk"); if(ok) ok.style.display="none";
+          const err = document.getElementById("stadErr"); if(err) err.style.display="none";
+          setTimeout(()=>{ const inp=document.getElementById("stadVem"); if(inp) inp.focus(); }, 200);
+        }
+        function stangStadLager(){
+          const lager = document.getElementById("stadLager");
+          if(lager) lager.hidden = true;
+          if(stadScanner){ try{ stadScanner.stop(); }catch(e){} try{ stadScanner.clear(); }catch(e){} stadScanner=null; const r=document.getElementById("stadReader"); if(r) r.style.display="none"; }
+        }
+        async function forsokStadQRdetektering(videoEl){
+          if(!_stadDetector) return null;
+          try{
+            const codes = await _stadDetector.detect(videoEl);
+            for(const c of codes){
+              const raw = c.rawValue || "";
+              const r = parseStadQR(raw);
+              if(r) return r;
+            }
+          }catch(e){}
+          return null;
+        }
+        async function sparaStadning(){
+          const vemEl = document.getElementById("stadVem");
+          const vem = vemEl ? vemEl.value.trim() : "";
+          const okEl = document.getElementById("stadOk");
+          const errEl = document.getElementById("stadErr");
+          const btn = document.getElementById("stadSparaBtn");
+          if(!stadRad){ errEl.textContent="Ingen rad – scanna QR först."; errEl.style.display="block"; return; }
+          if(!vem){ errEl.textContent="Fyll i ditt namn"; errEl.style.display="block"; vemEl.focus(); return; }
+          btn.disabled=true; btn.textContent="Sparar..."; errEl.style.display="none";
+          try{
+            const now = new Date();
+            const payload = {rad: stadRad, plats: stadRad, vem: vem, vecka: isoVeckaStad(now), tid: now.toISOString(), kalla:"lagersok-befintlig-kamera-clean-5px"};
+            const res = await fetch(STAT_URL+"/stad",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+            if(!res.ok) throw new Error(await res.text());
+            try{
+              let list = JSON.parse(localStorage.getItem("stad_namn")||"[]");
+              list = [vem, ...list.filter(x=>x!==vem)].slice(0,10);
+              localStorage.setItem("stad_namn", JSON.stringify(list));
+              localStorage.setItem("stad_senaste_namn", vem);
+            }catch(e){}
+            okEl.textContent="Klart! Rad "+stadRad+" städad av "+vem;
+            okEl.style.display="block";
+            btn.textContent="Klar ✓";
+            if(navigator.vibrate) navigator.vibrate([100,50,100]);
+            setTimeout(()=>{ stangStadLager(); btn.disabled=false; btn.textContent="✓ Bekräfta"; }, 1800);
+          }catch(e){
+            errEl.textContent="Kunde inte spara: "+e.message;
+            errEl.style.display="block";
+            btn.disabled=false; btn.textContent="✓ Bekräfta";
+          }
+        }
+        // Om man öppnar index.html?rad=X direkt
+        (function(){
+          try{
+            const p = new URLSearchParams(location.search);
+            const r = p.get("rad");
+            if(r){ setTimeout(()=>oppnaStadLager(r), 600); }
+          }catch(e){}
+        })();
+
         function visaHjalp() {
             document.getElementById('hjalpInnehall').innerHTML = hjalpText();
             document.getElementById('hjalpLager').hidden = false;
@@ -1639,7 +1648,7 @@
     <script>
         // Offline-stöd: sparar sidan och databasen i telefonen/datorn.
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js?v=4').catch(() => {}); });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
             // Appen startar direkt från sparad kopia; när en nyare version hämtats laddas sidan om om man inte håller på att söka.
             navigator.serviceWorker.addEventListener('message', e => {
                 if (e.data !== 'ny-version') return;
