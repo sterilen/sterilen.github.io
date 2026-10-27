@@ -66,22 +66,44 @@
         button.search-btn:active { transform: scale(0.98); }
 
         .sort-container { display: flex; justify-content: center; width: 100%; margin-bottom: 20px; }
-        .sort-box { display: flex; flex-direction: column; align-items: center; gap: 10px; background: #f8fafc; padding: 12px 10px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; }
+        .sort-box { display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 10px 16px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; justify-content: center; }
         .sort-box label { font-size: 15px; font-weight: 700; color: #475569; white-space: nowrap; }
         .sort-box select { padding: 6px 12px; font-size: 15px; font-weight: 600; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; background-color: #ffffff; color: #0f172a; max-width: 65%; }
 
-        .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: center; width: 100%; }
-        .chip-rubrik { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        .chip-rad { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 6px; width: 100%; }
-        .chip { flex: 1 1 auto; min-width: 0; white-space: nowrap; text-align: center; padding: 8px 10px; font-size: 14px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 999px; cursor: pointer; }
+        .sort-box { flex-direction: column; align-items: stretch; gap: 10px; }
+        .chip-rad { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+        .chip-rubrik { font-size: 13px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; width: 62px; flex-shrink: 0; text-align: left; }
+        .chip { padding: 8px 13px; font-size: 14px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 999px; cursor: pointer; }
         .chip:active { transform: scale(0.97); }
         .chip.aktiv { background: #0f172a; color: #ffffff; border-color: #0f172a; }
         .chip[data-filter="forbruk"].aktiv { background: #7fb046; border-color: #7fb046; }
         .chip[data-filter="galler"].aktiv { background: #4687b0; border-color: #4687b0; }
-        .chip.riktning { flex: 0 0 auto; margin-left: 0; background: #f1f5f9; }
+        .chip.riktning { margin-left: auto; background: #f1f5f9; }
+
+        /* Alla knappar på en rad vardera, även på smala skärmar */
+        .sort-box { padding: 10px 8px; }
+        .chip-rad { flex-wrap: nowrap; gap: 4px; }
+        .chip-rubrik { font-size: 11px; letter-spacing: 0.5px; width: 50px; }
+        .chip { flex: 0 1 auto; min-width: 0; white-space: nowrap; padding: 7px 8px; font-size: 13px; }
+        .chip.riktning { margin-left: auto; }
         @media (max-width: 380px) {
-            .chip { font-size: 13px; padding: 8px 6px; }
+            .chip-rubrik { width: 42px; font-size: 10px; letter-spacing: 0; }
+            .chip { padding: 7px 6px; font-size: 12px; }
         }
+
+        /* Rubrik ovanför knapparna, knapparna på en rad */
+        .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: stretch; }
+        .chip-rubrik { width: auto !important; text-align: left; font-size: 12px !important; letter-spacing: 1px !important; }
+        .chip-rad { flex-wrap: nowrap; }
+        .chip { flex: 1 1 auto; text-align: center; font-size: 14px; padding: 8px 6px; }
+        .chip.riktning { flex: 0 0 auto; margin-left: 0; }
+        @media (max-width: 380px) { .chip { font-size: 13px; padding: 8px 4px; } }
+
+        /* Centrerade rubriker och knappar */
+        .chip-grupp { align-items: center; }
+        .chip-rubrik { text-align: center !important; }
+        .chip-rad { justify-content: center; }
+        .chip { flex: 0 1 auto; }
 
         .logo-container { height: auto !important; }
         .logo-img { display: block; width: 100%; max-width: 110px; height: auto; }
@@ -321,26 +343,7 @@
         .tema-meny.oppet + .header-block { padding-top:140px; transition:padding-top .28s ease; }
         @media (prefers-reduced-motion:reduce) { .tema-val,.tema-knapp,.header-block { transition:none !important; } .tema-val { transition-delay:0ms; } }
 
-    
-        /* STÄDNING QR-modal – snygg sida när QR scannas */
-        [hidden]{display:none !important}
-        .stad-lager[hidden]{display:none !important}
-        .stad-lager{position:fixed;inset:0;background:rgba(15,23,42,.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px}
-        .stad-kort{width:100%;max-width:400px;background:#fff;border-radius:20px;padding:22px;box-shadow:0 20px 40px rgba(0,0,0,.25);animation:stadIn .2s ease}
-        @keyframes stadIn{from{transform:translateY(12px) scale(.97);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
-        .stad-top{font-size:12px;font-weight:800;letter-spacing:1.5px;color:#64748b;text-align:center}
-        .stad-rad{font-size:56px;font-weight:900;text-align:center;color:#0f172a;margin:6px 0}
-        .stad-vecka{font-size:13px;font-weight:700;background:#f1f5f9;display:inline-block;padding:6px 10px;border-radius:8px;margin:0 auto}
-        .stad-label{font-size:13px;font-weight:700;color:#475569;margin:14px 0 6px}
-        .stad-input{width:100%;padding:14px 14px;border:2px solid #e2e8f0;border-radius:12px;font-size:17px;background:#f8fafc;outline:none}
-        .stad-input:focus{border-color:#7fb046;background:#fff;box-shadow:0 0 0 3px rgba(127,176,70,.2)}
-        .stad-btn{width:100%;margin-top:14px;padding:14px;border:0;border-radius:12px;font-size:17px;font-weight:800;background:#7fb046;color:#fff;cursor:pointer}
-        .stad-btn:active{transform:scale(.98)}
-        .stad-btn.sec{background:#e2e8f0;color:#334155;margin-top:8px}
-        .stad-ok{display:none;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;padding:12px;border-radius:10px;margin-top:12px;text-align:center;font-weight:700}
-        .stad-err{display:none;background:#fef2f2;border:1px solid #fecaca;color:#7f1d1d;padding:12px;border-radius:10px;margin-top:12px;text-align:center}
-
-        </style>
+    </style>
     <style>
         /* Startbild: visas direkt medan sidan och databasen läses in */
         #startbild { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -507,7 +510,7 @@
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
-    <script src="data.js?v=" + Date.now()></script>
+    <script src="data.js"></script>
     <!-- ================================================================== -->
     <!-- =======================  DATABAS SLUTAR HÄR  ======================= -->
     <!-- Allt nedanför är programkoden, ändra inte om du bara byter data.     -->
@@ -967,113 +970,6 @@
     </script>
     <script>
         // ======================= KAMERALÄGE =======================
-        // ======================= STÄDNING QR – snygg modal =======================
-        const STAT_URL = "https://sterilsok-stat.pelle-holmstrom.workers.dev";
-        const KANDA_STAD_RADER = ["A","B","C","D","E","F","G","H","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","BG","BPA","GALLER"];
-        function parseStadQR(text){
-          if(!text) return null;
-          text = String(text).trim();
-          let m = text.match(/[?&]rad=([A-Z0-9]+)/i);
-          if(m) return m[1].toUpperCase();
-          m = text.match(/STÄDNING[:\s]*([A-Z0-9]+)/i);
-          if(m) return m[1].toUpperCase();
-          if(KANDA_STAD_RADER.includes(text.toUpperCase())) return text.toUpperCase();
-          try{ const u = new URL(text); const r = u.searchParams.get("rad"); if(r) return r.toUpperCase(); }catch(e){}
-          const t2 = text.replace(/[^A-Z0-9]/gi,'').toUpperCase();
-          if(KANDA_STAD_RADER.includes(t2)) return t2;
-          return null;
-        }
-        function isoVeckaStad(d){
-          const date = new Date(d);
-          date.setHours(0,0,0,0);
-          date.setDate(date.getDate() + 3 - (date.getDay()+6)%7);
-          const week1 = new Date(date.getFullYear(),0,4);
-          const week = 1 + Math.round(((date - week1)/86400000 -3 + (week1.getDay()+6)%7)/7);
-          return date.getFullYear()+"-W"+String(week).padStart(2,"0");
-        }
-        let aktivStadRad = null;
-        function fyllStadNamnlista(){
-          try{
-            const namn = JSON.parse(localStorage.getItem("stad_namn")||"[]");
-            const dl = document.getElementById("stadNamnLista");
-            if(!dl) return;
-            dl.innerHTML="";
-            namn.forEach(n=>{ const o=document.createElement("option"); o.value=n; dl.appendChild(o); });
-            const senaste = localStorage.getItem("stad_senaste_namn")||"";
-            const inp = document.getElementById("stadVem");
-            if(inp && senaste) inp.value = senaste;
-          }catch(e){}
-        }
-        function visaStadModal(rad){
-          aktivStadRad = rad.toUpperCase();
-          const now = new Date();
-          document.getElementById("stadRadVis").textContent = aktivStadRad;
-          document.getElementById("stadVecka").textContent = isoVeckaStad(now);
-          document.getElementById("stadDatum").textContent = now.toLocaleDateString("sv-SE");
-          document.getElementById("stadOk").style.display="none";
-          document.getElementById("stadErr").style.display="none";
-          document.getElementById("stadBtn").disabled=false;
-          document.getElementById("stadBtn").textContent="✓ Markera som städad";
-          document.getElementById("stadLager").hidden=false;
-          fyllStadNamnlista();
-          setTimeout(()=>{ const i=document.getElementById("stadVem"); if(i){ i.focus(); i.select(); } }, 100);
-          try{ navigator.vibrate && navigator.vibrate(60); }catch(e){}
-        }
-        function stangStadModal(){
-          document.getElementById("stadLager").hidden=true;
-          aktivStadRad=null;
-        }
-        document.getElementById("stadLager")?.addEventListener("click", e=>{ if(e.target.id==="stadLager") stangStadModal(); });
-        document.getElementById("stadBtn")?.addEventListener("click", async ()=>{
-          const vem = document.getElementById("stadVem").value.trim();
-          if(!vem){ document.getElementById("stadErr").textContent="Fyll i ditt namn"; document.getElementById("stadErr").style.display="block"; return; }
-          if(!aktivStadRad) return;
-          const btn = document.getElementById("stadBtn");
-          btn.disabled=true; btn.textContent="Sparar...";
-          document.getElementById("stadErr").style.display="none";
-          const vecka = isoVeckaStad(new Date());
-          try{
-            const res = await fetch(STAT_URL+"/stad",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rad: aktivStadRad, plats: aktivStadRad, vem: vem, vecka: vecka, tid: new Date().toISOString(), kalla:"lagersok-app-kamera-snygg"})});
-            if(!res.ok) throw new Error(await res.text());
-            localStorage.setItem("stad_senaste_namn", vem);
-            let list = []; try{ list = JSON.parse(localStorage.getItem("stad_namn")||"[]"); }catch(e){}
-            list = [vem, ...list.filter(x=>x!==vem)].slice(0,10);
-            try{ localStorage.setItem("stad_namn", JSON.stringify(list)); }catch(e){}
-            const ok = document.getElementById("stadOk");
-            ok.textContent=`Klart! Rad ${aktivStadRad} städad vecka ${vecka} av ${vem}`;
-            ok.style.display="block";
-            btn.textContent="Klar ✓";
-            try{ navigator.vibrate && navigator.vibrate([100,50,100]); }catch(e){}
-            setTimeout(()=>{ stangStadModal(); stangKamera(); }, 1800);
-          }catch(e){
-            document.getElementById("stadErr").textContent="Kunde inte spara: "+e.message;
-            document.getElementById("stadErr").style.display="block";
-            btn.disabled=false; btn.textContent="✓ Markera som städad";
-          }
-        });
-        // Enter för att spara
-        document.getElementById("stadVem")?.addEventListener("keydown", e=>{ if(e.key==="Enter") document.getElementById("stadBtn").click(); if(e.key==="Escape") stangStadModal(); });
-        let qrDetector = null;
-        try{ if('BarcodeDetector' in window){ qrDetector = new BarcodeDetector({formats:['qr_code']}); } }catch(e){}
-        async function kamForsokQR(canvas){
-          if(qrDetector){
-            try{
-              const barcodes = await qrDetector.detect(canvas);
-              for(const b of barcodes){
-                const txt = b.rawValue||"";
-                const rad = parseStadQR(txt);
-                if(rad) return {type:"stad", rad: rad, raw: txt};
-              }
-            }catch(e){}
-          }
-          return null;
-        }
-        function kamForsokQRText(text){
-          const rad = parseStadQR(text);
-          if(rad) return {type:"stad", rad: rad, raw: text};
-          return null;
-        }
-        // ======================= KAMERALÄGE ORIGINAL =======================
         // Läser texten på förpackningen med kameran och letar efter ett nummer som finns i databasen
         // (leverantörens artikelnummer, "REF", eller vårt eget artikelnummer). Textläsaren (Tesseract.js)
         // hämtas först när man trycker på kameraknappen, ligger mappen tesseract bredvid sidan används den, annars behövs nät första gången (ca 8 MB).
@@ -1259,9 +1155,6 @@
         // Osäkra träffar (t.ex. 3 som lästs i stället för 8) samlas och visas först om inget säkert nummer dyker upp.
         let kamOsakra = new Set();
         function kamHantera(text, slutgiltig) {
-            const qrFrånText = kamForsokQRText(text);
-            if(qrFrånText){ kamAktiv=false; visaStadModal(qrFrånText.rad); return true; }
-
             const r = kameraHittaNummer(text);
             // Står både artikelnummer och leverantörens nummer på etiketten ger de två träffar på samma artikel. Då är det ingen fråga om val.
             if (r.exakta.length > 1) {
@@ -1287,7 +1180,6 @@
                 const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
                 const bild = kamTaBild(hel);
                 if (!bild) { await new Promise(r => setTimeout(r, 300)); continue; }
-                try{ const qr = await kamForsokQR(bild); if(qr && qr.type==="stad"){ kamAktiv=false; visaStadModal(qr.rad); return; } }catch(e){}
                 let text = '';
                 try { text = await kamLas(bild, psm); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
                 if (!kamAktiv) return;
@@ -1362,10 +1254,6 @@
 
         // Reserv: en vanlig bild från kameraappen (om live-kameran inte går att använda)
         document.getElementById('kameraFil').addEventListener('change', async (e) => {
-            // QR för städning även via fil
-            let f = e.target.files && e.target.files[0];
-            if(f){ try{ const bmp = await createImageBitmap(f); const c = document.createElement('canvas'); c.width=bmp.width; c.height=bmp.height; c.getContext('2d').drawImage(bmp,0,0); const qr = await kamForsokQR(c); if(qr && qr.type==="stad"){ e.target.value=''; visaStadModal(qr.rad); return; } }catch(e2){} }
-
             const fil = e.target.files && e.target.files[0];
             e.target.value = '';
             if (!fil) return;
@@ -1500,7 +1388,6 @@
     <script>
         // ======================= HJÄLP =======================
         // Visar hjälp som passar enheten: telefon/platta (pekskärm) eller dator.
-        function debounce(fn, ms){ let t; return function(...a){ clearTimeout(t); t=setTimeout(()=>fn.apply(this,a), ms); }; }
         function hjalpArTelefon() {
             try { return window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; }
         }
@@ -1538,15 +1425,7 @@
                   <li>Skärmen låses i stående läge medan kameran är öppen (Android). På iPhone kan webbläsaren inte låsa skärmen, så där kan du slå på <b>Lås stående riktning</b> i Kontrollcenter. Håll paketet så att texten går någorlunda vågrätt, lite sned går bra.</li>
                   <li>Appen läser texten flera gånger i sekunden. När den hittar ett nummer som finns i databasen söker den direkt. Står både artikelnumret och leverantörens nummer på etiketten går den direkt till artikeln. Hittas flera olika artiklar, eller något som bara liknar, väljer du rätt.</li>
                 </ol>
-                <p>Tänk på: första gången hämtas textläsaren (cirka 8 MB), så det behövs nät. Det går bäst med bra ljus och en skarp bild. Streckkoder läses inte, bara tryckt text. Om kameran inte startar kan du välja <b>Ta en bild istället</b>.</p>
-                <h3>Städning – scanna QR på raden</h3>
-                <ol>
-                  <li>På utsidan av varje rad sitter en lapp märkt <b>STÄDNING</b> och radens namn, t.ex. <b>A</b>, <b>BG</b>.</li>
-                  <li>Tryck på samma kameraknapp 📷 som för artikelnummer och håll mot QR-koden på lappen.</li>
-                  <li>När QR-koden läses kommer en snygg sida upp med radens namn och veckonummer. Fyll i ditt namn och tryck <b>Markera som städad</b>.</li>
-                  <li>Raden blir grön direkt i Admin under STÄDNING. En rad per vecka.</li>
-                </ol>
-                <p>Tips: Samma kamera klarar både artikelnummer och städ-QR – appen känner automatiskt igen vad det är.</p>`;
+                <p>Tänk på: första gången hämtas textläsaren (cirka 8 MB), så det behövs nät. Det går bäst med bra ljus och en skarp bild. Streckkoder läses inte, bara tryckt text. Om kameran inte startar kan du välja <b>Ta en bild istället</b>.</p>`;
             }
             if (telefon) {
                 if (hjalpArIphone()) {
@@ -1577,23 +1456,9 @@
         document.addEventListener('keydown', e => { if (e.key === 'Escape') stangHjalp(); });
     </script>
     <script>
-        // Debounce sökningen för bättre prestanda på äldre telefoner
-        try {
-            const origSearch = window.sok || window.search;
-            if (typeof origSearch === 'function') {
-                const debounced = debounce(origSearch, 250);
-                const inp = document.getElementById('searchInput');
-                if (inp) {
-                    inp.removeEventListener('input', origSearch);
-                    inp.addEventListener('input', debounced);
-                }
-            }
-        } catch(e) {}
-    </script>
-    <script>
         // Offline-stöd: sparar sidan och databasen i telefonen/datorn.
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js?v=2').catch(() => {}); });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
             // Appen startar direkt från sparad kopia; när en nyare version hämtats laddas sidan om om man inte håller på att söka.
             navigator.serviceWorker.addEventListener('message', e => {
                 if (e.data !== 'ny-version') return;
@@ -1603,23 +1468,5 @@
             });
         }
     </script>
-
-    <!-- STÄDNING modal – snygg sida när QR scannas -->
-    <div id="stadLager" class="stad-lager" hidden>
-      <div class="stad-kort">
-        <div class="stad-top">STÄDNING</div>
-        <div class="stad-rad" id="stadRadVis">–</div>
-        <div style="text-align:center;margin-bottom:8px"><span class="stad-vecka" id="stadVecka"></span> <span id="stadDatum" style="font-size:12px;color:#64748b"></span></div>
-        <div class="stad-label">Vem städade?</div>
-        <input id="stadVem" class="stad-input" list="stadNamnLista" placeholder="T.ex. Anna" autocomplete="name">
-        <datalist id="stadNamnLista"></datalist>
-        <button class="stad-btn" id="stadBtn">✓ Markera som städad</button>
-        <button class="stad-btn sec" onclick="stangStadModal()">Avbryt</button>
-        <div class="stad-ok" id="stadOk"></div>
-        <div class="stad-err" id="stadErr"></div>
-        <div style="font-size:11px;color:#94a3b8;text-align:center;margin-top:10px">En rad per vecka. Namnet sparas till nästa gång.</div>
-      </div>
-    </div>
-
 </body>
 </html>
