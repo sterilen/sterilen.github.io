@@ -323,6 +323,8 @@
 
     
         /* STÄDNING QR-modal – snygg sida när QR scannas */
+        [hidden]{display:none !important}
+        .stad-lager[hidden]{display:none !important}
         .stad-lager{position:fixed;inset:0;background:rgba(15,23,42,.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px}
         .stad-kort{width:100%;max-width:400px;background:#fff;border-radius:20px;padding:22px;box-shadow:0 20px 40px rgba(0,0,0,.25);animation:stadIn .2s ease}
         @keyframes stadIn{from{transform:translateY(12px) scale(.97);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
