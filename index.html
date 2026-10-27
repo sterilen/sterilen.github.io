@@ -321,7 +321,24 @@
         .tema-meny.oppet + .header-block { padding-top:140px; transition:padding-top .28s ease; }
         @media (prefers-reduced-motion:reduce) { .tema-val,.tema-knapp,.header-block { transition:none !important; } .tema-val { transition-delay:0ms; } }
 
-    </style>
+    
+        /* STÄDNING QR-modal – snygg sida när QR scannas */
+        .stad-lager{position:fixed;inset:0;background:rgba(15,23,42,.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px}
+        .stad-kort{width:100%;max-width:400px;background:#fff;border-radius:20px;padding:22px;box-shadow:0 20px 40px rgba(0,0,0,.25);animation:stadIn .2s ease}
+        @keyframes stadIn{from{transform:translateY(12px) scale(.97);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+        .stad-top{font-size:12px;font-weight:800;letter-spacing:1.5px;color:#64748b;text-align:center}
+        .stad-rad{font-size:56px;font-weight:900;text-align:center;color:#0f172a;margin:6px 0}
+        .stad-vecka{font-size:13px;font-weight:700;background:#f1f5f9;display:inline-block;padding:6px 10px;border-radius:8px;margin:0 auto}
+        .stad-label{font-size:13px;font-weight:700;color:#475569;margin:14px 0 6px}
+        .stad-input{width:100%;padding:14px 14px;border:2px solid #e2e8f0;border-radius:12px;font-size:17px;background:#f8fafc;outline:none}
+        .stad-input:focus{border-color:#7fb046;background:#fff;box-shadow:0 0 0 3px rgba(127,176,70,.2)}
+        .stad-btn{width:100%;margin-top:14px;padding:14px;border:0;border-radius:12px;font-size:17px;font-weight:800;background:#7fb046;color:#fff;cursor:pointer}
+        .stad-btn:active{transform:scale(.98)}
+        .stad-btn.sec{background:#e2e8f0;color:#334155;margin-top:8px}
+        .stad-ok{display:none;background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;padding:12px;border-radius:10px;margin-top:12px;text-align:center;font-weight:700}
+        .stad-err{display:none;background:#fef2f2;border:1px solid #fecaca;color:#7f1d1d;padding:12px;border-radius:10px;margin-top:12px;text-align:center}
+
+        </style>
     <style>
         /* Startbild: visas direkt medan sidan och databasen läses in */
         #startbild { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -948,14 +965,7 @@
     </script>
     <script>
         // ======================= KAMERALÄGE =======================
-        // Läser texten på förpackningen med kameran och letar efter ett nummer som finns i databasen
-        // (leverantörens artikelnummer, "REF", eller vårt eget artikelnummer). Textläsaren (Tesseract.js)
-        // hämtas först när man trycker på kameraknappen, ligger mappen tesseract bredvid sidan används den, annars behövs nät första gången (ca 8 MB).
-        const TESS_JS = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
-        const TESS_SPRAK = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int';
-        let kamNummerIndex = null;
-
-        // ======================= STÄDNING QR =======================
+        // ======================= STÄDNING QR – snygg modal =======================
         const STAT_URL = "https://sterilsok-stat.pelle-holmstrom.workers.dev";
         const KANDA_STAD_RADER = ["A","B","C","D","E","F","G","H","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","BG","BPA","GALLER"];
         function parseStadQR(text){
@@ -966,9 +976,7 @@
           m = text.match(/STÄDNING[:\s]*([A-Z0-9]+)/i);
           if(m) return m[1].toUpperCase();
           if(KANDA_STAD_RADER.includes(text.toUpperCase())) return text.toUpperCase();
-          // Om hela strängen är en URL med rad param
           try{ const u = new URL(text); const r = u.searchParams.get("rad"); if(r) return r.toUpperCase(); }catch(e){}
-          // Om QR innehåller bara "A" men med whitespace
           const t2 = text.replace(/[^A-Z0-9]/gi,'').toUpperCase();
           if(KANDA_STAD_RADER.includes(t2)) return t2;
           return null;
@@ -981,54 +989,81 @@
           const week = 1 + Math.round(((date - week1)/86400000 -3 + (week1.getDay()+6)%7)/7);
           return date.getFullYear()+"-W"+String(week).padStart(2,"0");
         }
-        async function rapporteraStad(rad){
-          const senaste = localStorage.getItem("stad_senaste_namn")||"";
-          let vem = prompt(`STÄDNING av rad ${rad}\nVem städade?`, senaste);
-          if(!vem) return;
-          vem = vem.trim();
-          if(!vem) return;
-          localStorage.setItem("stad_senaste_namn", vem);
-          let namnLista = [];
-          try{ namnLista = JSON.parse(localStorage.getItem("stad_namn")||"[]"); }catch(e){}
-          namnLista = [vem, ...namnLista.filter(x=>x!==vem)].slice(0,10);
-          try{ localStorage.setItem("stad_namn", JSON.stringify(namnLista)); }catch(e){}
-          const vecka = isoVeckaStad(new Date());
-          kamStatus(`Sparar städning rad ${rad}...`);
+        let aktivStadRad = null;
+        function fyllStadNamnlista(){
           try{
-            const res = await fetch(STAT_URL+"/stad",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rad: rad, plats: rad, vem: vem, vecka: vecka, tid: new Date().toISOString(), kalla:"lagersok-app-kamera"})});
+            const namn = JSON.parse(localStorage.getItem("stad_namn")||"[]");
+            const dl = document.getElementById("stadNamnLista");
+            if(!dl) return;
+            dl.innerHTML="";
+            namn.forEach(n=>{ const o=document.createElement("option"); o.value=n; dl.appendChild(o); });
+            const senaste = localStorage.getItem("stad_senaste_namn")||"";
+            const inp = document.getElementById("stadVem");
+            if(inp && senaste) inp.value = senaste;
+          }catch(e){}
+        }
+        function visaStadModal(rad){
+          aktivStadRad = rad.toUpperCase();
+          const now = new Date();
+          document.getElementById("stadRadVis").textContent = aktivStadRad;
+          document.getElementById("stadVecka").textContent = isoVeckaStad(now);
+          document.getElementById("stadDatum").textContent = now.toLocaleDateString("sv-SE");
+          document.getElementById("stadOk").style.display="none";
+          document.getElementById("stadErr").style.display="none";
+          document.getElementById("stadBtn").disabled=false;
+          document.getElementById("stadBtn").textContent="✓ Markera som städad";
+          document.getElementById("stadLager").hidden=false;
+          fyllStadNamnlista();
+          setTimeout(()=>{ const i=document.getElementById("stadVem"); if(i){ i.focus(); i.select(); } }, 100);
+          try{ navigator.vibrate && navigator.vibrate(60); }catch(e){}
+        }
+        function stangStadModal(){
+          document.getElementById("stadLager").hidden=true;
+          aktivStadRad=null;
+        }
+        document.getElementById("stadLager")?.addEventListener("click", e=>{ if(e.target.id==="stadLager") stangStadModal(); });
+        document.getElementById("stadBtn")?.addEventListener("click", async ()=>{
+          const vem = document.getElementById("stadVem").value.trim();
+          if(!vem){ document.getElementById("stadErr").textContent="Fyll i ditt namn"; document.getElementById("stadErr").style.display="block"; return; }
+          if(!aktivStadRad) return;
+          const btn = document.getElementById("stadBtn");
+          btn.disabled=true; btn.textContent="Sparar...";
+          document.getElementById("stadErr").style.display="none";
+          const vecka = isoVeckaStad(new Date());
+          try{
+            const res = await fetch(STAT_URL+"/stad",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rad: aktivStadRad, plats: aktivStadRad, vem: vem, vecka: vecka, tid: new Date().toISOString(), kalla:"lagersok-app-kamera-snygg"})});
             if(!res.ok) throw new Error(await res.text());
-            kamStatus(`✓ Rad ${rad} städad vecka ${vecka} av ${vem}`);
-            kamBotten(`<div style="padding:12px;background:#e8f5d8;border-radius:10px;color:#2d5a0e;font-weight:700;text-align:center">Klart! Rad ${rad} markerad som städad.<br><small>${vecka} av ${vem}</small></div><button type="button" class="kamera-igen" onclick="stangKamera()">Stäng</button><button type="button" class="kamera-igen" onclick="kamStart()">Scanna ny</button>`);
+            localStorage.setItem("stad_senaste_namn", vem);
+            let list = []; try{ list = JSON.parse(localStorage.getItem("stad_namn")||"[]"); }catch(e){}
+            list = [vem, ...list.filter(x=>x!==vem)].slice(0,10);
+            try{ localStorage.setItem("stad_namn", JSON.stringify(list)); }catch(e){}
+            const ok = document.getElementById("stadOk");
+            ok.textContent=`Klart! Rad ${aktivStadRad} städad vecka ${vecka} av ${vem}`;
+            ok.style.display="block";
+            btn.textContent="Klar ✓";
             try{ navigator.vibrate && navigator.vibrate([100,50,100]); }catch(e){}
-            stangKameraEfter(2500);
+            setTimeout(()=>{ stangStadModal(); stangKamera(); }, 1800);
           }catch(e){
-            kamStatus(`Kunde inte spara: ${e.message}`);
-            kamBotten(`<button type="button" class="kamera-igen" onclick="rapporteraStad('${rad.replace(/'/g,"")}')">Försök igen</button><button type="button" class="kamera-igen" onclick="kamStart()">Scanna ny</button>`);
+            document.getElementById("stadErr").textContent="Kunde inte spara: "+e.message;
+            document.getElementById("stadErr").style.display="block";
+            btn.disabled=false; btn.textContent="✓ Markera som städad";
           }
-        }
-        function stangKameraEfter(ms){
-          setTimeout(()=>{ try{ stangKamera(); }catch(e){} }, ms);
-        }
-        // Försök läsa QR med BarcodeDetector om tillgängligt, annars försök med enkel text-tolkning
+        });
+        // Enter för att spara
+        document.getElementById("stadVem")?.addEventListener("keydown", e=>{ if(e.key==="Enter") document.getElementById("stadBtn").click(); if(e.key==="Escape") stangStadModal(); });
         let qrDetector = null;
-        try{
-          if('BarcodeDetector' in window){
-            qrDetector = new BarcodeDetector({formats:['qr_code']});
-          }
-        }catch(e){}
+        try{ if('BarcodeDetector' in window){ qrDetector = new BarcodeDetector({formats:['qr_code']}); } }catch(e){}
         async function kamForsokQR(canvas){
-          // 1) BarcodeDetector
           if(qrDetector){
             try{
               const barcodes = await qrDetector.detect(canvas);
               for(const b of barcodes){
-                const txt = b.rawValue||b.rawValue||"";
+                const txt = b.rawValue||"";
                 const rad = parseStadQR(txt);
                 if(rad) return {type:"stad", rad: rad, raw: txt};
               }
             }catch(e){}
           }
-          // 2) Om texten från Tesseract redan innehåller STÄDNING eller ?rad=
           return null;
         }
         function kamForsokQRText(text){
@@ -1036,7 +1071,13 @@
           if(rad) return {type:"stad", rad: rad, raw: text};
           return null;
         }
-
+        // ======================= KAMERALÄGE ORIGINAL =======================
+        // Läser texten på förpackningen med kameran och letar efter ett nummer som finns i databasen
+        // (leverantörens artikelnummer, "REF", eller vårt eget artikelnummer). Textläsaren (Tesseract.js)
+        // hämtas först när man trycker på kameraknappen, ligger mappen tesseract bredvid sidan används den, annars behövs nät första gången (ca 8 MB).
+        const TESS_JS = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+        const TESS_SPRAK = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int';
+        let kamNummerIndex = null;
         let kamStrom = null, kamWorker = null, kamWorkerLovar = null;
         let kamAktiv = false, kamVarv = 0;
 
@@ -1216,13 +1257,8 @@
         // Osäkra träffar (t.ex. 3 som lästs i stället för 8) samlas och visas först om inget säkert nummer dyker upp.
         let kamOsakra = new Set();
         function kamHantera(text, slutgiltig) {
-            // Kolla om OCR-texten råkar innehålla en STÄDNING-QR
             const qrFrånText = kamForsokQRText(text);
-            if(qrFrånText){
-              kamAktiv = false;
-              rapporteraStad(qrFrånText.rad);
-              return true;
-            }
+            if(qrFrånText){ kamAktiv=false; visaStadModal(qrFrånText.rad); return true; }
 
             const r = kameraHittaNummer(text);
             // Står både artikelnummer och leverantörens nummer på etiketten ger de två träffar på samma artikel. Då är det ingen fråga om val.
@@ -1249,15 +1285,7 @@
                 const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
                 const bild = kamTaBild(hel);
                 if (!bild) { await new Promise(r => setTimeout(r, 300)); continue; }
-                // Försök QR först (STÄDNING)
-                try{
-                  const qr = await kamForsokQR(bild);
-                  if(qr && qr.type==="stad"){
-                    kamAktiv = false;
-                    rapporteraStad(qr.rad);
-                    return;
-                  }
-                }catch(e){}
+                try{ const qr = await kamForsokQR(bild); if(qr && qr.type==="stad"){ kamAktiv=false; visaStadModal(qr.rad); return; } }catch(e){}
                 let text = '';
                 try { text = await kamLas(bild, psm); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
                 if (!kamAktiv) return;
@@ -1332,22 +1360,11 @@
 
         // Reserv: en vanlig bild från kameraappen (om live-kameran inte går att använda)
         document.getElementById('kameraFil').addEventListener('change', async (e) => {
-            let fil = e.target.files && e.target.files[0];
-            if(fil){
-              try{
-                const bmp = await createImageBitmap(fil);
-                const c = document.createElement('canvas');
-                c.width = bmp.width; c.height = bmp.height;
-                c.getContext('2d').drawImage(bmp,0,0);
-                const qr = await kamForsokQR(c);
-                if(qr && qr.type==="stad"){
-                  e.target.value='';
-                  rapporteraStad(qr.rad);
-                  return;
-                }
-              }catch(e2){}
-            }
-            fil = e.target.files && e.target.files[0];
+            // QR för städning även via fil
+            let f = e.target.files && e.target.files[0];
+            if(f){ try{ const bmp = await createImageBitmap(f); const c = document.createElement('canvas'); c.width=bmp.width; c.height=bmp.height; c.getContext('2d').drawImage(bmp,0,0); const qr = await kamForsokQR(c); if(qr && qr.type==="stad"){ e.target.value=''; visaStadModal(qr.rad); return; } }catch(e2){} }
+
+            const fil = e.target.files && e.target.files[0];
             e.target.value = '';
             if (!fil) return;
             kamStatus('Läser bilden...');
@@ -1524,11 +1541,10 @@
                 <ol>
                   <li>På utsidan av varje rad sitter en lapp märkt <b>STÄDNING</b> och radens namn, t.ex. <b>A</b>, <b>BG</b>.</li>
                   <li>Tryck på samma kameraknapp 📷 som för artikelnummer och håll mot QR-koden på lappen.</li>
-                  <li>Appen känner automatiskt igen att det är en städ-QR (den innehåller <b>rad=E</b> eller <b>STÄDNING</b>) och frågar <b>Vem städade?</b></li>
-                  <li>Välj ditt namn och tryck OK – raden markeras som städad denna vecka. Namnet sparas till nästa gång.</li>
-                  <li>I Admin under fliken STÄDNING blir raden grön direkt.</li>
+                  <li>När QR-koden läses kommer en snygg sida upp med radens namn och veckonummer. Fyll i ditt namn och tryck <b>Markera som städad</b>.</li>
+                  <li>Raden blir grön direkt i Admin under STÄDNING. En rad per vecka.</li>
                 </ol>
-                <p>Tips: Du behöver inte öppna stad.html separat – Lagersök-appens kamera klarar både artikelnummer och städning.</p>`;
+                <p>Tips: Samma kamera klarar både artikelnummer och städ-QR – appen känner automatiskt igen vad det är.</p>`;
             }
             if (telefon) {
                 if (hjalpArIphone()) {
@@ -1585,5 +1601,23 @@
             });
         }
     </script>
+
+    <!-- STÄDNING modal – snygg sida när QR scannas -->
+    <div id="stadLager" class="stad-lager" hidden>
+      <div class="stad-kort">
+        <div class="stad-top">STÄDNING</div>
+        <div class="stad-rad" id="stadRadVis">–</div>
+        <div style="text-align:center;margin-bottom:8px"><span class="stad-vecka" id="stadVecka"></span> <span id="stadDatum" style="font-size:12px;color:#64748b"></span></div>
+        <div class="stad-label">Vem städade?</div>
+        <input id="stadVem" class="stad-input" list="stadNamnLista" placeholder="T.ex. Anna" autocomplete="name">
+        <datalist id="stadNamnLista"></datalist>
+        <button class="stad-btn" id="stadBtn">✓ Markera som städad</button>
+        <button class="stad-btn sec" onclick="stangStadModal()">Avbryt</button>
+        <div class="stad-ok" id="stadOk"></div>
+        <div class="stad-err" id="stadErr"></div>
+        <div style="font-size:11px;color:#94a3b8;text-align:center;margin-top:10px">En rad per vecka. Namnet sparas till nästa gång.</div>
+      </div>
+    </div>
+
 </body>
 </html>
