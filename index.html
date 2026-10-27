@@ -318,6 +318,27 @@
         html[data-tema] :focus-visible { outline:3px solid var(--fokus); outline-offset:3px; }
         html[data-tema] #searchInput:focus, html[data-tema] #searchInput:focus-visible { outline:none; outline-offset:0; border-color:var(--kant); box-shadow:none; }
 
+
+        /* ===== Sökhistorik ===== */
+        .historik { width:100%; margin:-4px 0 16px; padding:10px 12px; border:1px solid var(--kant,#e2e8f0); border-radius:12px; background:var(--yta-dim,#f8fafc); color:var(--text,#0f172a); }
+        .historik[hidden] { display:none; }
+        .hist-topp { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+        .hist-rubrik { font-size:14px; font-weight:800; color:var(--text-dim,#475569); }
+        .hist-verktyg { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+        .hist-lank { border:0; background:transparent; color:var(--fokus,#0f766e); font-size:13px; font-weight:700; cursor:pointer; padding:4px 6px; border-radius:8px; text-decoration:underline; text-underline-offset:2px; }
+        .hist-lank:hover { background:var(--kant,#e2e8f0); }
+        .hist-chips { display:flex; flex-wrap:wrap; gap:8px; }
+        .hist-chip { max-width:100%; border:1px solid var(--kant,#cbd5e1); background:var(--yta,#fff); color:var(--text,#0f172a); border-radius:999px; padding:7px 14px; font-size:15px; font-weight:600; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .hist-chip::before { content:"↻ "; color:var(--text-dim,#64748b); font-weight:700; }
+        .hist-chip:active { transform:scale(.97); }
+        .hist-grupp { margin:10px 0 4px; font-size:12px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:var(--text-dim,#64748b); }
+        .hist-rad { display:flex; align-items:center; gap:6px; border-top:1px solid var(--kant,#e2e8f0); }
+        .hist-sok { flex:1; min-width:0; text-align:left; border:0; background:transparent; color:var(--text,#0f172a); font-size:15px; font-weight:600; padding:9px 4px; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .hist-tid { font-size:12px; color:var(--text-dim,#64748b); white-space:nowrap; }
+        .hist-ta { border:0; background:transparent; color:var(--text-dim,#64748b); font-size:15px; width:32px; height:32px; border-radius:50%; cursor:pointer; }
+        .hist-ta:hover { background:var(--kant,#e2e8f0); }
+        html[data-tema="mork"] .historik { background:#111c2e; border-color:#243247; }
+
         /* Solfjäder med jämnt avstånd längs en kvarts cirkel. */
         .tema-meny { position:absolute; top:12px; right:12px; width:40px; height:40px; z-index:40; }
         .tema-knapp { position:absolute; top:0; right:0; width:40px; height:40px; padding:0; border:1px solid var(--kant); background:var(--yta); color:var(--text); font-size:20px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; white-space:nowrap; box-shadow:0 2px 7px rgba(15,23,42,.09); transition:box-shadow .2s ease, border-color .2s ease, transform .2s ease; }
@@ -456,6 +477,7 @@
             <button type="button" id="kameraKnapp" class="kamera-knapp" onclick="oppnaKamera()" aria-label="Läs av REF-numret med kameran" title="Läs av REF-numret med kameran">📷</button>
             <button class="search-btn" onclick="sökLager()">Sök</button>
         </div>
+        <div id="historikOmrade" class="historik" hidden></div>
 
         <div class="sort-container">
             <div class="sort-box">
@@ -669,6 +691,7 @@
             if (searchInput.value.length === 0) {
                 document.getElementById('resultatOmråde').innerHTML = '';
             }
+            if (typeof historikRita === 'function') historikRita();
         }
 
         function clearSearch() {
@@ -846,6 +869,39 @@
             return item._pd.some(pd => pd.length >= delar.length && delar.every((x, i) => pd[i] === x));
         }
 
+        // ---- Statistik: skickar söktext, antal träffar och tid till den egna statistiktjänsten (tomt = av). Ingen info om vem som söker.
+        const STAT_URL = 'https://sterilsok-stat.pelle-holmstrom.workers.dev';          // t.ex. 'https://lagersok-stat.dittnamn.workers.dev' – lämna tom för att stänga av
+        let statTimer = null, statSist = '', statKalla = 0;     // statKalla: 1 = sökningen kom från kameran
+        function statEnhet() {                       // vilken sorts enhet söker? (utan att identifiera personen)
+            const ua = navigator.userAgent || '', touch = navigator.maxTouchPoints > 1;
+            const ipad = /iPad/.test(ua) || (/Macintosh/.test(ua) && touch);
+            const surf = ipad || (/Android/.test(ua) && !/Mobile/.test(ua)) || /Tablet/i.test(ua);
+            const mobil = !surf && (/Mobi|iPhone|iPod|Android/.test(ua));
+            const e = surf ? 'surfplatta' : mobil ? 'mobil' : 'dator';
+            const o = /Android/.test(ua) ? 'Android' : (/iPhone|iPod/.test(ua) || ipad) ? 'iOS' : /CrOS/.test(ua) ? 'ChromeOS' :
+                      /Windows/.test(ua) ? 'Windows' : /Macintosh/.test(ua) ? 'Mac' : /Linux/.test(ua) ? 'Linux' : 'Annat';
+            const b = /Edg\//.test(ua) ? 'Edge' : /OPR\/|Opera/.test(ua) ? 'Opera' : /SamsungBrowser/.test(ua) ? 'Samsung' :
+                      /Firefox|FxiOS/.test(ua) ? 'Firefox' : /Chrome|CriOS/.test(ua) ? 'Chrome' : /Safari/.test(ua) ? 'Safari' : 'Annan';
+            let a = 0; try { a = (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) ? 1 : 0; } catch (x) {}
+            return { e, o, a, b };
+        }
+        function statSkicka(data) {
+            if (!STAT_URL) return;
+            try { fetch(STAT_URL.replace(/\/$/, '') + '/log', { method: 'POST', body: JSON.stringify(Object.assign(data, statEnhet())), keepalive: true, mode: 'cors' }).catch(() => {}); } catch (e) {}
+        }
+        function statKameraOppnad() { statSkicka({ q: 'kamera', n: 0, l: 0, k: 2 }); }
+        function statLogga(fraga, antal, liknande) {
+            const kalla = statKalla; statKalla = 0;
+            if (!STAT_URL) return;
+            clearTimeout(statTimer);
+            fraga = String(fraga || '').trim();
+            if (fraga.length < 2 || fraga.toLowerCase() === statSist) return;
+            statTimer = setTimeout(() => {          // skickas först när man slutat skriva en stund
+                statSist = fraga.toLowerCase();
+                statSkicka({ q: fraga.slice(0, 60), n: antal, l: liknande ? 1 : 0, k: kalla });
+            }, 2500);
+        }
+
         function sökLager() {
             const sökord = document.getElementById('searchInput').value.trim().toLowerCase();
             const ordLista = sökord.split(/\s+/).filter(Boolean);
@@ -855,6 +911,8 @@
             resultatOmråde.innerHTML = ""; 
             
             if (!sökord) { document.getElementById('söktid').textContent = ''; return; }
+            historikSpara(document.getElementById('searchInput').value);
+            historikRita();
 
             lagerData.forEach(sokForbered);
             const platsFraga = sokPlatsFraga(document.getElementById('searchInput').value);
@@ -956,6 +1014,8 @@
                 resultatOmråde.innerHTML = "<div class='error'>🔍 Inga artiklar matchade din sökning i sterilförrådet.</div>";
             }
 
+            statLogga(document.getElementById('searchInput').value, hittade.length, !!liknande);
+
             // Mät tid tills svaret är ritat på skärmen
             requestAnimationFrame(() => setTimeout(() => {
                 const sek = (performance.now() - t0) / 1000;
@@ -963,6 +1023,85 @@
                     `Svaret lästes in på ${sek.toFixed(3).replace('.', ',')} sekunder`;
             }, 0));
         }
+
+
+        // ======================= SÖKHISTORIK =======================
+        // Sparas bara lokalt på den här enheten (localStorage). Inget skickas någonstans.
+        const HIST_NYCKEL = 'sokhistorik', HIST_MAX = 100, HIST_DAGAR = 90, DAG_MS = 86400000;
+        let historikOppen = false;
+
+        function historikLas() {
+            try {
+                const a = JSON.parse(localStorage.getItem(HIST_NYCKEL) || '[]');
+                return Array.isArray(a) ? a.filter(x => x && typeof x.q === 'string' && typeof x.t === 'number') : [];
+            } catch (e) { return []; }
+        }
+        function historikSkriv(a) { try { localStorage.setItem(HIST_NYCKEL, JSON.stringify(a)); } catch (e) {} }
+
+        function historikSpara(q) {
+            q = (q || '').trim();
+            if (!q || q.length > 80) return;
+            const nu = Date.now(), nyckel = q.toLowerCase();
+            let a = historikLas().filter(x => nu - x.t < HIST_DAGAR * DAG_MS && x.q.toLowerCase() !== nyckel);
+            a.unshift({ q: q, t: nu });
+            historikSkriv(a.slice(0, HIST_MAX));
+        }
+
+        function historikGrupper(a) {
+            const d0 = new Date(); d0.setHours(0, 0, 0, 0);
+            const idag = d0.getTime(), igar = idag - DAG_MS, vecka = idag - 6 * DAG_MS;
+            const g = [['Idag', []], ['Igår', []], ['Senaste 7 dagarna', []], ['Äldre', []]];
+            a.forEach(x => (x.t >= idag ? g[0] : x.t >= igar ? g[1] : x.t >= vecka ? g[2] : g[3])[1].push(x));
+            return g.filter(z => z[1].length);
+        }
+
+        function historikTid(t, grupp) {
+            const d = new Date(t);
+            if (grupp === 'Idag' || grupp === 'Igår') return d.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+            if (grupp === 'Senaste 7 dagarna') return d.toLocaleDateString('sv-SE', { weekday: 'short' }) + ' ' + d.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+            return d.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' });
+        }
+
+        function historikRita() {
+            const el = document.getElementById('historikOmrade');
+            if (!el) return;
+            const inp = document.getElementById('searchInput');
+            const a = historikLas();
+            if (!a.length || (inp && inp.value.length > 0)) { el.hidden = true; el.innerHTML = ''; return; }
+            el.hidden = false;
+            let h = '<div class="hist-topp"><span class="hist-rubrik">🕘 Senaste sökningar</span><span class="hist-verktyg">';
+            if (a.length > 5) h += `<button type="button" class="hist-lank" data-hist="vaxla" aria-expanded="${historikOppen}">${historikOppen ? 'Visa färre' : 'Visa alla (' + a.length + ')'}</button>`;
+            h += '<button type="button" class="hist-lank" data-hist="rensa">Rensa</button></span></div>';
+            if (!historikOppen) {
+                h += '<div class="hist-chips">' + a.slice(0, 5).map(x => `<button type="button" class="hist-chip" data-q="${esc(x.q)}" title="Sök igen">${esc(x.q)}</button>`).join('') + '</div>';
+            } else {
+                historikGrupper(a).forEach(([namn, lista]) => {
+                    h += `<div class="hist-grupp">${namn}</div>`;
+                    lista.forEach(x => {
+                        h += `<div class="hist-rad"><button type="button" class="hist-sok" data-q="${esc(x.q)}">${esc(x.q)}</button><span class="hist-tid">${historikTid(x.t, namn)}</span><button type="button" class="hist-ta" data-ta="${x.t}" aria-label="Ta bort ${esc(x.q)} från historiken">✕</button></div>`;
+                    });
+                });
+            }
+            el.innerHTML = h;
+        }
+
+        document.getElementById('historikOmrade').addEventListener('click', function (e) {
+            const k = e.target.closest('button');
+            if (!k) return;
+            if (k.dataset.q !== undefined) {
+                const inp = document.getElementById('searchInput');
+                inp.value = k.dataset.q;
+                toggleClearButton();
+                sökLager();
+            } else if (k.dataset.hist === 'vaxla') {
+                historikOppen = !historikOppen; historikRita();
+            } else if (k.dataset.hist === 'rensa') {
+                if (confirm('Rensa hela sökhistoriken på den här enheten?')) { historikSkriv([]); historikOppen = false; historikRita(); }
+            } else if (k.dataset.ta) {
+                historikSkriv(historikLas().filter(x => String(x.t) !== k.dataset.ta)); historikRita();
+            }
+        });
+        window.addEventListener('DOMContentLoaded', historikRita);
 
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') sökLager();
@@ -1147,6 +1286,7 @@
             const inp = document.getElementById('searchInput');
             inp.value = nr;
             toggleClearButton();
+            statKalla = 1; statSist = '';
             sökLager();
             try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
         }
@@ -1241,6 +1381,7 @@
                 return;
             }
             if (document.getElementById('kameraLager').hidden) return;
+            statKameraOppnad();
             kamStart();
         }
 
@@ -1441,7 +1582,9 @@
                 <h3>Installera på datorn</h3>
                 <p>I Chrome eller Edge kan du trycka på installationsikonen längst till höger i adressfältet för att få en egen ikon för appen.</p>`;
             }
-            h += `<h3>Färgteman</h3>
+            h += `<h3>Sökhistorik</h3>
+                <p>När sökfältet är tomt visas dina fem senaste sökningar. Tryck på en för att söka igen, eller på Visa alla för att se historiken sorterad på idag, igår, senaste 7 dagarna och äldre. Historiken sparas bara på den här ${telefon ? 'telefonen' : 'datorn'} och kan rensas med knappen Rensa.</p>
+                <h3>Färgteman</h3>
                 <p>Knappen med färgpaletten uppe till höger växlar mellan olika färgteman. Valet sparas på den här ${telefon ? 'telefonen' : 'datorn'}.</p>
                 <h3>Start, uppdateringar och utan nät</h3>
                 <p>När appen startar visas en startbild en kort stund. Appen sparar sig själv och databasen, startar direkt från den sparade kopian och fungerar även utan täckning efter första besöket. Nyare version och ny databas hämtas i bakgrunden, och sidan laddas om av sig själv om du inte har börjat söka. Längst ner står när databasen senast uppdaterades.</p>`;
