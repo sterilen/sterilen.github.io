@@ -66,22 +66,44 @@
         button.search-btn:active { transform: scale(0.98); }
 
         .sort-container { display: flex; justify-content: center; width: 100%; margin-bottom: 20px; }
-        .sort-box { display: flex; flex-direction: column; align-items: center; gap: 10px; background: #f8fafc; padding: 12px 10px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; }
+        .sort-box { display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 10px 16px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; justify-content: center; }
         .sort-box label { font-size: 15px; font-weight: 700; color: #475569; white-space: nowrap; }
         .sort-box select { padding: 6px 12px; font-size: 15px; font-weight: 600; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; background-color: #ffffff; color: #0f172a; max-width: 65%; }
 
-        .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: center; width: 100%; }
-        .chip-rubrik { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        .chip-rad { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 6px; width: 100%; }
-        .chip { flex: 1 1 auto; min-width: 0; white-space: nowrap; text-align: center; padding: 8px 10px; font-size: 14px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 999px; cursor: pointer; }
+        .sort-box { flex-direction: column; align-items: stretch; gap: 10px; }
+        .chip-rad { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+        .chip-rubrik { font-size: 13px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; width: 62px; flex-shrink: 0; text-align: left; }
+        .chip { padding: 8px 13px; font-size: 14px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 999px; cursor: pointer; }
         .chip:active { transform: scale(0.97); }
         .chip.aktiv { background: #0f172a; color: #ffffff; border-color: #0f172a; }
         .chip[data-filter="forbruk"].aktiv { background: #7fb046; border-color: #7fb046; }
         .chip[data-filter="galler"].aktiv { background: #4687b0; border-color: #4687b0; }
-        .chip.riktning { flex: 0 0 auto; margin-left: 0; background: #f1f5f9; }
+        .chip.riktning { margin-left: auto; background: #f1f5f9; }
+
+        /* Alla knappar på en rad vardera, även på smala skärmar */
+        .sort-box { padding: 10px 8px; }
+        .chip-rad { flex-wrap: nowrap; gap: 4px; }
+        .chip-rubrik { font-size: 11px; letter-spacing: 0.5px; width: 50px; }
+        .chip { flex: 0 1 auto; min-width: 0; white-space: nowrap; padding: 7px 8px; font-size: 13px; }
+        .chip.riktning { margin-left: auto; }
         @media (max-width: 380px) {
-            .chip { font-size: 13px; padding: 8px 6px; }
+            .chip-rubrik { width: 42px; font-size: 10px; letter-spacing: 0; }
+            .chip { padding: 7px 6px; font-size: 12px; }
         }
+
+        /* Rubrik ovanför knapparna, knapparna på en rad */
+        .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: stretch; }
+        .chip-rubrik { width: auto !important; text-align: left; font-size: 12px !important; letter-spacing: 1px !important; }
+        .chip-rad { flex-wrap: wrap; justify-content: center; }
+        .chip { flex: 0 0 auto; text-align: center; font-size: 14px; padding: 8px 14px; }
+        .chip.riktning { flex: 0 0 auto; margin-left: 0; }
+        @media (max-width: 380px) { .chip { font-size: 13px; padding: 8px 4px; } }
+
+        /* Centrerade rubriker och knappar */
+        .chip-grupp { align-items: center; }
+        .chip-rubrik { text-align: center !important; }
+        .chip-rad { justify-content: center; }
+        .chip { flex: 0 1 auto; }
 
         .logo-container { height: auto !important; }
         .logo-img { display: block; width: 100%; max-width: 110px; height: auto; }
@@ -296,6 +318,24 @@
         html[data-tema] :focus-visible { outline:3px solid var(--fokus); outline-offset:3px; }
         html[data-tema] #searchInput:focus, html[data-tema] #searchInput:focus-visible { outline:none; outline-offset:0; border-color:var(--kant); box-shadow:none; }
 
+        /* Sökhistorik följer temats färger */
+        html[data-tema] .hist-box { background:var(--yta-dim); border-color:var(--kant); }
+        html[data-tema] .hist-box-head:hover { background:var(--kant); }
+        html[data-tema] .hist-titel { color:var(--text-dim); }
+        html[data-tema] .hist-box-pill { background:var(--yta); color:var(--text-dim); border:1px solid var(--kant); }
+        html[data-tema] .hist-box-body { background:var(--yta); border-top-color:var(--kant); }
+        html[data-tema] .hist-rensa, html[data-tema] .hist-pil, html[data-tema] .hist-grupp-head span, html[data-tema] .hist-tom, html[data-tema] .hist-etikett { color:var(--text-dim); }
+        html[data-tema] .hist-grupp-head b { color:var(--text); }
+        html[data-tema] .hist-chip { background:var(--yta-dim); border-color:var(--kant); color:var(--text); }
+        html[data-tema] .hist-chip:hover { background:var(--accent); border-color:var(--accent); color:var(--accent-text); }
+        @supports (background: color-mix(in srgb, red, blue)) {
+            html[data-tema] .hist-box-head:hover { background:color-mix(in srgb, var(--kant) 55%, transparent); }
+            html[data-tema] .hist-chip:hover { background:color-mix(in srgb, var(--accent) 16%, var(--yta)); color:var(--text); }
+        }
+        html[data-tema] .hist-chip-x { background:var(--kant); color:var(--text-dim); }
+        html[data-tema] .hist-chip:hover .hist-chip-x { background:var(--text-dim); color:var(--yta); }
+        html[data-tema] .hist-chip-x:hover { background:#ef4444 !important; color:#fff; }
+
         /* Solfjäder med jämnt avstånd längs en kvarts cirkel. */
         .tema-meny { position:absolute; top:12px; right:12px; width:40px; height:40px; z-index:40; }
         .tema-knapp { position:absolute; top:0; right:0; width:40px; height:40px; padding:0; border:1px solid var(--kant); background:var(--yta); color:var(--text); font-size:20px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; white-space:nowrap; box-shadow:0 2px 7px rgba(15,23,42,.09); transition:box-shadow .2s ease, border-color .2s ease, transform .2s ease; }
@@ -322,31 +362,50 @@
         @media (prefers-reduced-motion:reduce) { .tema-val,.tema-knapp,.header-block { transition:none !important; } .tema-val { transition-delay:0ms; } }
 
     
-        /* Sökhistorik – egen fällbar ruta – följer valt tema */
-        .hist-box { width:100%; margin-bottom:16px; background:var(--yta); border:2px solid var(--kant); border-radius:14px; overflow:hidden; }
-        .hist-box-head { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; background:var(--yta); }
-        .hist-box-head:hover { background:var(--yta-dim); }
-        .hist-titel { font-size:12px; font-weight:800; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px; }
-        .hist-box-pill { font-size:11px; background:var(--yta-dim); color:var(--text-dim); padding:2px 8px; border-radius:999px; border:1px solid var(--kant); }
-        .hist-rensa { font-size:11px; color:var(--text-dim); background:none; border:none; cursor:pointer; text-decoration:underline; margin-left:8px; }
-        .hist-box-body { display:none; padding:10px 12px 12px; border-top:2px solid var(--kant); background:var(--yta); }
+        /* Sökhistorik – egen fällbar ruta */
+        .hist-box { width:100%; margin:12px 0; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; }
+        .hist-box-head { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; }
+        .hist-box-head:hover { background:#f1f5f9; }
+        .hist-titel { font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px; }
+        .hist-box-pill { font-size:11px; background:#e2e8f0; color:#475569; padding:2px 8px; border-radius:999px; }
+        .hist-rensa { font-size:11px; color:#94a3b8; background:none; border:none; cursor:pointer; text-decoration:underline; margin-left:8px; }
+        .hist-box-body { display:none; padding:10px 12px 12px; border-top:1px solid #e2e8f0; background:#fff; }
         .hist-box.open .hist-box-body { display:block; }
         .hist-box.open .hist-pil { transform: rotate(180deg); }
-        .hist-pil { transition: transform .2s; font-size:12px; color:var(--text-dim); }
+        .hist-pil { transition: transform .2s; font-size:12px; color:#94a3b8; }
         .hist-chips { display:flex; flex-wrap:wrap; gap:6px; }
-        .hist-chip { padding:7px 10px 7px 12px; font-size:13px; font-weight:600; background:var(--yta-dim); border:2px solid var(--kant); border-radius:999px; cursor:pointer; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-flex; align-items:center; gap:6px; color:var(--text); }
-        .hist-chip-x { width:18px; height:18px; border-radius:50%; background:var(--kant); color:var(--yta); border:none; font-size:10px; font-weight:700; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:0 0 18px; }
-        .hist-chip:hover { background:var(--info-bg); border-color:var(--info-border); }
-        .hist-chip:hover .hist-chip-x { background:var(--text-dim); color:var(--yta); }
-        .hist-chip-x:hover { background:#ef4444 !important; color:#fff !important; }
+        .hist-chip { padding:7px 10px 7px 12px; font-size:13px; font-weight:600; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-flex; align-items:center; gap:6px; }
+        .hist-chip:hover { background:#dbeafe; border-color:#93c5fd; }
+        .hist-chip:hover .hist-chip-x { background:#64748b; }
+        .hist-chip-x { width:18px; height:18px; border-radius:50%; background:#cbd5e1; color:#fff; border:none; font-size:10px; font-weight:700; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:0 0 18px; }
+        .hist-chip-x:hover { background:#ef4444 !important; color:#fff; }
         .hist-grupp { margin-top:12px; }
         .hist-grupp-head { display:flex; align-items:center; gap:6px; cursor:pointer; padding:4px 2px; }
-        .hist-grupp-head b { font-size:12px; color:var(--text-dim); }
-        .hist-grupp-head span { font-size:11px; color:var(--text-dim); opacity:0.7; }
+        .hist-grupp-head b { font-size:12px; color:#475569; }
+        .hist-grupp-head span { font-size:11px; color:#94a3b8; }
         .hist-grupp-list { display:none; flex-wrap:wrap; gap:6px; margin:6px 0 0; }
         .hist-grupp.open .hist-grupp-list { display:flex; }
-        .hist-tom { font-size:13px; color:var(--text-dim); text-align:center; padding:8px; }
+        .hist-tom { font-size:13px; color:#94a3b8; text-align:center; padding:8px; }
 
+        
+        /* ---- Städning: ruta för namn efter QR-scanning ---- */
+        .stad-lager { position: fixed; inset: 0; z-index: 1100; background: rgba(15, 23, 42, 0.65); display: flex; align-items: center; justify-content: center; padding: 16px; }
+        .stad-lager[hidden] { display: none; }
+        .stad-ruta { width: 100%; max-width: 380px; background: var(--yta, #ffffff); color: var(--text, #0f172a); border-radius: 20px; padding: 22px 20px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.35); text-align: center; }
+        .stad-topp { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-dim, #64748b); }
+        .stad-rad { font-size: 64px; font-weight: 900; line-height: 1.05; margin: 6px 0 2px; }
+        .stad-vecka { font-size: 13px; font-weight: 700; color: var(--text-dim, #64748b); margin-bottom: 14px; }
+        .stad-etikett { display: block; text-align: left; font-size: 14px; font-weight: 700; margin: 0 0 6px; }
+        .stad-input { width: 100%; padding: 14px; font-size: 18px; border: 2px solid var(--kant, #e2e8f0); border-radius: 12px; background: var(--yta-dim, #f8fafc); color: inherit; outline: none; }
+        .stad-input:focus { border-color: #7fb046; box-shadow: 0 0 0 3px rgba(127,176,70,0.25); }
+        .stad-meddelande { min-height: 22px; margin-top: 12px; font-size: 15px; font-weight: 700; }
+        .stad-meddelande.ok { color: #2f7d32; }
+        .stad-meddelande.fel { color: #b91c1c; }
+        .stad-knappar { display: flex; gap: 10px; margin-top: 10px; }
+        .stad-knappar button { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 17px; font-weight: 800; cursor: pointer; }
+        .stad-sek { background: var(--yta-dim, #e2e8f0); color: inherit; }
+        .stad-klar { background: #7fb046; color: #ffffff; flex: 1.5 !important; }
+        .stad-klar:disabled { background: #cbd5e1; cursor: default; }
         </style>
     <style>
         /* Startbild: visas direkt medan sidan och databasen läses in */
@@ -371,7 +430,33 @@
         @keyframes sbSol { from { transform: scale(1); } to { transform: scale(1.06); } }
         @keyframes sbRad { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
         @media (prefers-reduced-motion: reduce) { #startbild .rok, #startbild .ang, #startbild .glod, #startbild .sol, #startbild .sb-rad b { animation: none; } #startbild { transition: none; } }
-    </style>
+    
+        /* Sökhistorik – egen fällbar ruta */
+        .hist-box { width:100%; margin:12px 0; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; }
+        .hist-box-head { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; }
+        .hist-box-head:hover { background:#f1f5f9; }
+        .hist-titel { font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px; }
+        .hist-box-pill { font-size:11px; background:#e2e8f0; color:#475569; padding:2px 8px; border-radius:999px; }
+        .hist-rensa { font-size:11px; color:#94a3b8; background:none; border:none; cursor:pointer; text-decoration:underline; margin-left:8px; }
+        .hist-box-body { display:none; padding:10px 12px 12px; border-top:1px solid #e2e8f0; background:#fff; }
+        .hist-box.open .hist-box-body { display:block; }
+        .hist-box.open .hist-pil { transform: rotate(180deg); }
+        .hist-pil { transition: transform .2s; font-size:12px; color:#94a3b8; }
+        .hist-chips { display:flex; flex-wrap:wrap; gap:6px; }
+        .hist-chip { padding:7px 10px 7px 12px; font-size:13px; font-weight:600; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-flex; align-items:center; gap:6px; }
+        .hist-chip:hover { background:#dbeafe; border-color:#93c5fd; }
+        .hist-chip:hover .hist-chip-x { background:#64748b; }
+        .hist-chip-x { width:18px; height:18px; border-radius:50%; background:#cbd5e1; color:#fff; border:none; font-size:10px; font-weight:700; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:0 0 18px; }
+        .hist-chip-x:hover { background:#ef4444 !important; color:#fff; }
+        .hist-grupp { margin-top:12px; }
+        .hist-grupp-head { display:flex; align-items:center; gap:6px; cursor:pointer; padding:4px 2px; }
+        .hist-grupp-head b { font-size:12px; color:#475569; }
+        .hist-grupp-head span { font-size:11px; color:#94a3b8; }
+        .hist-grupp-list { display:none; flex-wrap:wrap; gap:6px; margin:6px 0 0; }
+        .hist-grupp.open .hist-grupp-list { display:flex; }
+        .hist-tom { font-size:13px; color:#94a3b8; text-align:center; padding:8px; }
+
+        </style>
 </head>
 <body>
     <div id="startbild" role="status" aria-live="polite">
@@ -470,6 +555,20 @@
                     <button type="button" class="chip aktiv" data-filter="galler" onclick="valjFilter('galler')">Instrumentgaller</button>
                     </div>
                 </div>
+
+        <div id="histBox" class="hist-box" hidden>
+          <div class="hist-box-head" onclick="this.parentElement.classList.toggle('open')">
+            <div class="hist-titel">🕓 Sökhistorik <span id="histTotalPill" class="hist-box-pill"></span></div>
+            <div style="display:flex;align-items:center;gap:8px"><button class="hist-rensa" onclick="event.stopPropagation(); rensaHistorik()">Rensa</button><span class="hist-pil">▼</span></div>
+          </div>
+          <div class="hist-box-body">
+            <div style="margin-bottom:8px"><div class="hist-etikett" style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:4px">Senaste 5</div><div id="histChips" class="hist-chips"></div></div>
+            <div class="hist-grupp open" id="histGruppIdag"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Idag</b><span id="histCountIdag"></span></div><div class="hist-grupp-list" id="histListIdag"></div></div>
+            <div class="hist-grupp" id="histGruppIgar"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Igår</b><span id="histCountIgar"></span></div><div class="hist-grupp-list" id="histListIgar"></div></div>
+            <div class="hist-grupp" id="histGruppVecka"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Senaste 7 dagarna</b><span id="histCountVecka"></span></div><div class="hist-grupp-list" id="histListVecka"></div></div>
+          </div>
+        </div>
+
                 <div class="chip-grupp">
                     <span class="chip-rubrik">Sortera</span>
                     <div class="chip-rad">
@@ -502,6 +601,21 @@
         </div>
     </div>
     <input type="file" id="kameraFil" accept="image/*" capture="environment" hidden>
+    <div id="stadLager" class="stad-lager" hidden>
+        <div class="stad-ruta" role="dialog" aria-modal="true" aria-labelledby="stadRubrik">
+            <div class="stad-topp" id="stadRubrik">STÄDNING</div>
+            <div class="stad-rad" id="stadRad">–</div>
+            <div class="stad-vecka" id="stadVecka"></div>
+            <label class="stad-etikett" for="stadNamn">Vem städade?</label>
+            <input id="stadNamn" class="stad-input" list="stadNamnLista" placeholder="Ditt namn" autocomplete="off" autocapitalize="words" enterkeyhint="done">
+            <datalist id="stadNamnLista"></datalist>
+            <div id="stadMeddelande" class="stad-meddelande" role="status"></div>
+            <div class="stad-knappar">
+                <button type="button" id="stadAvbryt" class="stad-sek">Avbryt</button>
+                <button type="button" id="stadKlar" class="stad-klar">Klar</button>
+            </div>
+        </div>
+    </div>
 
     <footer class="footer">
         <span id="söktid"></span><br><br>
@@ -514,7 +628,7 @@
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
-    <script src="data.js?v=" + Date.now()></script>
+    <script src="data.js?v=4""></script>
     <!-- ================================================================== -->
     <!-- =======================  DATABAS SLUTAR HÄR  ======================= -->
     <!-- Allt nedanför är programkoden, ändra inte om du bara byter data.     -->
@@ -525,6 +639,7 @@
         let aktivSort = 'plats';
         const aktivaTyper = { forbruk: true, galler: true };
         let fallande = false;
+
 
         const TEMA_FARGER = { mork: '#0b1120', ljus: '#f5f8f8', bla: '#edf5ff', gron: '#eef7f1', sand: '#f7f0e3' };
         const temaMeny = document.getElementById('temaMeny');
@@ -849,6 +964,126 @@
             return item._pd.some(pd => pd.length >= delar.length && delar.every((x, i) => pd[i] === x));
         }
 
+        
+        /* ===== SÖKHISTORIK – lokalt på enheten + statistik ===== */
+        const HIST_KEY = 'lagersok_hist_v1';
+        const HIST_MAX = 100;
+        const STAT_URL = "https://sterilsok-stat.pelle-holmstrom.workers.dev";
+        function getHist(){ try{ const a = JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+        function saveHist(arr){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0,HIST_MAX))); }catch(e){} }
+        function addHist(q, antal){
+          q = String(q||'').trim(); if(!q || q.length<2) return;
+          const now = Date.now();
+          let h = getHist();
+          h = h.filter(x=> !(x.q.toLowerCase()===q.toLowerCase() && (now - x.t)<60000));
+          h.unshift({q:q, t:now, c: (typeof antal==='number'?antal:null)});
+          if(h.length>HIST_MAX) h = h.slice(0,HIST_MAX);
+          saveHist(h);
+          renderHist();
+        }
+        function rensaHistorik(){
+          if(!confirm('Rensa hela sökhistoriken på den här enheten?')) return;
+          try{ localStorage.removeItem(HIST_KEY); }catch(e){}
+          renderHist();
+        }
+        function taBortHistItem(ts){
+          try{
+            let h = getHist();
+            h = h.filter(x=> x.t !== ts);
+            saveHist(h);
+            renderHist();
+          }catch(e){}
+        }
+        function anvandHist(q){
+          const inp = document.getElementById('searchInput');
+          if(inp){ inp.value=q; if(typeof toggleClearButton==='function') toggleClearButton(); if(typeof sökLager==='function') sökLager(); inp.focus(); }
+        }
+        function renderHist(){
+          const box = document.getElementById('histBox');
+          if(!box) return;
+          const h = getHist();
+          if(!h.length){ box.hidden=true; return; }
+          box.hidden=false;
+          const pill = document.getElementById('histTotalPill'); if(pill) pill.textContent = h.length + ' st';
+          const chips = document.getElementById('histChips');
+          chips.innerHTML='';
+          h.slice(0,5).forEach(item=>{
+            const el = document.createElement('div');
+            el.className='hist-chip';
+            el.title = new Date(item.t).toLocaleString('sv-SE');
+            const txtSpan = document.createElement('span');
+            txtSpan.textContent = item.q;
+            txtSpan.style.cursor='pointer';
+            txtSpan.onclick=()=>anvandHist(item.q);
+            const xBtn = document.createElement('button');
+            xBtn.className='hist-chip-x';
+            xBtn.textContent='✕';
+            xBtn.title='Ta bort';
+            xBtn.onclick=(e)=>{ e.stopPropagation(); taBortHistItem(item.t); };
+            el.appendChild(txtSpan);
+            el.appendChild(xBtn);
+            chips.appendChild(el);
+          });
+          const now = new Date(); now.setHours(0,0,0,0);
+          const igarStart = new Date(now); igarStart.setDate(now.getDate()-1);
+          const veckaStart = new Date(now); veckaStart.setDate(now.getDate()-6);
+          const idag = h.filter(x=> x.t >= now.getTime());
+          const igar = h.filter(x=> x.t >= igarStart.getTime() && x.t < now.getTime());
+          const vecka = h.filter(x=> x.t >= veckaStart.getTime() && x.t < igarStart.getTime());
+          function fill(listId, countId, arr){
+            const list = document.getElementById(listId);
+            const cnt = document.getElementById(countId);
+            if(!list) return;
+            list.innerHTML='';
+            if(cnt) cnt.textContent = arr.length?`· ${arr.length} st`:'';
+            if(!arr.length){ list.innerHTML='<div class="hist-tom">Inga sökningar</div>'; return; }
+            arr.slice(0,20).forEach(item=>{
+              const el = document.createElement('div');
+              el.className='hist-chip';
+              el.title = new Date(item.t).toLocaleString('sv-SE');
+              const txtSpan = document.createElement('span');
+              txtSpan.textContent = item.q;
+              txtSpan.style.cursor='pointer';
+              txtSpan.onclick=()=>anvandHist(item.q);
+              const xBtn = document.createElement('button');
+              xBtn.className='hist-chip-x';
+              xBtn.textContent='✕';
+              xBtn.title='Ta bort';
+              xBtn.onclick=(e)=>{ e.stopPropagation(); taBortHistItem(item.t); };
+              el.appendChild(txtSpan);
+              el.appendChild(xBtn);
+              list.appendChild(el);
+            });
+          }
+          fill('histListIdag','histCountIdag',idag);
+          fill('histListIgar','histCountIgar',igar);
+          fill('histListVecka','histCountVecka',vecka);
+        }
+        // Skickar en rad till statistiken. kod i sista fältet: 0 = vanlig sökning, 1 = sökning via kameran, 2 = kameran öppnades.
+        function skickaStat(q, hasHit, kod){
+          try{
+            const ts = Date.now();
+            const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'Mobil' : 'Dator';
+            const isPWA = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ? true : false;
+            let os = 'Okänd'; const ua = navigator.userAgent;
+            if(/Windows/i.test(ua)) os='Windows'; else if(/Android/i.test(ua)) os='Android'; else if(/iPhone|iPad/i.test(ua)) os='iOS'; else if(/Mac/i.test(ua)) os='macOS';
+            let browser = 'Okänd'; if(/Chrome/i.test(ua) && !/Edg/i.test(ua)) browser='Chrome'; else if(/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser='Safari'; else if(/Edg/i.test(ua)) browser='Edge'; else if(/Firefox/i.test(ua)) browser='Firefox';
+            const arr = [ts, q.slice(0,80), hasHit, null, isMobile, os, isPWA, browser, kod];
+            if(navigator.sendBeacon){ try{ navigator.sendBeacon(STAT_URL+'/log', JSON.stringify(arr)); return; }catch(e){} }
+            fetch(STAT_URL+'/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(arr), keepalive:true}).catch(()=>{});
+          }catch(e){}
+        }
+        // Sökordet som kameran just la in. Räknas som kamerasökning bara om det står kvar oförändrat när sökningen loggas.
+        let kamSokOrd = null;
+        function logSearchStat(q, antal, ms){
+          if(!q || q.length<2) return;
+          const kod = (kamSokOrd !== null && q === kamSokOrd) ? 1 : 0;
+          kamSokOrd = null;
+          skickaStat(q, (antal||0) > 0, kod);
+        }
+        document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(renderHist, 300); });
+
+
         function sökLager() {
             const sökord = document.getElementById('searchInput').value.trim().toLowerCase();
             const ordLista = sökord.split(/\s+/).filter(Boolean);
@@ -960,8 +1195,10 @@
             }
 
             // Mät tid tills svaret är ritat på skärmen
+                        try{ addHist(document.getElementById('searchInput').value.trim(), hittade.length); }catch(e){}
             requestAnimationFrame(() => setTimeout(() => {
                 const sek = (performance.now() - t0) / 1000;
+                try{ logSearchStat(document.getElementById('searchInput').value.trim(), hittade.length, sek*1000); }catch(e){}
                 document.getElementById('söktid').textContent =
                     `Svaret lästes in på ${sek.toFixed(3).replace('.', ',')} sekunder`;
             }, 0));
@@ -1149,6 +1386,7 @@
             stangKamera();
             const inp = document.getElementById('searchInput');
             inp.value = nr;
+            kamSokOrd = String(nr).trim();
             toggleClearButton();
             sökLager();
             try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
@@ -1175,7 +1413,7 @@
         async function kamStart() {
             kamAktiv = true; kamVarv = 0; kamOsakra = new Set();
             kamBotten('');
-            kamStatus('Håll REF-numret i rutan');
+            kamStatus('Håll REF-numret i rutan, eller scanna QR på hyllraden');
             const klart = Date.now() + 60000;
             // Oftast bara rutan (snabbast), varannan gång hela bilden ifall numret står utanför rutan
             const upplagg = [[false, 6], [true, 11], [false, 11], [true, 6], [false, 6], [false, 11]];
@@ -1221,6 +1459,7 @@
 
         async function oppnaKamera() {
             const lager = document.getElementById('kameraLager');
+            if (lager.hidden) { try { skickaStat('kamera', false, 2); } catch (e) {} }   // bara när kameran öppnas, inte vid "Försök igen"
             lager.hidden = false;
             kamLasSkarm();
             kamBotten('');
@@ -1235,6 +1474,7 @@
             const video = document.getElementById('kameraVideo');
             video.srcObject = kamStrom;
             try { await video.play(); } catch (e) {}
+            if (window.qrStart) qrStart();   // läser städ-QR parallellt med textläsningen
             try { const sp = kamStrom.getVideoTracks()[0]; sp.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }).catch(() => {}); } catch (e) {}
             kamStatus('Hämtar textläsaren... (första gången tar det en stund)');
             try { await laddaTesseract(); }
@@ -1249,6 +1489,7 @@
 
         function stangKamera() {
             kamAktiv = false;
+            if (window.qrStopp) qrStopp();
             document.getElementById('kameraLager').hidden = true;
             kamLosSkarm();
             if (kamStrom) { kamStrom.getTracks().forEach(t => t.stop()); kamStrom = null; }
@@ -1286,6 +1527,164 @@
                     // Har kameran använts förut ligger textläsaren redan sparad. Då förbereds den i bakgrunden så att kameran startar fortare.
                     let anvand = false; try { anvand = localStorage.getItem('kamAnvand') === '1'; } catch (e) {}
                     if (anvand) setTimeout(() => { laddaTesseract().catch(() => {}); }, 2500);
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <script>
+        // ======================= STÄDNING (QR på hyllraden) =======================
+        // Kameran läser QR-koden på en hyllrad (adress med ?stad=E). Då öppnas en ruta där man skriver sitt namn och trycker Klar.
+        // Registreringen skickas till samma tjänst som statistiken (POST /stad) och visas i fliken STÄDNING i Lagersök Admin.
+        (function () {
+            const URL_STAD = (typeof STAT_URL !== 'undefined' ? STAT_URL : 'https://sterilsok-stat.pelle-holmstrom.workers.dev').replace(/\/$/, '') + '/stad';
+            const JSQR_CDN = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+            const $ = id => document.getElementById(id);
+
+            function isoVecka(d) {
+                const t = new Date(d); t.setHours(0, 0, 0, 0);
+                t.setDate(t.getDate() + 3 - (t.getDay() + 6) % 7);
+                const v1 = new Date(t.getFullYear(), 0, 4);
+                const v = 1 + Math.round(((t - v1) / 86400000 - 3 + (v1.getDay() + 6) % 7) / 7);
+                return t.getFullYear() + '-W' + String(v).padStart(2, '0');
+            }
+            function lasLista(nyckel) { try { const l = JSON.parse(localStorage.getItem(nyckel) || '[]'); return Array.isArray(l) ? l : []; } catch (e) { return []; } }
+            function sparaLista(nyckel, l) { try { localStorage.setItem(nyckel, JSON.stringify(l)); } catch (e) {} }
+
+            // Vilken rad står i QR-koden? Godtar adressen ?stad=E (eller ?rad=E) och texten "STÄDNING:E".
+            function stadParse(txt) {
+                if (!txt) return null;
+                txt = String(txt).trim();
+                let m = txt.match(/[?&#](?:stad|rad)=([A-Za-z0-9]{1,8})(?![A-Za-z0-9])/);
+                if (m) return m[1].toUpperCase();
+                m = txt.match(/^ST[ÄA]DNING\s*[:=]\s*([A-Za-z0-9]{1,8})$/i);
+                return m ? m[1].toUpperCase() : null;
+            }
+            window.stadParse = stadParse;
+
+            // ---- ruta för namn ----
+            let aktuellRad = '', stangTimer = null;
+            function meddela(text, typ) { const m = $('stadMeddelande'); m.textContent = text || ''; m.className = 'stad-meddelande' + (typ ? ' ' + typ : ''); }
+            function oppnaStad(rad) {
+                clearTimeout(stangTimer);
+                aktuellRad = rad;
+                $('stadRad').textContent = rad;
+                $('stadVecka').textContent = 'Vecka ' + isoVecka(new Date()).split('-W')[1];
+                const dl = $('stadNamnLista'); dl.innerHTML = '';
+                lasLista('stad_namn').forEach(n => { const o = document.createElement('option'); o.value = n; dl.appendChild(o); });
+                let sen = ''; try { sen = localStorage.getItem('stad_senaste_namn') || ''; } catch (e) {}
+                $('stadNamn').value = sen;
+                $('stadKlar').disabled = false; $('stadKlar').textContent = 'Klar';
+                meddela('');
+                $('stadLager').hidden = false;
+                setTimeout(() => { const f = $('stadNamn'); f.focus(); f.select(); }, 60);
+            }
+            function stangStad() { clearTimeout(stangTimer); $('stadLager').hidden = true; }
+            window.oppnaStad = oppnaStad;
+
+            // ---- skicka (med kö om nätet saknas) ----
+            async function post(p) {
+                const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 15000);
+                try { return await fetch(URL_STAD, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(p), signal: ctl.signal }); }
+                finally { clearTimeout(t); }
+            }
+            async function skickaKo() {
+                let ko = lasLista('stad_ko');
+                while (ko.length) {
+                    try { const r = await post(ko[0]); if (!r.ok && r.status >= 500) break; } catch (e) { break; }
+                    ko.shift(); sparaLista('stad_ko', ko);
+                }
+            }
+            async function klar() {
+                const vem = $('stadNamn').value.trim();
+                if (!vem) { meddela('Skriv ditt namn', 'fel'); $('stadNamn').focus(); return; }
+                const nu = new Date();
+                const p = { rad: aktuellRad, plats: aktuellRad, vem: vem, vecka: isoVecka(nu), datum: nu.toISOString(), tid: nu.toISOString(), kalla: 'app' };
+                $('stadKlar').disabled = true; $('stadKlar').textContent = 'Sparar...'; meddela('');
+                let sparat = false, ko = false;
+                try {
+                    const r = await post(p);
+                    if (!r.ok) throw new Error('Servern svarade ' + r.status);
+                    sparat = true;
+                } catch (e) {
+                    if (e instanceof TypeError || e.name === 'AbortError') ko = true;   // inget nät: spara i telefonen och skicka senare
+                    else { meddela('Kunde inte spara: ' + e.message, 'fel'); $('stadKlar').disabled = false; $('stadKlar').textContent = 'Försök igen'; return; }
+                }
+                if (ko) { const k = lasLista('stad_ko'); k.push(p); sparaLista('stad_ko', k.slice(-50)); }
+                sparaLista('stad_namn', [vem, ...lasLista('stad_namn').filter(x => x !== vem)].slice(0, 10));
+                try { localStorage.setItem('stad_senaste_namn', vem); } catch (e) {}
+                meddela(sparat ? '✓ Rad ' + aktuellRad + ' markerad som städad' : '✓ Sparad i telefonen, skickas när nätet är tillbaka', 'ok');
+                $('stadKlar').textContent = 'Klar ✓';
+                if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+                stangTimer = setTimeout(stangStad, 1800);
+            }
+            $('stadKlar').addEventListener('click', klar);
+            $('stadAvbryt').addEventListener('click', stangStad);
+            $('stadNamn').addEventListener('keydown', e => { if (e.key === 'Enter') klar(); });
+            document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('stadLager').hidden) stangStad(); });
+            window.addEventListener('online', () => { skickaKo(); });
+            setTimeout(skickaKo, 3000);
+
+            // ---- QR-läsning i kameran ----
+            let qrAktiv = false, qrTimer = null, qrDet = null, qrCanvas = null;
+            async function qrForbered() {
+                if (qrDet) return qrDet;
+                if ('BarcodeDetector' in window) {
+                    try {
+                        const f = await BarcodeDetector.getSupportedFormats();
+                        if (f.indexOf('qr_code') >= 0) { qrDet = { bd: new BarcodeDetector({ formats: ['qr_code'] }) }; return qrDet; }
+                    } catch (e) {}
+                }
+                if (!window.jsQR) {
+                    try { await kamLaddaSkript('jsQR.js'); }            // helst en lokal kopia bredvid index.html
+                    catch (e) { await kamLaddaSkript(JSQR_CDN); }
+                }
+                qrDet = { js: true }; return qrDet;
+            }
+            window.qrStopp = function () { qrAktiv = false; clearTimeout(qrTimer); };
+            window.qrStart = async function () {
+                if (qrAktiv) return;
+                qrAktiv = true;
+                let det;
+                try { det = await qrForbered(); } catch (e) { qrAktiv = false; return; }   // QR-läsaren kunde inte hämtas, textläsningen fungerar ändå
+                const v = $('kameraVideo');
+                const tick = async () => {
+                    if (!qrAktiv) return;
+                    let text = null;
+                    try {
+                        if (v.videoWidth && !v.paused) {
+                            if (det.bd) { const r = await det.bd.detect(v); if (r.length) text = r[0].rawValue; }
+                            else {
+                                const s = Math.min(1, 720 / v.videoWidth), w = Math.round(v.videoWidth * s), h = Math.round(v.videoHeight * s);
+                                if (!qrCanvas) { qrCanvas = document.createElement('canvas'); }
+                                if (qrCanvas.width !== w || qrCanvas.height !== h) { qrCanvas.width = w; qrCanvas.height = h; }
+                                const cx = qrCanvas.getContext('2d', { willReadFrequently: true });
+                                cx.drawImage(v, 0, 0, w, h);
+                                const k = window.jsQR(cx.getImageData(0, 0, w, h).data, w, h, { inversionAttempts: 'dontInvert' });
+                                if (k) text = k.data;
+                            }
+                        }
+                    } catch (e) {}
+                    if (!qrAktiv) return;
+                    const rad = text ? stadParse(text) : null;
+                    if (rad) {
+                        qrAktiv = false;
+                        try { kamAktiv = false; } catch (e) {}
+                        if (navigator.vibrate) navigator.vibrate(100);
+                        stangKamera();
+                        oppnaStad(rad);
+                        return;
+                    }
+                    qrTimer = setTimeout(tick, 150);
+                };
+                tick();
+            };
+
+            // ---- QR scannad med telefonens vanliga kameraapp: sidan öppnas med ?stad=E ----
+            try {
+                const rad = new URLSearchParams(location.search).get('stad');
+                if (rad && /^[A-Za-z0-9]{1,8}$/.test(rad)) {
+                    oppnaStad(rad.toUpperCase());
+                    history.replaceState(null, '', location.pathname + location.hash);
                 }
             } catch (e) {}
         })();
@@ -1391,7 +1790,6 @@
     <script>
         // ======================= HJÄLP =======================
         // Visar hjälp som passar enheten: telefon/platta (pekskärm) eller dator.
-        function debounce(fn, ms){ let t; return function(...a){ clearTimeout(t); t=setTimeout(()=>fn.apply(this,a), ms); }; }
         function hjalpArTelefon() {
             try { return window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; }
         }
@@ -1460,23 +1858,9 @@
         document.addEventListener('keydown', e => { if (e.key === 'Escape') stangHjalp(); });
     </script>
     <script>
-        // Debounce sökningen för bättre prestanda på äldre telefoner
-        try {
-            const origSearch = window.sok || window.search;
-            if (typeof origSearch === 'function') {
-                const debounced = debounce(origSearch, 250);
-                const inp = document.getElementById('searchInput');
-                if (inp) {
-                    inp.removeEventListener('input', origSearch);
-                    inp.addEventListener('input', debounced);
-                }
-            }
-        } catch(e) {}
-    </script>
-    <script>
         // Offline-stöd: sparar sidan och databasen i telefonen/datorn.
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js?v=2').catch(() => {}); });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js?v=5').catch(() => {}); });
             // Appen startar direkt från sparad kopia; när en nyare version hämtats laddas sidan om om man inte håller på att söka.
             navigator.serviceWorker.addEventListener('message', e => {
                 if (e.data !== 'ny-version') return;
