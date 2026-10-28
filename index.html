@@ -223,6 +223,11 @@
         .kamera-ram { position: absolute; left: 10%; right: 10%; top: 36%; height: 17%; border: 3px solid rgba(255,255,255,0.9); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); pointer-events: none; }
         .kamera-lager[data-ruta="stor"] .kamera-ram { left: 4%; right: 4%; top: 32%; height: 26%; }
         .kamera-ruta { flex: 0 0 auto; height: 44px; padding: 0 14px; border-radius: 22px; border: none; background: rgba(255,255,255,0.2); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+        /* På dator - ännu mindre sökrutor */
+        @media (pointer: fine) {
+            .kamera-ram { left: 30%; right: 30%; top: 40%; height: 10%; }
+            .kamera-lager[data-ruta="stor"] .kamera-ram { left: 20%; right: 20%; top: 36%; height: 18%; }
+        }
         .kamera-topp { position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px; background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0)); }
         .kamera-status { flex: 1; font-size: 16px; font-weight: 700; line-height: 1.3; }
         .kamera-stang { width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,0.2); color: #fff; font-size: 20px; cursor: pointer; flex: 0 0 auto; }
@@ -1537,25 +1542,11 @@
         document.addEventListener('visibilitychange', () => { if (document.hidden) stangKamera(); });
 
         // Knappen visas bara på enheter med kamera och pekskärm (alltså inte på vanliga datorer)
-        (async function visaKameraOmFinns() {
-            const knapp = document.getElementById('kameraKnapp');
-            if (!knapp || !navigator.mediaDevices) return;
+        (function () {
             try {
-                // Kolla om enheten har kamera - fungerar även på datorer
-                let harKamera = false;
-                try {
-                    if (navigator.mediaDevices.enumerateDevices) {
-                        const enheter = await navigator.mediaDevices.enumerateDevices();
-                        harKamera = enheter.some(d => d.kind === 'videoinput');
-                    }
-                } catch (e) {}
-                // Fallback: om enumerateDevices inte ger svar (kräver ibland tillåtelse),
-                // visa knappen om getUserMedia finns - oppnaKamera() hanterar felet snyggt
-                if (!harKamera && navigator.mediaDevices.getUserMedia) {
-                    harKamera = true;
-                }
-                if (harKamera) {
-                    knapp.classList.add('finns');
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.matchMedia('(pointer: coarse)').matches) {
+                    document.getElementById('kameraKnapp').classList.add('finns');
+                    // Har kameran använts förut ligger textläsaren redan sparad. Då förbereds den i bakgrunden så att kameran startar fortare.
                     let anvand = false; try { anvand = localStorage.getItem('kamAnvand') === '1'; } catch (e) {}
                     if (anvand) setTimeout(() => { laddaTesseract().catch(() => {}); }, 2500);
                 }
@@ -1870,7 +1861,7 @@
                 }
             } else {
                 h += `<h3>Kameran</h3>
-                <p>Kameraknappen visas om enheten har kamera. Saknar datorn kamera syns den inte.</p>
+                <p>Kameraknappen finns bara på telefoner och plattor, så du ser den inte på datorn.</p>
                 <h3>Installera på datorn</h3>
                 <p>I Chrome eller Edge kan du trycka på installationsikonen längst till höger i adressfältet för att få en egen ikon för appen.</p>`;
             }
