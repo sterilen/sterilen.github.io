@@ -1849,6 +1849,8 @@
                   <li>Siffror måste vara helt rätt. Ett artikelnummer med en siffra fel ger inga träffar, för att du inte ska få fel produkt.</li>
                   <li>Under träfflistan står hur snabbt svaret kom.</li>
                 </ul>`;
+            h += `<h3>Sökhistorik</h3>
+                <p>Under sökfältet finns rutan <b>Sökhistorik</b>. Den visar dina <b>senaste 5</b> sökningar som knappar: tryck på en för att söka igen, eller på ✕ för att ta bort den. Tryck på rubriken för att fälla ut rutan och se sökningarna sorterade på <b>Idag</b>, <b>Igår</b> och <b>Senaste 7 dagarna</b> (högst 10 i varje grupp). <b>Rensa</b> tar bort hela historiken. Historiken sparas bara på den här ${telefon ? 'telefonen' : 'datorn'} och skickas ingenstans.</p>`;
             h += `<h3>Visa och sortera</h3>
                 <p><b>Visa</b> väljer om du vill se Fabrikssterilt, Instrumentgaller eller båda. Minst en måste vara vald. <b>Sortera</b> ordnar träffarna efter plats, namn, artikelnummer eller leverantörens nummer.</p>`;
             h += `<h3>Platsrutorna</h3>
@@ -1857,12 +1859,12 @@
                   <li>${dot('#4687b0')}<b>Blå</b>: instrumentgaller, med plats som <b>12:3</b> (hylla:fack).</li>
                   <li>${dot('#b04671')}<b>Rosa, märkt BULK</b>: bulkplats. Den visas alltid bredvid hyllplatsen när artikeln också finns i bulk.</li>
                 </ul>`;
-            if (telefon && harKamera) {
+            if (harKamera) {
                 h += `<h3>Läsa av en förpackning med kameran</h3>
                 <ol>
-                  <li>Tryck på kameraknappen 📷 bredvid Sök. Första gången frågar telefonen om kameran får användas.</li>
-                  <li>Håll telefonen stilla en bit från paketet eller hyllskylten så att numret hamnar i den vita rutan. Det kan vara numret efter <b>REF</b>, <b>Artnr</b> eller <b>Lev.artnr</b>.</li>
-                  <li>Skärmen låses i stående läge medan kameran är öppen (Android). På iPhone kan webbläsaren inte låsa skärmen, så där kan du slå på <b>Lås stående riktning</b> i Kontrollcenter. Håll paketet så att texten går någorlunda vågrätt, lite sned går bra.</li>
+                  <li>Tryck på kameraknappen 📷 bredvid Sök. Första gången frågar ${telefon ? 'telefonen' : 'webbläsaren'} om kameran får användas.</li>
+                  <li>Håll ${telefon ? 'telefonen' : 'etiketten'} stilla en bit från ${telefon ? 'paketet eller hyllskylten' : 'kameran'} så att numret hamnar i den vita rutan. Knappen <b>Stor ruta / Liten ruta</b> uppe till höger byter storlek på rutan: den lilla är snabbast, den stora är lättare att träffa med. Valet sparas. Det kan vara numret efter <b>REF</b>, <b>Artnr</b> eller <b>Lev.artnr</b>.</li>
+                  <li>${telefon ? 'Skärmen låses i stående läge medan kameran är öppen (Android). På iPhone kan webbläsaren inte låsa skärmen, så där kan du slå på <b>Lås stående riktning</b> i Kontrollcenter. ' : ''}Håll paketet så att texten går någorlunda vågrätt, lite sned går bra.</li>
                   <li>Appen läser texten flera gånger i sekunden. När den hittar ett nummer som finns i databasen söker den direkt. Står både artikelnumret och leverantörens nummer på etiketten går den direkt till artikeln. Hittas flera olika artiklar, eller något som bara liknar, väljer du rätt.</li>
                 </ol>
                 <p>Tänk på: första gången hämtas textläsaren (cirka 8 MB), så det behövs nät. Det går bäst med bra ljus och en skarp bild. Streckkoder läses inte, bara tryckt text. Om kameran inte startar kan du välja <b>Ta en bild istället</b>.</p>`;
@@ -1876,9 +1878,7 @@
                     <p>Öppna sidan i Chrome, tryck på menyn (tre punkter) och välj <b>Lägg till på startskärmen</b> eller <b>Installera app</b>. Då startar den som en vanlig app.</p>`;
                 }
             } else {
-                h += `<h3>Kameran</h3>
-                <p>Kameraknappen visas om enheten har kamera. Saknar datorn kamera syns den inte.</p>
-                <h3>Installera på datorn</h3>
+                h += `<h3>Installera på datorn</h3>
                 <p>I Chrome eller Edge kan du trycka på installationsikonen längst till höger i adressfältet för att få en egen ikon för appen.</p>`;
             }
             h += `<h3>Färgteman</h3>
