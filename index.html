@@ -329,6 +329,7 @@
         .hist-verktyg { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
         .hist-lank { border:0; background:transparent; color:var(--fokus,#0f766e); font-size:13px; font-weight:700; cursor:pointer; padding:4px 6px; border-radius:8px; text-decoration:underline; text-underline-offset:2px; }
         .hist-lank:hover { background:var(--kant,#e2e8f0); }
+        .hist-tom { font-size:14px; color:var(--text-dim,#64748b); }
         .hist-chips { display:flex; flex-wrap:wrap; gap:8px; }
         .hist-chip { max-width:100%; border:1px solid var(--kant,#cbd5e1); background:var(--yta,#fff); color:var(--text,#0f172a); border-radius:999px; padding:7px 14px; font-size:15px; font-weight:600; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .hist-chip::before { content:"↻ "; color:var(--text-dim,#64748b); font-weight:700; }
@@ -1070,7 +1071,12 @@
             if (!el) return;
             const inp = document.getElementById('searchInput');
             const a = historikLas();
-            if (!a.length || (inp && inp.value.length > 0)) { el.hidden = true; el.innerHTML = ''; return; }
+            if (inp && inp.value.length > 0) { el.hidden = true; el.innerHTML = ''; return; }
+            if (!a.length) {
+                el.hidden = false;
+                el.innerHTML = '<div class="hist-topp"><span class="hist-rubrik">🕘 Senaste sökningar</span></div><div class="hist-tom">Dina senaste sökningar visas här.</div>';
+                return;
+            }
             el.hidden = false;
             let h = '<div class="hist-topp"><span class="hist-rubrik">🕘 Senaste sökningar</span><span class="hist-verktyg">';
             if (a.length > 5) h += `<button type="button" class="hist-lank" data-hist="vaxla" aria-expanded="${historikOppen}">${historikOppen ? 'Visa färre' : 'Visa alla (' + a.length + ')'}</button>`;
