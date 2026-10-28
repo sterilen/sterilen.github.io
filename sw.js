@@ -1,5 +1,5 @@
-// sw.js v13 – hämtar alltid färsk index.html och data.js när det finns nät, och använder den sparade kopian utan nät.
-const CACHE = 'sterilsok-v13';
+// sw.js v15 – hämtar alltid färsk index.html och data.js när det finns nät, och använder den sparade kopian utan nät.
+const CACHE = 'sterilsok-v15';
 const ASSETS = ['./', 'index.html', 'data.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

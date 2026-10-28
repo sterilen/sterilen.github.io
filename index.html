@@ -304,6 +304,29 @@
         html[data-tema] .chip.aktiv { background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
         html[data-tema] .chip[data-filter="forbruk"].aktiv { background:var(--forbruk); border-color:var(--forbruk); color:#fff; }
         html[data-tema] .chip[data-filter="galler"].aktiv { background:var(--galler); border-color:var(--galler); color:#fff; }
+        /* Enhetlig hovereffekt på alla knappar (bara på enheter med mus, så att den inte fastnar på pekskärmar):
+           knappen lyfter 2 px och får en skugga. Knappar med ram får temats fokusfärg på kanten, fyllda knappar blir lite ljusare. */
+        .chip, button.search-btn, .kamera-knapp, .hjalp-knapp, .tema-knapp, .fredag-knapp, .hist-chip, .kamera-ruta, .kamera-stang {
+            transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, border-color .12s ease, filter .12s ease;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            html[data-tema] .chip:hover, html[data-tema] button.search-btn:hover, html[data-tema] .kamera-knapp:hover,
+            html[data-tema] .hjalp-knapp:hover, html[data-tema] .tema-knapp:hover, html[data-tema] .fredag-knapp:hover,
+            html[data-tema] .hist-chip:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(15,23,42,.18); }
+            html[data-tema] .chip:hover, html[data-tema] .kamera-knapp:hover, html[data-tema] .hjalp-knapp:hover,
+            html[data-tema] .tema-knapp:hover, html[data-tema] .fredag-knapp:hover { border-color: var(--fokus, #0f766e); }
+            html[data-tema] .chip:not(.aktiv):hover, html[data-tema] .kamera-knapp:hover, html[data-tema] .hjalp-knapp:hover,
+            html[data-tema] .tema-knapp:hover { background: var(--yta-dim, #f1f5f9); }
+            html[data-tema] .chip.aktiv:hover, html[data-tema] button.search-btn:hover { filter: brightness(1.12); }
+            html[data-tema] .clear-btn:hover { filter: brightness(1.2); }
+            html[data-tema] .kamera-ruta:hover, html[data-tema] .kamera-stang:hover { background: rgba(255,255,255,0.32); }
+            html[data-tema="mork"] .chip:hover, html[data-tema="mork"] button.search-btn:hover, html[data-tema="mork"] .kamera-knapp:hover,
+            html[data-tema="mork"] .hjalp-knapp:hover, html[data-tema="mork"] .tema-knapp:hover, html[data-tema="mork"] .fredag-knapp:hover,
+            html[data-tema="mork"] .hist-chip:hover { box-shadow: 0 5px 12px rgba(0,0,0,.45); }
+            html[data-tema] .chip:active, html[data-tema] button.search-btn:active, html[data-tema] .kamera-knapp:active,
+            html[data-tema] .hjalp-knapp:active, html[data-tema] .tema-knapp:active, html[data-tema] .fredag-knapp:active,
+            html[data-tema] .hist-chip:active { transform: translateY(0) scale(.97); box-shadow: none; }
+        }
         html[data-tema] .result-table td { background:var(--yta); border-top-color:var(--kant); border-bottom-color:var(--kant); }
         html[data-tema] .result-table td:first-child { border-left-color:var(--kant); }
         html[data-tema] .result-table td:last-child { border-right-color:var(--kant); }
