@@ -1437,7 +1437,7 @@
         async function kamStart() {
             kamAktiv = true; kamVarv = 0; kamOsakra = new Set();
             kamBotten('');
-            kamStatus('Håll REF-numret i rutan, eller scanna QR på hyllraden');
+            kamStatus('');   // instruktionen står redan i rutan ovanför (kamera-titel)
             const klart = Date.now() + 60000;
             // Oftast bara rutan (snabbast), varannan gång hela bilden ifall numret står utanför rutan
             const upplagg = [[false, 6], [true, 11], [false, 11], [true, 6], [false, 6], [false, 11]];
