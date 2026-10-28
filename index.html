@@ -223,11 +223,10 @@
         .kamera-ram { position: absolute; left: 10%; right: 10%; top: 36%; height: 17%; border: 3px solid rgba(255,255,255,0.9); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); pointer-events: none; }
         .kamera-lager[data-ruta="stor"] .kamera-ram { left: 4%; right: 4%; top: 32%; height: 26%; }
         .kamera-ruta { flex: 0 0 auto; height: 44px; padding: 0 14px; border-radius: 22px; border: none; background: rgba(255,255,255,0.2); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
-                /* På dator - dubbel storlek från 60% smalare, höjd oförändrad i förhållande */
+        /* På dator: rutan är dubbelt så bred (höjden oförändrad). Mobilen påverkas inte. */
         @media (pointer: fine) {
-            .kamera-ram { left: 42%; right: 42%; top: 35%; height: 20%; }
-            .kamera-lager[data-ruta="stor"] .kamera-ram { left: 38%; right: 38%; top: 27%; height: 36%; }
-        }
+            .kamera-ram { left: 34%; right: 34%; top: 35%; height: 20%; }
+            .kamera-lager[data-ruta="stor"] .kamera-ram { left: 26%; right: 26%; top: 27%; height: 36%; }
         }
         .kamera-titel { position: relative; z-index: 3; font-size: 15px; font-weight: 700; background: rgba(0,0,0,0.5); padding: 6px 12px; border-radius: 20px; }
         .kamera-topp { position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px; background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0)); }
@@ -557,14 +556,6 @@
 
         <div class="sort-container">
             <div class="sort-box">
-                <div class="chip-grupp">
-                    <span class="chip-rubrik">Visa</span>
-                    <div class="chip-rad">
-                    <button type="button" class="chip aktiv" data-filter="forbruk" onclick="valjFilter('forbruk')">Fabrikssterilt</button>
-                    <button type="button" class="chip aktiv" data-filter="galler" onclick="valjFilter('galler')">Instrumentgaller</button>
-                    </div>
-                </div>
-
         <div id="histBox" class="hist-box" hidden>
           <div class="hist-box-head" onclick="this.parentElement.classList.toggle('open')">
             <div class="hist-titel">🕓 Sökhistorik <span id="histTotalPill" class="hist-box-pill"></span></div>
@@ -577,6 +568,14 @@
             <div class="hist-grupp" id="histGruppVecka"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Senaste 7 dagarna</b><span id="histCountVecka"></span></div><div class="hist-grupp-list" id="histListVecka"></div></div>
           </div>
         </div>
+
+                <div class="chip-grupp">
+                    <span class="chip-rubrik">Visa</span>
+                    <div class="chip-rad">
+                    <button type="button" class="chip aktiv" data-filter="forbruk" onclick="valjFilter('forbruk')">Fabrikssterilt</button>
+                    <button type="button" class="chip aktiv" data-filter="galler" onclick="valjFilter('galler')">Instrumentgaller</button>
+                    </div>
+                </div>
 
                 <div class="chip-grupp">
                     <span class="chip-rubrik">Sortera</span>
@@ -598,7 +597,7 @@
         <video id="kameraVideo" class="kamera-video" playsinline muted autoplay></video>
         <div class="kamera-ram"></div>
         <div class="kamera-topp">
-            <div class="kamera-titel" style="position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:15px;font-weight:700;background:rgba(0,0,0,0.5);padding:6px 12px;border-radius:20px;z-index:3;">Scanna REF — håll etiketten i rutan</div>
+            <div class="kamera-titel" style="position:absolute;top:78px;left:50%;transform:translateX(-50%);font-size:14px;font-weight:700;background:rgba(0,0,0,0.5);padding:6px 12px;border-radius:20px;z-index:3;white-space:nowrap;pointer-events:none;">Scanna REF — håll etiketten i rutan</div>
             <div id="kameraStatus" class="kamera-status"></div>
             <button type="button" id="kameraRuta" class="kamera-ruta" onclick="kamVaxlaRuta()" aria-label="Byt storlek på rutan"></button>
             <button type="button" class="kamera-stang" onclick="stangKamera()" aria-label="Stäng kameran">✕</button>
@@ -1048,7 +1047,7 @@
             list.innerHTML='';
             if(cnt) cnt.textContent = arr.length?`· ${arr.length} st`:'';
             if(!arr.length){ list.innerHTML='<div class="hist-tom">Inga sökningar</div>'; return; }
-            arr.slice(0,20).forEach(item=>{
+            arr.slice(0,10).forEach(item=>{
               const el = document.createElement('div');
               el.className='hist-chip';
               el.title = new Date(item.t).toLocaleString('sv-SE');
