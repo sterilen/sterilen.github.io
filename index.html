@@ -66,44 +66,22 @@
         button.search-btn:active { transform: scale(0.98); }
 
         .sort-container { display: flex; justify-content: center; width: 100%; margin-bottom: 20px; }
-        .sort-box { display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 10px 16px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; justify-content: center; }
+        .sort-box { display: flex; flex-direction: column; align-items: center; gap: 10px; background: #f8fafc; padding: 12px 10px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; }
         .sort-box label { font-size: 15px; font-weight: 700; color: #475569; white-space: nowrap; }
         .sort-box select { padding: 6px 12px; font-size: 15px; font-weight: 600; border: 1px solid #cbd5e1; border-radius: 8px; outline: none; background-color: #ffffff; color: #0f172a; max-width: 65%; }
 
-        .sort-box { flex-direction: column; align-items: stretch; gap: 10px; }
-        .chip-rad { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-        .chip-rubrik { font-size: 13px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; width: 62px; flex-shrink: 0; text-align: left; }
-        .chip { padding: 8px 13px; font-size: 14px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 999px; cursor: pointer; }
+        .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: center; width: 100%; }
+        .chip-rubrik { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .chip-rad { display: flex; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 6px; width: 100%; }
+        .chip { flex: 1 1 auto; min-width: 0; white-space: nowrap; text-align: center; padding: 8px 10px; font-size: 14px; font-weight: 700; color: #334155; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 999px; cursor: pointer; }
         .chip:active { transform: scale(0.97); }
         .chip.aktiv { background: #0f172a; color: #ffffff; border-color: #0f172a; }
         .chip[data-filter="forbruk"].aktiv { background: #7fb046; border-color: #7fb046; }
         .chip[data-filter="galler"].aktiv { background: #4687b0; border-color: #4687b0; }
-        .chip.riktning { margin-left: auto; background: #f1f5f9; }
-
-        /* Alla knappar på en rad vardera, även på smala skärmar */
-        .sort-box { padding: 10px 8px; }
-        .chip-rad { flex-wrap: nowrap; gap: 4px; }
-        .chip-rubrik { font-size: 11px; letter-spacing: 0.5px; width: 50px; }
-        .chip { flex: 0 1 auto; min-width: 0; white-space: nowrap; padding: 7px 8px; font-size: 13px; }
-        .chip.riktning { margin-left: auto; }
+        .chip.riktning { flex: 0 0 auto; margin-left: 0; background: #f1f5f9; }
         @media (max-width: 380px) {
-            .chip-rubrik { width: 42px; font-size: 10px; letter-spacing: 0; }
-            .chip { padding: 7px 6px; font-size: 12px; }
+            .chip { font-size: 13px; padding: 8px 6px; }
         }
-
-        /* Rubrik ovanför knapparna, knapparna på en rad */
-        .chip-grupp { display: flex; flex-direction: column; gap: 5px; align-items: stretch; }
-        .chip-rubrik { width: auto !important; text-align: left; font-size: 12px !important; letter-spacing: 1px !important; }
-        .chip-rad { flex-wrap: nowrap; }
-        .chip { flex: 1 1 auto; text-align: center; font-size: 14px; padding: 8px 6px; }
-        .chip.riktning { flex: 0 0 auto; margin-left: 0; }
-        @media (max-width: 380px) { .chip { font-size: 13px; padding: 8px 4px; } }
-
-        /* Centrerade rubriker och knappar */
-        .chip-grupp { align-items: center; }
-        .chip-rubrik { text-align: center !important; }
-        .chip-rad { justify-content: center; }
-        .chip { flex: 0 1 auto; }
 
         .logo-container { height: auto !important; }
         .logo-img { display: block; width: 100%; max-width: 110px; height: auto; }
@@ -220,9 +198,7 @@
         .kamera-lager { position: fixed; inset: 0; z-index: 1000; background: #000; color: #fff; display: flex; flex-direction: column; }
         .kamera-lager[hidden] { display: none; }
         .kamera-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; }
-        .kamera-ram { position: absolute; left: 10%; right: 10%; top: 36%; height: 17%; border: 3px solid rgba(255,255,255,0.9); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); pointer-events: none; }
-        .kamera-lager[data-ruta="stor"] .kamera-ram { left: 4%; right: 4%; top: 32%; height: 26%; }
-        .kamera-ruta { flex: 0 0 auto; height: 44px; padding: 0 14px; border-radius: 22px; border: none; background: rgba(255,255,255,0.2); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+        .kamera-ram { position: absolute; left: 4%; right: 4%; top: 32%; height: 26%; border: 3px solid rgba(255,255,255,0.9); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); pointer-events: none; }
         .kamera-topp { position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px; background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0)); }
         .kamera-status { flex: 1; font-size: 16px; font-weight: 700; line-height: 1.3; }
         .kamera-stang { width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,0.2); color: #fff; font-size: 20px; cursor: pointer; flex: 0 0 auto; }
@@ -320,28 +296,6 @@
         html[data-tema] :focus-visible { outline:3px solid var(--fokus); outline-offset:3px; }
         html[data-tema] #searchInput:focus, html[data-tema] #searchInput:focus-visible { outline:none; outline-offset:0; border-color:var(--kant); box-shadow:none; }
 
-
-        /* ===== Sökhistorik ===== */
-        .historik { width:100%; margin:-4px 0 16px; padding:10px 12px; border:1px solid var(--kant,#e2e8f0); border-radius:12px; background:var(--yta-dim,#f8fafc); color:var(--text,#0f172a); }
-        .historik[hidden] { display:none; }
-        .hist-topp { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
-        .hist-rubrik { font-size:14px; font-weight:800; color:var(--text-dim,#475569); }
-        .hist-verktyg { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
-        .hist-lank { border:0; background:transparent; color:var(--fokus,#0f766e); font-size:13px; font-weight:700; cursor:pointer; padding:4px 6px; border-radius:8px; text-decoration:underline; text-underline-offset:2px; }
-        .hist-lank:hover { background:var(--kant,#e2e8f0); }
-        .hist-tom { font-size:14px; color:var(--text-dim,#64748b); }
-        .hist-chips { display:flex; flex-wrap:wrap; gap:8px; }
-        .hist-chip { max-width:100%; border:1px solid var(--kant,#cbd5e1); background:var(--yta,#fff); color:var(--text,#0f172a); border-radius:999px; padding:7px 14px; font-size:15px; font-weight:600; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-        .hist-chip::before { content:"↻ "; color:var(--text-dim,#64748b); font-weight:700; }
-        .hist-chip:active { transform:scale(.97); }
-        .hist-grupp { margin:10px 0 4px; font-size:12px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:var(--text-dim,#64748b); }
-        .hist-rad { display:flex; align-items:center; gap:6px; border-top:1px solid var(--kant,#e2e8f0); }
-        .hist-sok { flex:1; min-width:0; text-align:left; border:0; background:transparent; color:var(--text,#0f172a); font-size:15px; font-weight:600; padding:9px 4px; cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-        .hist-tid { font-size:12px; color:var(--text-dim,#64748b); white-space:nowrap; }
-        .hist-ta { border:0; background:transparent; color:var(--text-dim,#64748b); font-size:15px; width:32px; height:32px; border-radius:50%; cursor:pointer; }
-        .hist-ta:hover { background:var(--kant,#e2e8f0); }
-        html[data-tema="mork"] .historik { background:#111c2e; border-color:#243247; }
-
         /* Solfjäder med jämnt avstånd längs en kvarts cirkel. */
         .tema-meny { position:absolute; top:12px; right:12px; width:40px; height:40px; z-index:40; }
         .tema-knapp { position:absolute; top:0; right:0; width:40px; height:40px; padding:0; border:1px solid var(--kant); background:var(--yta); color:var(--text); font-size:20px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; border-radius:50%; white-space:nowrap; box-shadow:0 2px 7px rgba(15,23,42,.09); transition:box-shadow .2s ease, border-color .2s ease, transform .2s ease; }
@@ -367,7 +321,33 @@
         .tema-meny.oppet + .header-block { padding-top:140px; transition:padding-top .28s ease; }
         @media (prefers-reduced-motion:reduce) { .tema-val,.tema-knapp,.header-block { transition:none !important; } .tema-val { transition-delay:0ms; } }
 
-    </style>
+    
+        /* Sökhistorik – egen fällbar ruta – följer valt tema */
+        .hist-box { width:100%; margin-bottom:16px; background:var(--yta); border:2px solid var(--kant); border-radius:14px; overflow:hidden; }
+        .hist-box-head { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; cursor:pointer; user-select:none; background:var(--yta); }
+        .hist-box-head:hover { background:var(--yta-dim); }
+        .hist-titel { font-size:12px; font-weight:800; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px; }
+        .hist-box-pill { font-size:11px; background:var(--yta-dim); color:var(--text-dim); padding:2px 8px; border-radius:999px; border:1px solid var(--kant); }
+        .hist-rensa { font-size:11px; color:var(--text-dim); background:none; border:none; cursor:pointer; text-decoration:underline; margin-left:8px; }
+        .hist-box-body { display:none; padding:10px 12px 12px; border-top:2px solid var(--kant); background:var(--yta); }
+        .hist-box.open .hist-box-body { display:block; }
+        .hist-box.open .hist-pil { transform: rotate(180deg); }
+        .hist-pil { transition: transform .2s; font-size:12px; color:var(--text-dim); }
+        .hist-chips { display:flex; flex-wrap:wrap; gap:6px; }
+        .hist-chip { padding:7px 10px 7px 12px; font-size:13px; font-weight:600; background:var(--yta-dim); border:2px solid var(--kant); border-radius:999px; cursor:pointer; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:inline-flex; align-items:center; gap:6px; color:var(--text); }
+        .hist-chip-x { width:18px; height:18px; border-radius:50%; background:var(--kant); color:var(--yta); border:none; font-size:10px; font-weight:700; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:0 0 18px; }
+        .hist-chip:hover { background:var(--info-bg); border-color:var(--info-border); }
+        .hist-chip:hover .hist-chip-x { background:var(--text-dim); color:var(--yta); }
+        .hist-chip-x:hover { background:#ef4444 !important; color:#fff !important; }
+        .hist-grupp { margin-top:12px; }
+        .hist-grupp-head { display:flex; align-items:center; gap:6px; cursor:pointer; padding:4px 2px; }
+        .hist-grupp-head b { font-size:12px; color:var(--text-dim); }
+        .hist-grupp-head span { font-size:11px; color:var(--text-dim); opacity:0.7; }
+        .hist-grupp-list { display:none; flex-wrap:wrap; gap:6px; margin:6px 0 0; }
+        .hist-grupp.open .hist-grupp-list { display:flex; }
+        .hist-tom { font-size:13px; color:var(--text-dim); text-align:center; padding:8px; }
+
+        </style>
     <style>
         /* Startbild: visas direkt medan sidan och databasen läses in */
         #startbild { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -480,7 +460,6 @@
             <button type="button" id="kameraKnapp" class="kamera-knapp" onclick="oppnaKamera()" aria-label="Läs av REF-numret med kameran" title="Läs av REF-numret med kameran">📷</button>
             <button class="search-btn" onclick="sökLager()">Sök</button>
         </div>
-        <div id="historikOmrade" class="historik" hidden></div>
 
         <div class="sort-container">
             <div class="sort-box">
@@ -512,7 +491,6 @@
         <div class="kamera-ram"></div>
         <div class="kamera-topp">
             <div id="kameraStatus" class="kamera-status"></div>
-            <button type="button" id="kameraRuta" class="kamera-ruta" onclick="kamVaxlaRuta()" aria-label="Byt storlek på rutan"></button>
             <button type="button" class="kamera-stang" onclick="stangKamera()" aria-label="Stäng kameran">✕</button>
         </div>
         <div id="kameraBotten" class="kamera-botten"></div>
@@ -531,12 +509,12 @@
             <button type="button" id="fredagKnapp" class="fredag-knapp" aria-label="Gunilla Persson" title="Gunilla Persson"><img src="data:image/jpeg;base64,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" alt="" onerror="this.replaceWith(document.createTextNode('GP'))"></button>
             <button type="button" id="marockoKnapp" class="fredag-knapp" aria-label="Marocko" title="Marocko"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDAgQDAwMEBAQFBgoGBgUFBgwICQcKDgwPDg4MDQ0PERYTDxAVEQ0NExoTFRcYGRkZDxIbHRsYHRYYGRj/2wBDAQQEBAYFBgsGBgsYEA0QGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBj/wAARCACAAIADASIAAhEBAxEB/8QAGgABAAMBAQEAAAAAAAAAAAAAAAMEBQECB//EAC0QAAICAQEFBwQDAQAAAAAAAAABAgMEEQUSITFBExUiUZHB0SRTYfBCUrEj/8QAHAEBAAEFAQEAAAAAAAAAAAAAAAIBBAUGBwMI/8QAKxEAAgECBQMCBwEBAAAAAAAAAQIAAxEEBRIhMQYTQVFhIiMkQnFygZEz/9oADAMBAAIRAxEAPwD5WADUZ9NQABEAARAAEQABEAARAAEQABEAARAAEQABEAHmclCuU5PRRTbEi7qilmNgJ6B5hJTrjOL1Ukmj0IR1dQym4MAASUAARAAEQABEAARAAEQUdqW9ngOKfGb3S8ZmT9TtuqjnGvjL/X7HtQAL3PA3mpdbYqpTytsNRPzK5FJfy5sf8W5/kl2Xb2mAot8YPdLxmY30227aOUbOMf8AV7mmK4s1xwd5TonFVKmVrhq5+ZQJpN+UNh/q2P8AYAB4zboAAiAAIgACIOSbUW0m35I6BKMLiwNpnz2tRXNwnTdGS5ppfJzvnG+3d6Is5WJTlQ0mtJLlJc0UYWXbPmqsmtWU8ozS5fvkXaLScbDf0vOU5xj+o8pxX1WJVcMeKgpBgp8BwGBX9hccceJe+Mb7V3ovkp4mdVVk25F0JylN8N1cuJdz7qe7HOrcfaPdTS9SxiY8asKuDgtdNXqurK6kVCdPO3MtXwmdZpnNKguOR+wncDCmNIL3VRYNuSt2Bvt4mVl51VuTVkUwnGUHx3lz4lzvjG+1d6L5LOXjxtwrIKC101Wi6or4F1PdinbuLs3uttegujoDp425hMJnWV5zVoNjkTvp3CxpjSSllYWLbELZib7+ZzvnG+3d6I9Q2tRZNQhTdKT5JJfJBO27aE3Vi1qulcJTa5/vkXsXDpxYaQWsnzk+bKOtJBuN/S8usnx/UebYr6XEq2GHNQ0goY+QgLEt+xsOefM8W3FNpp+TOgFpOrKLAAm8AASsAARAAEQeZwjODhOKlF80z0cbSi23olxYEhUVGQrUAKnm/FveYOTjqnaHZY8ZWKPicOenXQ1sXNqyo8PDPrB+xV2brbkX5k+r0TfTr8EGW6sjNisGDduvGcOC/fyX7juHQ3IHM4VlOJfIKJzrAle3iah00LfEyBiE7drnUNza2mx8bTRys2rFj4vFPpBe5k42OrtodlkKVal4lBcNeuhLiOrHzZLOhJW68Jz4r9/JPtL/AJZGPmQ46PRtdevyEHbOheT5jNsS+f0RnWOK9vDVBqoW+JULAP3L2Oo7G1tNh53mjCEYQUIRUYrkkejiacU09U+KOlhO601RUC0wAo4txb2gACTgACIAAiAAIgqbSt7LZ89Oc/CvctkF+LDItg7XrCH8fN/knTIDAtxML1DQxWJy6th8F/0caQSbAatiSfYEnbf0mVi05OVjxpT7KhPVv+z9zXox6sercqjp5vqyRJRSSSSXJI6Tq1i/sJiumuj8NkyLUdjVrBQutvAAtpQfavsNz5JkV+PVkVblsdfJ9UZGVTk4uPKmT7Whvwv+r9jcONKSaaTT5pilWKe4jqXo/DZyrVEY0qxUrrXyCLaXH3L7HceCJV2bb2uz4a84eF+xbIKMWGPbN1PSE/4+T/BOQqEFiV4mV6eoYrDZdRw+Nt3EGkkG4OnYEfkAHff1gAEJmoAAiAAIgACIAAiAAIgACIAAiAAIgACIAAiAAIgACIAAiAAIgACIAAiAAIn/2Q==" alt=""></button>
         </div>
-        Utvecklat av Pelle Holmström 2026<br>
+        Copyright © 2026 Pelle Holmström<br>
         Version 1.2<span id="dbdatum"></span>
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
-    <script src="data.js"></script>
+    <script src="data.js?v=" + Date.now()></script>
     <!-- ================================================================== -->
     <!-- =======================  DATABAS SLUTAR HÄR  ======================= -->
     <!-- Allt nedanför är programkoden, ändra inte om du bara byter data.     -->
@@ -547,7 +525,6 @@
         let aktivSort = 'plats';
         const aktivaTyper = { forbruk: true, galler: true };
         let fallande = false;
-
 
         const TEMA_FARGER = { mork: '#0b1120', ljus: '#f5f8f8', bla: '#edf5ff', gron: '#eef7f1', sand: '#f7f0e3' };
         const temaMeny = document.getElementById('temaMeny');
@@ -695,7 +672,6 @@
             if (searchInput.value.length === 0) {
                 document.getElementById('resultatOmråde').innerHTML = '';
             }
-            if (typeof historikRita === 'function') historikRita();
         }
 
         function clearSearch() {
@@ -873,39 +849,6 @@
             return item._pd.some(pd => pd.length >= delar.length && delar.every((x, i) => pd[i] === x));
         }
 
-        // ---- Statistik: skickar söktext, antal träffar och tid till den egna statistiktjänsten (tomt = av). Ingen info om vem som söker.
-        const STAT_URL = 'https://sterilsok-stat.pelle-holmstrom.workers.dev';          // t.ex. 'https://lagersok-stat.dittnamn.workers.dev' – lämna tom för att stänga av
-        let statTimer = null, statSist = '', statKalla = 0;     // statKalla: 1 = sökningen kom från kameran
-        function statEnhet() {                       // vilken sorts enhet söker? (utan att identifiera personen)
-            const ua = navigator.userAgent || '', touch = navigator.maxTouchPoints > 1;
-            const ipad = /iPad/.test(ua) || (/Macintosh/.test(ua) && touch);
-            const surf = ipad || (/Android/.test(ua) && !/Mobile/.test(ua)) || /Tablet/i.test(ua);
-            const mobil = !surf && (/Mobi|iPhone|iPod|Android/.test(ua));
-            const e = surf ? 'surfplatta' : mobil ? 'mobil' : 'dator';
-            const o = /Android/.test(ua) ? 'Android' : (/iPhone|iPod/.test(ua) || ipad) ? 'iOS' : /CrOS/.test(ua) ? 'ChromeOS' :
-                      /Windows/.test(ua) ? 'Windows' : /Macintosh/.test(ua) ? 'Mac' : /Linux/.test(ua) ? 'Linux' : 'Annat';
-            const b = /Edg\//.test(ua) ? 'Edge' : /OPR\/|Opera/.test(ua) ? 'Opera' : /SamsungBrowser/.test(ua) ? 'Samsung' :
-                      /Firefox|FxiOS/.test(ua) ? 'Firefox' : /Chrome|CriOS/.test(ua) ? 'Chrome' : /Safari/.test(ua) ? 'Safari' : 'Annan';
-            let a = 0; try { a = (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) ? 1 : 0; } catch (x) {}
-            return { e, o, a, b };
-        }
-        function statSkicka(data) {
-            if (!STAT_URL) return;
-            try { fetch(STAT_URL.replace(/\/$/, '') + '/log', { method: 'POST', body: JSON.stringify(Object.assign(data, statEnhet())), keepalive: true, mode: 'cors' }).catch(() => {}); } catch (e) {}
-        }
-        function statKameraOppnad() { statSkicka({ q: 'kamera', n: 0, l: 0, k: 2 }); }
-        function statLogga(fraga, antal, liknande) {
-            const kalla = statKalla; statKalla = 0;
-            if (!STAT_URL) return;
-            clearTimeout(statTimer);
-            fraga = String(fraga || '').trim();
-            if (fraga.length < 2 || fraga.toLowerCase() === statSist) return;
-            statTimer = setTimeout(() => {          // skickas först när man slutat skriva en stund
-                statSist = fraga.toLowerCase();
-                statSkicka({ q: fraga.slice(0, 60), n: antal, l: liknande ? 1 : 0, k: kalla });
-            }, 2500);
-        }
-
         function sökLager() {
             const sökord = document.getElementById('searchInput').value.trim().toLowerCase();
             const ordLista = sökord.split(/\s+/).filter(Boolean);
@@ -915,8 +858,6 @@
             resultatOmråde.innerHTML = ""; 
             
             if (!sökord) { document.getElementById('söktid').textContent = ''; return; }
-            historikSpara(document.getElementById('searchInput').value);
-            historikRita();
 
             lagerData.forEach(sokForbered);
             const platsFraga = sokPlatsFraga(document.getElementById('searchInput').value);
@@ -1018,8 +959,6 @@
                 resultatOmråde.innerHTML = "<div class='error'>🔍 Inga artiklar matchade din sökning i sterilförrådet.</div>";
             }
 
-            statLogga(document.getElementById('searchInput').value, hittade.length, !!liknande);
-
             // Mät tid tills svaret är ritat på skärmen
             requestAnimationFrame(() => setTimeout(() => {
                 const sek = (performance.now() - t0) / 1000;
@@ -1027,90 +966,6 @@
                     `Svaret lästes in på ${sek.toFixed(3).replace('.', ',')} sekunder`;
             }, 0));
         }
-
-
-        // ======================= SÖKHISTORIK =======================
-        // Sparas bara lokalt på den här enheten (localStorage). Inget skickas någonstans.
-        const HIST_NYCKEL = 'sokhistorik', HIST_MAX = 100, HIST_DAGAR = 90, DAG_MS = 86400000;
-        let historikOppen = false;
-
-        function historikLas() {
-            try {
-                const a = JSON.parse(localStorage.getItem(HIST_NYCKEL) || '[]');
-                return Array.isArray(a) ? a.filter(x => x && typeof x.q === 'string' && typeof x.t === 'number') : [];
-            } catch (e) { return []; }
-        }
-        function historikSkriv(a) { try { localStorage.setItem(HIST_NYCKEL, JSON.stringify(a)); } catch (e) {} }
-
-        function historikSpara(q) {
-            q = (q || '').trim();
-            if (!q || q.length > 80) return;
-            const nu = Date.now(), nyckel = q.toLowerCase();
-            let a = historikLas().filter(x => nu - x.t < HIST_DAGAR * DAG_MS && x.q.toLowerCase() !== nyckel);
-            a.unshift({ q: q, t: nu });
-            historikSkriv(a.slice(0, HIST_MAX));
-        }
-
-        function historikGrupper(a) {
-            const d0 = new Date(); d0.setHours(0, 0, 0, 0);
-            const idag = d0.getTime(), igar = idag - DAG_MS, vecka = idag - 6 * DAG_MS;
-            const g = [['Idag', []], ['Igår', []], ['Senaste 7 dagarna', []], ['Äldre', []]];
-            a.forEach(x => (x.t >= idag ? g[0] : x.t >= igar ? g[1] : x.t >= vecka ? g[2] : g[3])[1].push(x));
-            return g.filter(z => z[1].length);
-        }
-
-        function historikTid(t, grupp) {
-            const d = new Date(t);
-            if (grupp === 'Idag' || grupp === 'Igår') return d.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
-            if (grupp === 'Senaste 7 dagarna') return d.toLocaleDateString('sv-SE', { weekday: 'short' }) + ' ' + d.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
-            return d.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' });
-        }
-
-        function historikRita() {
-            const el = document.getElementById('historikOmrade');
-            if (!el) return;
-            const inp = document.getElementById('searchInput');
-            const a = historikLas();
-            if (inp && inp.value.length > 0) { el.hidden = true; el.innerHTML = ''; return; }
-            if (!a.length) {
-                el.hidden = false;
-                el.innerHTML = '<div class="hist-topp"><span class="hist-rubrik">🕘 Senaste sökningar</span></div><div class="hist-tom">Dina senaste sökningar visas här.</div>';
-                return;
-            }
-            el.hidden = false;
-            let h = '<div class="hist-topp"><span class="hist-rubrik">🕘 Senaste sökningar</span><span class="hist-verktyg">';
-            if (a.length > 5) h += `<button type="button" class="hist-lank" data-hist="vaxla" aria-expanded="${historikOppen}">${historikOppen ? 'Visa färre' : 'Visa alla (' + a.length + ')'}</button>`;
-            h += '<button type="button" class="hist-lank" data-hist="rensa">Rensa</button></span></div>';
-            if (!historikOppen) {
-                h += '<div class="hist-chips">' + a.slice(0, 5).map(x => `<button type="button" class="hist-chip" data-q="${esc(x.q)}" title="Sök igen">${esc(x.q)}</button>`).join('') + '</div>';
-            } else {
-                historikGrupper(a).forEach(([namn, lista]) => {
-                    h += `<div class="hist-grupp">${namn}</div>`;
-                    lista.forEach(x => {
-                        h += `<div class="hist-rad"><button type="button" class="hist-sok" data-q="${esc(x.q)}">${esc(x.q)}</button><span class="hist-tid">${historikTid(x.t, namn)}</span><button type="button" class="hist-ta" data-ta="${x.t}" aria-label="Ta bort ${esc(x.q)} från historiken">✕</button></div>`;
-                    });
-                });
-            }
-            el.innerHTML = h;
-        }
-
-        document.getElementById('historikOmrade').addEventListener('click', function (e) {
-            const k = e.target.closest('button');
-            if (!k) return;
-            if (k.dataset.q !== undefined) {
-                const inp = document.getElementById('searchInput');
-                inp.value = k.dataset.q;
-                toggleClearButton();
-                sökLager();
-            } else if (k.dataset.hist === 'vaxla') {
-                historikOppen = !historikOppen; historikRita();
-            } else if (k.dataset.hist === 'rensa') {
-                if (confirm('Rensa hela sökhistoriken på den här enheten?')) { historikSkriv([]); historikOppen = false; historikRita(); }
-            } else if (k.dataset.ta) {
-                historikSkriv(historikLas().filter(x => String(x.t) !== k.dataset.ta)); historikRita();
-            }
-        });
-        window.addEventListener('DOMContentLoaded', historikRita);
 
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') sökLager();
@@ -1196,20 +1051,6 @@
             return { exakta: [...exakta], osakra: [...osakra] };
         }
 
-        // Rutans storlek: liten (snabbast, standard) eller stor. Valet sparas på enheten.
-        function kamRutaSatt(storlek) {
-            const lager = document.getElementById('kameraLager');
-            lager.dataset.ruta = storlek;
-            document.getElementById('kameraRuta').textContent = storlek === 'stor' ? '⤡ Liten ruta' : '⤢ Stor ruta';
-            try { localStorage.setItem('kamRuta', storlek); } catch (e) {}
-        }
-        function kamVaxlaRuta() {
-            kamRutaSatt(document.getElementById('kameraLager').dataset.ruta === 'stor' ? 'liten' : 'stor');
-        }
-        (function () {
-            let s = 'liten'; try { if (localStorage.getItem('kamRuta') === 'stor') s = 'stor'; } catch (e) {}
-            window.addEventListener('DOMContentLoaded', () => kamRutaSatt(s));
-        })();
         function kamStatus(t) { document.getElementById('kameraStatus').textContent = t; }
         function kamBotten(html) { document.getElementById('kameraBotten').innerHTML = html || ''; }
 
@@ -1309,7 +1150,6 @@
             const inp = document.getElementById('searchInput');
             inp.value = nr;
             toggleClearButton();
-            statKalla = 1; statSist = '';
             sökLager();
             try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
         }
@@ -1337,8 +1177,8 @@
             kamBotten('');
             kamStatus('Håll REF-numret i rutan');
             const klart = Date.now() + 60000;
-            // Oftast bara rutan (snabbast), var fjärde gång hela bilden ifall numret står utanför rutan
-            const upplagg = [[false, 6], [false, 11], [false, 6], [true, 11]];
+            // Oftast bara rutan (snabbast), varannan gång hela bilden ifall numret står utanför rutan
+            const upplagg = [[false, 6], [true, 11], [false, 11], [true, 6], [false, 6], [false, 11]];
             while (kamAktiv && Date.now() < klart) {
                 const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
                 const bild = kamTaBild(hel);
@@ -1404,7 +1244,6 @@
                 return;
             }
             if (document.getElementById('kameraLager').hidden) return;
-            statKameraOppnad();
             kamStart();
         }
 
@@ -1552,6 +1391,7 @@
     <script>
         // ======================= HJÄLP =======================
         // Visar hjälp som passar enheten: telefon/platta (pekskärm) eller dator.
+        function debounce(fn, ms){ let t; return function(...a){ clearTimeout(t); t=setTimeout(()=>fn.apply(this,a), ms); }; }
         function hjalpArTelefon() {
             try { return window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; }
         }
@@ -1605,9 +1445,7 @@
                 <h3>Installera på datorn</h3>
                 <p>I Chrome eller Edge kan du trycka på installationsikonen längst till höger i adressfältet för att få en egen ikon för appen.</p>`;
             }
-            h += `<h3>Sökhistorik</h3>
-                <p>När sökfältet är tomt visas dina fem senaste sökningar. Tryck på en för att söka igen, eller på Visa alla för att se historiken sorterad på idag, igår, senaste 7 dagarna och äldre. Historiken sparas bara på den här ${telefon ? 'telefonen' : 'datorn'} och kan rensas med knappen Rensa.</p>
-                <h3>Färgteman</h3>
+            h += `<h3>Färgteman</h3>
                 <p>Knappen med färgpaletten uppe till höger växlar mellan olika färgteman. Valet sparas på den här ${telefon ? 'telefonen' : 'datorn'}.</p>
                 <h3>Start, uppdateringar och utan nät</h3>
                 <p>När appen startar visas en startbild en kort stund. Appen sparar sig själv och databasen, startar direkt från den sparade kopian och fungerar även utan täckning efter första besöket. Nyare version och ny databas hämtas i bakgrunden, och sidan laddas om av sig själv om du inte har börjat söka. Längst ner står när databasen senast uppdaterades.</p>`;
@@ -1622,9 +1460,23 @@
         document.addEventListener('keydown', e => { if (e.key === 'Escape') stangHjalp(); });
     </script>
     <script>
+        // Debounce sökningen för bättre prestanda på äldre telefoner
+        try {
+            const origSearch = window.sok || window.search;
+            if (typeof origSearch === 'function') {
+                const debounced = debounce(origSearch, 250);
+                const inp = document.getElementById('searchInput');
+                if (inp) {
+                    inp.removeEventListener('input', origSearch);
+                    inp.addEventListener('input', debounced);
+                }
+            }
+        } catch(e) {}
+    </script>
+    <script>
         // Offline-stöd: sparar sidan och databasen i telefonen/datorn.
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js?v=2').catch(() => {}); });
             // Appen startar direkt från sparad kopia; när en nyare version hämtats laddas sidan om om man inte håller på att söka.
             navigator.serviceWorker.addEventListener('message', e => {
                 if (e.data !== 'ny-version') return;
