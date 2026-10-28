@@ -220,7 +220,9 @@
         .kamera-lager { position: fixed; inset: 0; z-index: 1000; background: #000; color: #fff; display: flex; flex-direction: column; }
         .kamera-lager[hidden] { display: none; }
         .kamera-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; }
-        .kamera-ram { position: absolute; left: 4%; right: 4%; top: 32%; height: 26%; border: 3px solid rgba(255,255,255,0.9); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); pointer-events: none; }
+        .kamera-ram { position: absolute; left: 10%; right: 10%; top: 36%; height: 17%; border: 3px solid rgba(255,255,255,0.9); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); pointer-events: none; }
+        .kamera-lager[data-ruta="stor"] .kamera-ram { left: 4%; right: 4%; top: 32%; height: 26%; }
+        .kamera-ruta { flex: 0 0 auto; height: 44px; padding: 0 14px; border-radius: 22px; border: none; background: rgba(255,255,255,0.2); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
         .kamera-topp { position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px; background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0)); }
         .kamera-status { flex: 1; font-size: 16px; font-weight: 700; line-height: 1.3; }
         .kamera-stang { width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,0.2); color: #fff; font-size: 20px; cursor: pointer; flex: 0 0 auto; }
@@ -590,6 +592,7 @@
         <div class="kamera-ram"></div>
         <div class="kamera-topp">
             <div id="kameraStatus" class="kamera-status"></div>
+            <button type="button" id="kameraRuta" class="kamera-ruta" onclick="kamVaxlaRuta()" aria-label="Byt storlek på rutan"></button>
             <button type="button" class="kamera-stang" onclick="stangKamera()" aria-label="Stäng kameran">✕</button>
         </div>
         <div id="kameraBotten" class="kamera-botten"></div>
@@ -1288,6 +1291,20 @@
             return { exakta: [...exakta], osakra: [...osakra] };
         }
 
+        // Rutans storlek: liten (snabbast, standard) eller stor. Valet sparas på enheten.
+        function kamRutaSatt(storlek) {
+            const lager = document.getElementById('kameraLager');
+            lager.dataset.ruta = storlek;
+            document.getElementById('kameraRuta').textContent = storlek === 'stor' ? '⤡ Liten ruta' : '⤢ Stor ruta';
+            try { localStorage.setItem('kamRuta', storlek); } catch (e) {}
+        }
+        function kamVaxlaRuta() {
+            kamRutaSatt(document.getElementById('kameraLager').dataset.ruta === 'stor' ? 'liten' : 'stor');
+        }
+        (function () {
+            let s = 'liten'; try { if (localStorage.getItem('kamRuta') === 'stor') s = 'stor'; } catch (e) {}
+            window.addEventListener('DOMContentLoaded', () => kamRutaSatt(s));
+        })();
         function kamStatus(t) { document.getElementById('kameraStatus').textContent = t; }
         function kamBotten(html) { document.getElementById('kameraBotten').innerHTML = html || ''; }
 
