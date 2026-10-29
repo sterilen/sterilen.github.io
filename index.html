@@ -1237,7 +1237,7 @@
                     const typText = gallerPlats ? 'Instrumentgaller' : 'Fabrikssterilt';
                     const bildSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artikel.artnr)}.webp`;
                     const fallbackSrc = `bilder/bild-saknas.webp`;
-                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><img src="${bildSrc}" alt="" class="prod-thumb" loading="lazy" onerror="this.onerror=null;this.src=fallbackSrc" onclick="visaBild(this.src.includes('bild-saknas') ? '${bildSrc}' : this.src, \"${esc(artikel.namn).replace(/"/g,'&quot;')}\")"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
+                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><img src="${bildSrc}" alt="" class="prod-thumb" loading="lazy" onerror="this.onerror=null;this.src=fallbackSrc;this.dataset.missing='1'" onclick="visaBild('${bildSrc}', \"${esc(artikel.namn).replace(/"/g,'&quot;')}\")"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
@@ -1870,11 +1870,20 @@
         // ======================= HJÄLP =======================
         // Visar hjälp som passar enheten: telefon/platta (pekskärm) eller dator.
 
-        function visaBild(src, titel) {
+                function visaBild(src, titel) {
             const lager = document.getElementById('bildLager');
             const img = document.getElementById('bildStor');
             const tit = document.getElementById('bildTitel');
             if (!lager || !img) return;
+            img.onerror = function() {
+                this.onerror = null;
+                // Försök först filen bild-saknas.webp, om även den saknas visa inline SVG
+                if (this.src.includes('bild-saknas.webp')) {
+                    this.src = `data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" rx="16" fill="#f1f5f9" stroke="#e2e8f0"/><g transform="translate(150,80)"><path d="M10 20h80a8 8 0 0 1 8 8v48a8 8 0 0 1-8 8H10a8 8 0 0 1-8-8V28a8 8 0 0 1 8-8zm12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm32 12a16 16 0 1 1 0 32 16 16 0 0 1 0-32z" fill="#94a3b8"/><path d="M0 72 L100 0" stroke="#64748b" stroke-width="6" stroke-linecap="round"/></g><text x="200" y="220" text-anchor="middle" font-size="20" fill="#64748b" font-family="sans-serif">Bild saknas</text></svg>')}`;
+                } else {
+                    this.src = 'bilder/bild-saknas.webp';
+                }
+            };
             img.src = src;
             if (tit) tit.textContent = titel || '';
             lager.hidden = false;
@@ -1887,7 +1896,8 @@
         }
         document.addEventListener('keydown', e => { if (e.key === 'Escape') { const b = document.getElementById('bildLager'); if (b && !b.hidden) stangBild(); }});
 
-        function hjalpArTelefon() {
+
+function hjalpArTelefon() {
             try { return window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; }
         }
         function hjalpArIphone() {
