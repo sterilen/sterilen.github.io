@@ -213,7 +213,7 @@
         .footer { margin-top: auto; padding-top: 30px; font-size: 13px; color: #94a3b8; font-weight: 500; text-align: center; line-height: 1.6; }
 
         /* ===== Kameraläge (läser REF-numret på förpackningen) ===== */
-        .kamera-knapp { display: none; flex: 0 0 auto; width: 48px; padding: 0; font-size: 28px; line-height: 1; background-color: #ffffff; color: #0f172a; border: 2px solid #e2e8f0; border-radius: 14px; cursor: pointer; align-items: center; justify-content: center; }
+        .kamera-knapp { display: none; flex: 0 0 auto; width: 48px; padding: 0; font-size: 22px; line-height: 1; background-color: #ffffff; color: #0f172a; border: 2px solid #e2e8f0; border-radius: 14px; cursor: pointer; align-items: center; justify-content: center; }
         .kamera-knapp.finns { display: flex; }
         .kamera-knapp:active { transform: scale(0.97); }
         html[data-tema="mork"] .kamera-knapp { background-color: #1e293b; border-color: #334155; color: #f1f5f9; }
@@ -222,25 +222,12 @@
         .kamera-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; }
         .kamera-ram { position: absolute; left: 10%; right: 10%; top: 36%; height: 17%; border: 3px solid rgba(255,255,255,0.9); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); pointer-events: none; }
         .kamera-lager[data-ruta="stor"] .kamera-ram { left: 4%; right: 4%; top: 32%; height: 26%; }
-        .serie-kort { width:100%; background:#fff; color:#0f172a; border-radius:14px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; }
-        .serie-namn { font-size:19px; font-weight:800; line-height:1.25; }
-        .serie-info { font-size:13px; font-weight:600; color:#475569; }
-        .serie-plats { display:flex; flex-wrap:wrap; gap:8px; }
-        .serie-skylt { flex:1 1 auto; min-width:120px; text-align:center; color:#fff; font-size:28px; font-weight:900; letter-spacing:1px; border-radius:12px; padding:10px 12px; background:#7fb046; }
-        .serie-skylt.galler { background:#4687b0; }
-        .serie-skylt.bulk { background:#b04671; font-size:22px; }
-        .serie-skylt small { display:block; font-size:11px; font-weight:800; letter-spacing:1.5px; opacity:.9; }
-        .serie-rad { display:flex; align-items:center; gap:10px; }
-        .serie-bar { flex:1; height:8px; border-radius:6px; background:rgba(255,255,255,.25); overflow:hidden; }
-        .serie-bar i { display:block; height:100%; width:100%; background:#fff; }
-        .serie-rad .kamera-igen { padding:10px 14px; font-size:15px; white-space:nowrap; }
         .kamera-ruta { flex: 0 0 auto; height: 44px; padding: 0 14px; border-radius: 22px; border: none; background: rgba(255,255,255,0.2); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
-        /* På dator: rutan är dubbelt så bred (höjden oförändrad). Mobilen påverkas inte. */
+        /* På dator - 60% smalare sökrutor (höjd oförändrad) */
         @media (pointer: fine) {
             .kamera-ram { left: 34%; right: 34%; top: 35%; height: 20%; }
             .kamera-lager[data-ruta="stor"] .kamera-ram { left: 26%; right: 26%; top: 27%; height: 36%; }
         }
-        .kamera-titel { position: relative; z-index: 3; font-size: 15px; font-weight: 700; background: rgba(0,0,0,0.5); padding: 6px 12px; border-radius: 20px; }
         .kamera-topp { position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 14px 14px 10px; background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0)); }
         .kamera-status { flex: 1; font-size: 16px; font-weight: 700; line-height: 1.3; }
         .kamera-stang { width: 44px; height: 44px; border-radius: 50%; border: none; background: rgba(255,255,255,0.2); color: #fff; font-size: 20px; cursor: pointer; flex: 0 0 auto; }
@@ -316,29 +303,6 @@
         html[data-tema] .chip.aktiv { background:var(--accent); color:var(--accent-text); border-color:var(--accent); }
         html[data-tema] .chip[data-filter="forbruk"].aktiv { background:var(--forbruk); border-color:var(--forbruk); color:#fff; }
         html[data-tema] .chip[data-filter="galler"].aktiv { background:var(--galler); border-color:var(--galler); color:#fff; }
-        /* Enhetlig hovereffekt på alla knappar (bara på enheter med mus, så att den inte fastnar på pekskärmar):
-           knappen lyfter 2 px och får en skugga. Knappar med ram får temats fokusfärg på kanten, fyllda knappar blir lite ljusare. */
-        .chip, button.search-btn, .kamera-knapp, .hjalp-knapp, .tema-knapp, .fredag-knapp, .hist-chip, .kamera-ruta, .kamera-stang {
-            transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, border-color .12s ease, filter .12s ease;
-        }
-        @media (hover: hover) and (pointer: fine) {
-            html[data-tema] .chip:hover, html[data-tema] button.search-btn:hover, html[data-tema] .kamera-knapp:hover,
-            html[data-tema] .hjalp-knapp:hover, html[data-tema] .tema-knapp:hover, html[data-tema] .fredag-knapp:hover,
-            html[data-tema] .hist-chip:hover { transform: translateY(-2px); box-shadow: 0 5px 12px rgba(15,23,42,.18); }
-            html[data-tema] .chip:hover, html[data-tema] .kamera-knapp:hover, html[data-tema] .hjalp-knapp:hover,
-            html[data-tema] .tema-knapp:hover, html[data-tema] .fredag-knapp:hover { border-color: var(--fokus, #0f766e); }
-            html[data-tema] .chip:not(.aktiv):hover, html[data-tema] .kamera-knapp:hover, html[data-tema] .hjalp-knapp:hover,
-            html[data-tema] .tema-knapp:hover { background: var(--yta-dim, #f1f5f9); }
-            html[data-tema] .chip.aktiv:hover, html[data-tema] button.search-btn:hover { filter: brightness(1.12); }
-            html[data-tema] .clear-btn:hover { filter: brightness(1.2); }
-            html[data-tema] .kamera-ruta:hover, html[data-tema] .kamera-stang:hover { background: rgba(255,255,255,0.32); }
-            html[data-tema="mork"] .chip:hover, html[data-tema="mork"] button.search-btn:hover, html[data-tema="mork"] .kamera-knapp:hover,
-            html[data-tema="mork"] .hjalp-knapp:hover, html[data-tema="mork"] .tema-knapp:hover, html[data-tema="mork"] .fredag-knapp:hover,
-            html[data-tema="mork"] .hist-chip:hover { box-shadow: 0 5px 12px rgba(0,0,0,.45); }
-            html[data-tema] .chip:active, html[data-tema] button.search-btn:active, html[data-tema] .kamera-knapp:active,
-            html[data-tema] .hjalp-knapp:active, html[data-tema] .tema-knapp:active, html[data-tema] .fredag-knapp:active,
-            html[data-tema] .hist-chip:active { transform: translateY(0) scale(.97); box-shadow: none; }
-        }
         html[data-tema] .result-table td { background:var(--yta); border-top-color:var(--kant); border-bottom-color:var(--kant); }
         html[data-tema] .result-table td:first-child { border-left-color:var(--kant); }
         html[data-tema] .result-table td:last-child { border-right-color:var(--kant); }
@@ -450,7 +414,7 @@
         .stad-klar { background: #7fb046; color: #ffffff; flex: 1.5 !important; }
         .stad-klar:disabled { background: #cbd5e1; cursor: default; }
         
-        /* ===== Bildfunktion - WEBP 800px - endast tillägg, rör ej kamera/sökruta ===== */
+        /* ===== Bildfunktion - WEBP 800px - pekar på bilder/bild-saknas.webp ===== */
         .prod-rad { display: flex; gap: 12px; align-items: flex-start; }
         .prod-thumb { width: 56px; height: 56px; flex: 0 0 56px; object-fit: cover; border-radius: 10px; border: 1px solid var(--kant,#e2e8f0); background: #f8fafc; cursor: pointer; }
         .prod-thumb:hover { transform: scale(1.03); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
@@ -516,7 +480,7 @@
         .hist-tom { font-size:13px; color:#94a3b8; text-align:center; padding:8px; }
 
         
-        /* ===== Bildfunktion - WEBP 800px - endast tillägg, rör ej kamera/sökruta ===== */
+        /* ===== Bildfunktion - WEBP 800px - pekar på bilder/bild-saknas.webp ===== */
         .prod-rad { display: flex; gap: 12px; align-items: flex-start; }
         .prod-thumb { width: 56px; height: 56px; flex: 0 0 56px; object-fit: cover; border-radius: 10px; border: 1px solid var(--kant,#e2e8f0); background: #f8fafc; cursor: pointer; }
         .prod-thumb:hover { transform: scale(1.03); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
@@ -623,6 +587,14 @@
 
         <div class="sort-container">
             <div class="sort-box">
+                <div class="chip-grupp">
+                    <span class="chip-rubrik">Visa</span>
+                    <div class="chip-rad">
+                    <button type="button" class="chip aktiv" data-filter="forbruk" onclick="valjFilter('forbruk')">Fabrikssterilt</button>
+                    <button type="button" class="chip aktiv" data-filter="galler" onclick="valjFilter('galler')">Instrumentgaller</button>
+                    </div>
+                </div>
+
         <div id="histBox" class="hist-box" hidden>
           <div class="hist-box-head" onclick="this.parentElement.classList.toggle('open')">
             <div class="hist-titel">🕓 Sökhistorik <span id="histTotalPill" class="hist-box-pill"></span></div>
@@ -635,14 +607,6 @@
             <div class="hist-grupp" id="histGruppVecka"><div class="hist-grupp-head" onclick="this.parentElement.classList.toggle('open')"><b>Senaste 7 dagarna</b><span id="histCountVecka"></span></div><div class="hist-grupp-list" id="histListVecka"></div></div>
           </div>
         </div>
-
-                <div class="chip-grupp">
-                    <span class="chip-rubrik">Visa</span>
-                    <div class="chip-rad">
-                    <button type="button" class="chip aktiv" data-filter="forbruk" onclick="valjFilter('forbruk')">Fabrikssterilt</button>
-                    <button type="button" class="chip aktiv" data-filter="galler" onclick="valjFilter('galler')">Instrumentgaller</button>
-                    </div>
-                </div>
 
                 <div class="chip-grupp">
                     <span class="chip-rubrik">Sortera</span>
@@ -664,9 +628,7 @@
         <video id="kameraVideo" class="kamera-video" playsinline muted autoplay></video>
         <div class="kamera-ram"></div>
         <div class="kamera-topp">
-            <div class="kamera-titel" style="position:absolute;top:78px;left:50%;transform:translateX(-50%);font-size:14px;font-weight:700;background:rgba(0,0,0,0.5);padding:6px 12px;border-radius:20px;z-index:3;white-space:nowrap;pointer-events:none;">Scanna REF — håll etiketten i rutan</div>
             <div id="kameraStatus" class="kamera-status"></div>
-            <button type="button" id="kameraSerie" class="kamera-ruta" onclick="kamVaxlaSerie()" aria-label="Serieläge: visa produkten en stund och fortsätt sedan scanna"></button>
             <button type="button" id="kameraRuta" class="kamera-ruta" onclick="kamVaxlaRuta()" aria-label="Byt storlek på rutan"></button>
             <button type="button" class="kamera-stang" onclick="stangKamera()" aria-label="Stäng kameran">✕</button>
         </div>
@@ -699,7 +661,7 @@
     <div id="bildLager" class="bild-lager" hidden onclick="if(event.target===this) stangBild()">
         <div class="bild-ruta" role="dialog" aria-modal="true">
             <div class="bild-topp"><div id="bildTitel" class="bild-titel"></div><button type="button" class="bild-stang" onclick="stangBild()" aria-label="Stäng bild">✕</button></div>
-            <img id="bildStor" src="" alt="">
+            <img id="bildStor" src="" alt="" onerror="this.onerror=null;this.src='bilder/bild-saknas.webp'">
         </div>
     </div>
 
@@ -1124,7 +1086,7 @@
             list.innerHTML='';
             if(cnt) cnt.textContent = arr.length?`· ${arr.length} st`:'';
             if(!arr.length){ list.innerHTML='<div class="hist-tom">Inga sökningar</div>'; return; }
-            arr.slice(0,10).forEach(item=>{
+            arr.slice(0,20).forEach(item=>{
               const el = document.createElement('div');
               el.className='hist-chip';
               el.title = new Date(item.t).toLocaleString('sv-SE');
@@ -1274,8 +1236,8 @@
                     const typ = gallerPlats ? 'galler' : 'forbruk';
                     const typText = gallerPlats ? 'Instrumentgaller' : 'Fabrikssterilt';
                     const bildSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artikel.artnr)}.webp`;
-                    const placeholderSvg = `data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56"><rect width="56" height="56" rx="10" fill="#f1f5f9" stroke="#e2e8f0"/><g transform="translate(14,12)"><path d="M2 4h20a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm3 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm8 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" fill="#94a3b8"/><path d="M0 18 L28 0" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></g><text x="28" y="48" text-anchor="middle" font-size="6" fill="#64748b" font-family="sans-serif">Bild saknas</text></svg>')}`;
-                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><img src="${bildSrc}" alt="" class="prod-thumb" loading="lazy" onerror="this.onerror=null;this.src=placeholderSvg" onclick="visaBild(this.src.includes('data:image') ? '${bildSrc}' : this.src, \"${esc(artikel.namn).replace(/"/g,'&quot;')}\")"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
+                    const fallbackSrc = `bilder/bild-saknas.webp`;
+                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><img src="${bildSrc}" alt="" class="prod-thumb" loading="lazy" onerror="this.onerror=null;this.src=fallbackSrc" onclick="visaBild(this.src.includes('bild-saknas') ? '${bildSrc}' : this.src, \"${esc(artikel.namn).replace(/"/g,'&quot;')}\")"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
@@ -1378,54 +1340,6 @@
         }
 
         // Rutans storlek: liten (snabbast, standard) eller stor. Valet sparas på enheten.
-        // ===== Serieläge: vid träff visas produkten i 10 sekunder, sedan fortsätter kameran scanna nästa produkt =====
-        const KAM_SERIE_MS = 10000;
-        let kamSerieTimer = null, kamSerieSista = null, kamSerieBorta = 0;
-        function kamSerie() { try { return localStorage.getItem('kamSerie') === '1'; } catch (e) { return false; } }
-        function kamSerieKnapp() { const b = document.getElementById('kameraSerie'); if (b) b.textContent = kamSerie() ? '⟳ Serie: På' : '⟳ Serie: Av'; }
-        function kamVaxlaSerie() {
-            try { localStorage.setItem('kamSerie', kamSerie() ? '0' : '1'); } catch (e) {}
-            kamSerieKnapp();
-        }
-        window.addEventListener('DOMContentLoaded', kamSerieKnapp);
-        function kamSerieNyckel(nr) {
-            return ((kamNummerIndex && kamNummerIndex.exakt.get(nr)) || []).map(a => a.artnr + '|' + a.lev_artnr + '|' + a.plats).sort().join(';');
-        }
-        function kamSerieVisa(nr) {
-            kamAktiv = false;
-            clearTimeout(kamSerieTimer);
-            const artiklar = (kamNummerIndex && kamNummerIndex.exakt.get(nr)) || [];
-            kamSerieSista = kamSerieNyckel(nr); kamSerieBorta = 0;
-            try { kamSokOrd = String(nr).trim(); logSearchStat(String(nr).trim(), artiklar.length, 0); } catch (e) {}
-            const sk = (klass, rubrik, plats) => `<div class="serie-skylt ${klass}"><small>${rubrik}</small>${esc(plats)}</div>`;
-            const kort = artiklar.slice(0, 3).map(a => {
-                const galler = /^\d+:\d+$/.test(a.plats);
-                return `<div class="serie-kort"><div class="serie-namn">${esc(a.namn)}</div>` +
-                    `<div class="serie-info">${galler ? 'Instrumentgaller' : 'Fabrikssterilt'}${galler ? '' : ' · Art.nr ' + esc(a.artnr) + (a.lev_artnr && a.lev_artnr !== '-' ? ' · Lev.nr ' + esc(a.lev_artnr) : '')}</div>` +
-                    `<div class="serie-plats">${sk(galler ? 'galler' : '', 'PLATS', a.plats)}${a.bulk ? sk('bulk', 'BULK', a.bulk) : ''}</div></div>`;
-            }).join('');
-            kamStatus('✓ Hittad: ' + nr);
-            kamBotten(kort +
-                '<div class="serie-rad"><div class="serie-bar"><i id="serieBar"></i></div>' +
-                '<button type="button" class="kamera-igen" onclick="kamSerieOppna()">Öppna i sökning</button>' +
-                '<button type="button" class="kamera-igen" onclick="kamSerieNasta()">Nästa ›</button></div>');
-            kamSerieSistaNr = nr;
-            const bar = document.getElementById('serieBar');
-            if (bar) { bar.style.transition = 'none'; bar.style.width = '100%'; void bar.offsetWidth; bar.style.transition = 'width ' + KAM_SERIE_MS + 'ms linear'; bar.style.width = '0%'; }
-            kamSerieTimer = setTimeout(kamSerieNasta, KAM_SERIE_MS);
-            try { navigator.vibrate && navigator.vibrate(60); } catch (e) {}
-        }
-        let kamSerieSistaNr = '';
-        function kamSerieNasta() {
-            clearTimeout(kamSerieTimer);
-            if (document.getElementById('kameraLager').hidden) return;
-            kamBotten(''); kamStatus('');
-            kamStart();
-        }
-        function kamSerieOppna() {            // hoppar ur serieläget för just den här produkten och söker på den
-            clearTimeout(kamSerieTimer);
-            kamValjNormal(kamSerieSistaNr);
-        }
         function kamRutaSatt(storlek) {
             const lager = document.getElementById('kameraLager');
             lager.dataset.ruta = storlek;
@@ -1534,10 +1448,6 @@
         }
 
         function kamValj(nr) {
-            if (kamSerie()) { kamSerieVisa(nr); return; }
-            kamValjNormal(nr);
-        }
-        function kamValjNormal(nr) {
             stangKamera();
             const inp = document.getElementById('searchInput');
             inp.value = nr;
@@ -1558,11 +1468,6 @@
                 const k0 = nyckel(r.exakta[0]);
                 if (k0 && r.exakta.every(nr => nyckel(nr) === k0)) r.exakta = [r.exakta[0]];
             }
-            if (kamSerie() && kamSerieSista) {
-                // Samma produkt står kvar framför kameran efter visningen: räkna den inte en gång till.
-                if (r.exakta.length && r.exakta.every(nr => kamSerieNyckel(nr) === kamSerieSista)) { kamSerieBorta = 0; return false; }
-                if (!r.exakta.length && ++kamSerieBorta >= 6) kamSerieSista = null;   // produkten är borta, nästa får scannas
-            }
             if (r.exakta.length === 1) { kamValj(r.exakta[0]); return true; }
             if (r.exakta.length > 1) { kamAktiv = false; kamVisaVal(r.exakta, []); return true; }
             r.osakra.forEach(n => kamOsakra.add(n));
@@ -1573,8 +1478,8 @@
         async function kamStart() {
             kamAktiv = true; kamVarv = 0; kamOsakra = new Set();
             kamBotten('');
-            kamStatus('');   // instruktionen står redan i rutan ovanför (kamera-titel)
-            const klart = Date.now() + (kamSerie() ? 180000 : 60000);   // serieläget scannar längre mellan produkterna
+            kamStatus('Håll REF-numret i rutan, eller scanna QR på hyllraden');
+            const klart = Date.now() + 60000;
             // Oftast bara rutan (snabbast), varannan gång hela bilden ifall numret står utanför rutan
             const upplagg = [[false, 6], [true, 11], [false, 11], [true, 6], [false, 6], [false, 11]];
             while (kamAktiv && Date.now() < klart) {
@@ -1649,7 +1554,6 @@
 
         function stangKamera() {
             kamAktiv = false;
-            clearTimeout(kamSerieTimer); kamSerieSista = null; kamSerieBorta = 0;
             if (window.qrStopp) qrStopp();
             document.getElementById('kameraLager').hidden = true;
             kamLosSkarm();
@@ -2004,8 +1908,6 @@
                   <li>Siffror måste vara helt rätt. Ett artikelnummer med en siffra fel ger inga träffar, för att du inte ska få fel produkt.</li>
                   <li>Under träfflistan står hur snabbt svaret kom.</li>
                 </ul>`;
-            h += `<h3>Sökhistorik</h3>
-                <p>Under sökfältet finns rutan <b>Sökhistorik</b>. Den visar dina <b>senaste 5</b> sökningar som knappar: tryck på en för att söka igen, eller på ✕ för att ta bort den. Tryck på rubriken för att fälla ut rutan och se sökningarna sorterade på <b>Idag</b>, <b>Igår</b> och <b>Senaste 7 dagarna</b> (högst 10 i varje grupp). <b>Rensa</b> tar bort hela historiken. Historiken sparas bara på den här ${telefon ? 'telefonen' : 'datorn'} och skickas ingenstans.</p>`;
             h += `<h3>Visa och sortera</h3>
                 <p><b>Visa</b> väljer om du vill se Fabrikssterilt, Instrumentgaller eller båda. Minst en måste vara vald. <b>Sortera</b> ordnar träffarna efter plats, namn, artikelnummer eller leverantörens nummer.</p>`;
             h += `<h3>Platsrutorna</h3>
@@ -2014,14 +1916,13 @@
                   <li>${dot('#4687b0')}<b>Blå</b>: instrumentgaller, med plats som <b>12:3</b> (hylla:fack).</li>
                   <li>${dot('#b04671')}<b>Rosa, märkt BULK</b>: bulkplats. Den visas alltid bredvid hyllplatsen när artikeln också finns i bulk.</li>
                 </ul>`;
-            if (harKamera) {
+            if (telefon && harKamera) {
                 h += `<h3>Läsa av en förpackning med kameran</h3>
                 <ol>
-                  <li>Tryck på kameraknappen 📷 bredvid Sök. Första gången frågar ${telefon ? 'telefonen' : 'webbläsaren'} om kameran får användas.</li>
-                  <li>Håll ${telefon ? 'telefonen' : 'etiketten'} stilla en bit från ${telefon ? 'paketet eller hyllskylten' : 'kameran'} så att numret hamnar i den vita rutan. Knappen <b>Stor ruta / Liten ruta</b> uppe till höger byter storlek på rutan: den lilla är snabbast, den stora är lättare att träffa med. Valet sparas. Det kan vara numret efter <b>REF</b>, <b>Artnr</b> eller <b>Lev.artnr</b>.</li>
-                  <li>${telefon ? 'Skärmen låses i stående läge medan kameran är öppen (Android). På iPhone kan webbläsaren inte låsa skärmen, så där kan du slå på <b>Lås stående riktning</b> i Kontrollcenter. ' : ''}Håll paketet så att texten går någorlunda vågrätt, lite sned går bra.</li>
+                  <li>Tryck på kameraknappen 📷 bredvid Sök. Första gången frågar telefonen om kameran får användas.</li>
+                  <li>Håll telefonen stilla en bit från paketet eller hyllskylten så att numret hamnar i den vita rutan. Det kan vara numret efter <b>REF</b>, <b>Artnr</b> eller <b>Lev.artnr</b>.</li>
+                  <li>Skärmen låses i stående läge medan kameran är öppen (Android). På iPhone kan webbläsaren inte låsa skärmen, så där kan du slå på <b>Lås stående riktning</b> i Kontrollcenter. Håll paketet så att texten går någorlunda vågrätt, lite sned går bra.</li>
                   <li>Appen läser texten flera gånger i sekunden. När den hittar ett nummer som finns i databasen söker den direkt. Står både artikelnumret och leverantörens nummer på etiketten går den direkt till artikeln. Hittas flera olika artiklar, eller något som bara liknar, väljer du rätt.</li>
-                  <li><b>Serieläge:</b> när knappen <b>Serie: På</b> är vald stänger kameran inte vid träff. Produkten (namn, plats och bulkplats) visas i 10 sekunder, sedan fortsätter kameran scanna nästa produkt, så du slipper tangentbordet när du har många att läsa av. <b>Nästa</b> hoppar över väntetiden och <b>Öppna i sökning</b> söker på produkten som vanligt. Samma produkt räknas inte två gånger så länge den hålls kvar framför kameran.</li>
                 </ol>
                 <p>Tänk på: första gången hämtas textläsaren (cirka 8 MB), så det behövs nät. Det går bäst med bra ljus och en skarp bild. Streckkoder läses inte, bara tryckt text. Om kameran inte startar kan du välja <b>Ta en bild istället</b>.</p>`;
             }
@@ -2034,7 +1935,9 @@
                     <p>Öppna sidan i Chrome, tryck på menyn (tre punkter) och välj <b>Lägg till på startskärmen</b> eller <b>Installera app</b>. Då startar den som en vanlig app.</p>`;
                 }
             } else {
-                h += `<h3>Installera på datorn</h3>
+                h += `<h3>Kameran</h3>
+                <p>Kameraknappen visas om enheten har kamera. Saknar datorn kamera syns den inte.</p>
+                <h3>Installera på datorn</h3>
                 <p>I Chrome eller Edge kan du trycka på installationsikonen längst till höger i adressfältet för att få en egen ikon för appen.</p>`;
             }
             h += `<h3>Färgteman</h3>
