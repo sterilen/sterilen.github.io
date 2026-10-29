@@ -1526,6 +1526,8 @@
             const lager = document.getElementById('kameraLager');
             if (lager.hidden) { try { skickaStat('kamera', false, 2); } catch (e) {} }   // bara när kameran öppnas, inte vid "Försök igen"
             lager.hidden = false;
+            lager.style.display = 'flex';
+            lager.removeAttribute('hidden');
             kamLasSkarm();
             kamBotten('');
             kamStatus('Startar kameran...');
@@ -1930,11 +1932,13 @@
             img.src = src;
             if (tit) tit.textContent = titel || '';
             lager.hidden = false;
+            lager.style.display = 'flex';
+            lager.removeAttribute('hidden');
         }
         window.stangBild = function() {
             const lager = document.getElementById('bildLager');
             const img = document.getElementById('bildStor');
-            if (lager) lager.hidden = true;
+            if (lager) { lager.hidden = true; lager.style.display = 'none'; }
             if (img) img.src = '';
         }
         document.addEventListener('keydown', e => { if (e.key === 'Escape') { const b = document.getElementById('bildLager'); if (b && !b.hidden) stangBild(); }});
