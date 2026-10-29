@@ -1273,9 +1273,12 @@
                     const artInfo = gallerPlats ? '' : `<div class="art-info-block"><span class="art-no-wrap">Art. Nr: ${esc(artikel.artnr)}</span><span class="art-no-wrap">Lev. Art Nr: ${esc(artikel.lev_artnr)}</span></div>`;
                     const typ = gallerPlats ? 'galler' : 'forbruk';
                     const typText = gallerPlats ? 'Instrumentgaller' : 'Fabrikssterilt';
-                    const bildSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artikel.artnr)}.jpg`;
+                    const artId = (artikel.artnr || '').toString().replace(/[^A-Za-z0-9]/g, '');
+                    const thumbSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artId)}_thumb.webp`;
+                    const fullSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artId)}.webp`;
+                    const bildSrc = thumbSrc;
                     const harBild = true; // visar alltid miniatyr, göms om fil saknas
-                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad">${harBild ? `<img src="${bildSrc}" alt="" class="prod-thumb" loading="lazy" onerror="this.style.display='none'" onclick="visaBild('${bildSrc}', \"${esc(artikel.namn).replace(/"/g,'&quot;')}\")">` : ''}<div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
+                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad">${harBild ? `<img src="${bildSrc}" data-full="${fullSrc}" data-artid="${artId}" alt="" class="prod-thumb" loading="lazy" onerror="bildFallback(this)" onclick="visaBild('${fullSrc}', \"${esc(artikel.namn).replace(/"/g,'&quot;')}\")">` : ''}<div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
@@ -1985,11 +1988,27 @@
 
 
         window.bildFallback = function(img){
+            const artId = img.dataset.artid || '';
+            const full = img.dataset.full || '';
             if (!img.dataset.step) {
                 img.dataset.step = '1';
+                // thumb -> testa full 800px
+                if (full && img.src !== full) {
+                    img.src = full;
+                    return;
+                }
                 img.src = 'bilder/bild-saknas.webp';
-            } else {
+            } else if (img.dataset.step === '1') {
                 img.dataset.step = '2';
+                if (img.src.indexOf('bild-saknas') === -1) {
+                    img.src = 'bilder/bild-saknas.webp';
+                } else {
+                    img.dataset.step = '3';
+                    img.onerror = null;
+                    img.src = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56"><rect width="56" height="56" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/><text x="28" y="34" text-anchor="middle" font-size="8" fill="#64748b">Bild saknas</text></svg>');
+                }
+            } else {
+                img.dataset.step = '3';
                 img.onerror = null;
                 img.src = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56"><rect width="56" height="56" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/><text x="28" y="34" text-anchor="middle" font-size="8" fill="#64748b">Bild saknas</text></svg>');
             }
@@ -2082,7 +2101,7 @@
     <script>
         // Offline-stöd: sparar sidan och databasen i telefonen/datorn.
         if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js?v=5').catch(() => {}); });
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js?v=6').catch(() => {}); });
             // Appen startar direkt från sparad kopia; när en nyare version hämtats laddas sidan om om man inte håller på att söka.
             navigator.serviceWorker.addEventListener('message', e => {
                 if (e.data !== 'ny-version') return;
