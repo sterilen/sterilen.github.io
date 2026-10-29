@@ -1235,9 +1235,8 @@
                     const artInfo = gallerPlats ? '' : `<div class="art-info-block"><span class="art-no-wrap">Art. Nr: ${esc(artikel.artnr)}</span><span class="art-no-wrap">Lev. Art Nr: ${esc(artikel.lev_artnr)}</span></div>`;
                     const typ = gallerPlats ? 'galler' : 'forbruk';
                     const typText = gallerPlats ? 'Instrumentgaller' : 'Fabrikssterilt';
-                    const bildSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artikel.artnr)}.webp`;
-                    const fallbackSrc = `bilder/bild-saknas.webp`;
-                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><img src="${bildSrc}" alt="" class="prod-thumb" loading="lazy" onerror="this.onerror=null;this.src=fallbackSrc;this.dataset.missing='1'" onclick="visaBild('${bildSrc}', \"${esc(artikel.namn).replace(/"/g,'&quot;')}\")"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
+                                        const bildSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artikel.artnr)}.webp`;
+                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><img src="${bildSrc}" alt="Bild" class="prod-thumb" loading="lazy" onerror="bildFallback(this)" onclick="if(this.dataset.fallbackSteg!=='2') visaBild('${bildSrc}', \"${esc(artikel.namn).replace(/"/g,'&quot;')}\")"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
@@ -1870,18 +1869,34 @@
         // ======================= HJÄLP =======================
         // Visar hjälp som passar enheten: telefon/platta (pekskärm) eller dator.
 
+        
+        function bildFallback(img) {
+            // Försök först filen bild-saknas.webp, om även den saknas visa inline SVG
+            if (!img.dataset.fallbackSteg) {
+                img.dataset.fallbackSteg = '1';
+                img.src = 'bilder/bild-saknas.webp';
+            } else if (img.dataset.fallbackSteg === '1') {
+                img.dataset.fallbackSteg = '2';
+                img.src = `data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56"><rect width="56" height="56" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/><g transform="translate(14,12)"><path d="M2 4h20a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm3 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm8 3a4 4 0 1 1 0 8 4 4 0 0 1 0-8z" fill="#94a3b8"/><path d="M0 18 L28 0" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></g><text x="28" y="48" text-anchor="middle" font-size="6" fill="#64748b" font-family="sans-serif">Bild saknas</text></svg>')}`;
+                img.style.cursor = 'default';
+                img.onclick = null;
+            }
+        }
+
                 function visaBild(src, titel) {
             const lager = document.getElementById('bildLager');
             const img = document.getElementById('bildStor');
             const tit = document.getElementById('bildTitel');
             if (!lager || !img) return;
+            img.dataset.fallbackSteg = '';
             img.onerror = function() {
-                this.onerror = null;
-                // Försök först filen bild-saknas.webp, om även den saknas visa inline SVG
-                if (this.src.includes('bild-saknas.webp')) {
-                    this.src = `data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" rx="16" fill="#f1f5f9" stroke="#e2e8f0"/><g transform="translate(150,80)"><path d="M10 20h80a8 8 0 0 1 8 8v48a8 8 0 0 1-8 8H10a8 8 0 0 1-8-8V28a8 8 0 0 1 8-8zm12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm32 12a16 16 0 1 1 0 32 16 16 0 0 1 0-32z" fill="#94a3b8"/><path d="M0 72 L100 0" stroke="#64748b" stroke-width="6" stroke-linecap="round"/></g><text x="200" y="220" text-anchor="middle" font-size="20" fill="#64748b" font-family="sans-serif">Bild saknas</text></svg>')}`;
-                } else {
+                if (!this.dataset.fallbackSteg) {
+                    this.dataset.fallbackSteg = '1';
                     this.src = 'bilder/bild-saknas.webp';
+                } else {
+                    this.dataset.fallbackSteg = '2';
+                    this.onerror = null;
+                    this.src = `data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" rx="16" fill="#f1f5f9" stroke="#cbd5e1"/><g transform="translate(150,80)"><path d="M10 20h80a8 8 0 0 1 8 8v48a8 8 0 0 1-8 8H10a8 8 0 0 1-8-8V28a8 8 0 0 1 8-8zm12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm32 12a16 16 0 1 1 0 32 16 16 0 0 1 0-32z" fill="#94a3b8"/><path d="M0 72 L100 0" stroke="#64748b" stroke-width="6" stroke-linecap="round"/></g><text x="200" y="220" text-anchor="middle" font-size="20" fill="#64748b" font-family="sans-serif">Bild saknas</text></svg>')}`;
                 }
             };
             img.src = src;
@@ -1895,6 +1910,7 @@
             if (img) img.src = '';
         }
         document.addEventListener('keydown', e => { if (e.key === 'Escape') { const b = document.getElementById('bildLager'); if (b && !b.hidden) stangBild(); }});
+
 
 
 function hjalpArTelefon() {
