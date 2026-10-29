@@ -417,6 +417,7 @@
         /* ===== Bildfunktion - WEBP 800px - pekar på bilder/bild-saknas.webp ===== */
         .prod-rad { display: flex; gap: 12px; align-items: flex-start; }
         .prod-thumb { width: 56px; height: 56px; flex: 0 0 56px; object-fit: cover; border-radius: 10px; border: 1px solid var(--kant,#e2e8f0); background: #f8fafc; cursor: pointer; }
+        .thumb-knapp:focus{outline:2px solid #4a7c59;outline-offset:2px;border-radius:10px}
         .prod-thumb:hover { transform: scale(1.03); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
         .prod-info { flex: 1; min-width: 0; }
         .bild-lager { position: fixed; touch-action: manipulation; -webkit-tap-highlight-color: transparent; inset: 0; z-index: 2000; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; padding: 16px; }
@@ -483,6 +484,7 @@
         /* ===== Bildfunktion - WEBP 800px - pekar på bilder/bild-saknas.webp ===== */
         .prod-rad { display: flex; gap: 12px; align-items: flex-start; }
         .prod-thumb { width: 56px; height: 56px; flex: 0 0 56px; object-fit: cover; border-radius: 10px; border: 1px solid var(--kant,#e2e8f0); background: #f8fafc; cursor: pointer; }
+        .thumb-knapp:focus{outline:2px solid #4a7c59;outline-offset:2px;border-radius:10px}
         .prod-thumb:hover { transform: scale(1.03); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
         .prod-info { flex: 1; min-width: 0; }
         .bild-lager { position: fixed; touch-action: manipulation; -webkit-tap-highlight-color: transparent; inset: 0; z-index: 2000; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; padding: 16px; }
@@ -1228,9 +1230,9 @@
                     const artInfo = gallerPlats ? '' : `<div class="art-info-block"><span class="art-no-wrap">Art. Nr: ${esc(artikel.artnr)}</span><span class="art-no-wrap">Lev. Art Nr: ${esc(artikel.lev_artnr)}</span></div>`;
                     const typ = gallerPlats ? 'galler' : 'forbruk';
                     const typText = gallerPlats ? 'Instrumentgaller' : 'Fabrikssterilt';
-                                                                                const bildSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artikel.artnr)}.webp`;
+                                                                                                    const bildSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artikel.artnr)}.webp`;
                     const safeTitel = esc(artikel.namn).replace(/'/g, "&#39;").replace(/"/g, '&quot;');
-                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><img src="${bildSrc}" data-full-src="${bildSrc}" data-titel="${safeTitel}" alt="Bild" class="prod-thumb" loading="lazy" onerror="window.bildFallback(this)" onclick="window.visaBild(this.dataset.fullSrc||this.src, this.dataset.titel||'')"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
+                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><button type="button" class="thumb-knapp" onclick="window.visaBild('${bildSrc}', '${safeTitel}')" style="border:0;padding:0;background:transparent;flex:0 0 56px;"><img src="${bildSrc}" data-full-src="${bildSrc}" alt="Bild" class="prod-thumb" loading="lazy" onerror="window.bildFallback(this)"></button><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
