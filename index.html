@@ -2019,6 +2019,8 @@
                 <p>Under sökfältet finns rutan <b>Sökhistorik</b>. Den visar dina <b>senaste 5</b> sökningar som knappar: tryck på en för att söka igen, eller på ✕ för att ta bort den. Tryck på rubriken för att fälla ut rutan och se sökningarna sorterade på <b>Idag</b>, <b>Igår</b> och <b>Senaste 7 dagarna</b> (högst 10 i varje grupp). <b>Rensa</b> tar bort hela historiken. Historiken sparas bara på den här ${telefon ? 'telefonen' : 'datorn'} och skickas ingenstans.</p>`;
             h += `<h3>Visa och sortera</h3>
                 <p><b>Visa</b> väljer om du vill se Fabrikssterilt, Instrumentgaller eller båda. Minst en måste vara vald. <b>Sortera</b> ordnar träffarna efter plats, namn, artikelnummer eller leverantörens nummer.</p>`;
+            h += `<h3>Bilder på artiklar</h3>
+                <p>Har en artikel en bild visas en liten miniatyr till vänster om namnet. ${telefon ? '<b>Tryck</b>' : '<b>Klicka</b>'} på miniatyren för att se bilden större, med artikelns namn överst. Stäng med <b>✕</b>, genom att ${telefon ? 'trycka' : 'klicka'} utanför bilden${telefon ? '' : ' eller med Esc'}. Saknas bilden visas ingen ruta alls.</p>`;
             h += `<h3>Platsrutorna</h3>
                 <ul>
                   <li>${dot('#7fb046')}<b>Grön</b>: fabrikssterilt, med hyllplats som <b>E-05-04-01</b>.</li>
