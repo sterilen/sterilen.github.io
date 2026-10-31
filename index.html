@@ -464,6 +464,30 @@
         .bild-stang { width: 36px; height: 36px; border-radius: 50%; border: none; background: #0f172a; color: #fff; font-size: 18px; cursor: pointer; flex: 0 0 36px; }
         html[data-tema="mork"] .bild-ruta { background: #162032; }
         html[data-tema="mork"] .bild-titel { color: #f1f5f9; }
+        .bild-plus { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; box-sizing: border-box; width: 56px; height: 56px; min-width: 56px; flex: 0 0 56px; padding: 2px; border-radius: 10px; border: 1.5px dashed var(--kant,#cbd5e1); background: transparent; color: var(--text-dim,#64748b); cursor: pointer; font: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        .bild-plus span { font-size: 18px; line-height: 1; }
+        .bild-plus small { font-size: 9px; line-height: 1.1; font-weight: 700; text-align: center; }
+        .bild-plus:hover { border-color: var(--fokus,#0f766e); color: var(--fokus,#0f766e); }
+        .bild-ny { margin: 4px auto 0; padding: 10px 16px; border-radius: 12px; border: 1px solid var(--kant,#cbd5e1); background: #f1f5f9; color: #0f172a; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .bild-ny[hidden] { display: none; }
+        html[data-tema="mork"] .bild-ny { background: #1e293b; color: #f1f5f9; }
+        .bidrag-lager { position: fixed; inset: 0; z-index: 2100; background: rgba(15, 23, 42, 0.7); display: flex; align-items: center; justify-content: center; padding: 14px; }
+        .bidrag-lager[hidden] { display: none; }
+        .bidrag-ruta { width: 100%; max-width: 440px; max-height: 94vh; overflow-y: auto; background: var(--yta,#fff); color: var(--text,#0f172a); border-radius: 18px; padding: 18px 18px 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .bidrag-ruta h2 { font-size: 18px; margin: 0 0 4px; }
+        .bidrag-ruta .bidrag-under { font-size: 13px; color: var(--text-dim,#64748b); margin: 0 0 12px; }
+        .bidrag-ruta p, .bidrag-ruta li { font-size: 14.5px; line-height: 1.45; }
+        .bidrag-ruta ul { padding-left: 20px; margin: 6px 0 12px; }
+        .bidrag-ruta input[type=text] { width: 100%; box-sizing: border-box; padding: 14px; font-size: 20px; letter-spacing: 3px; text-transform: uppercase; text-align: center; border: 2px solid var(--kant,#e2e8f0); border-radius: 12px; background: var(--yta-dim,#f8fafc); color: var(--text,#0f172a); }
+        .bidrag-knappar { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+        .bidrag-knappar button { flex: 1 1 140px; padding: 13px 14px; font-size: 15px; font-weight: 700; border-radius: 12px; border: 1px solid var(--kant,#cbd5e1); background: var(--yta-dim,#f1f5f9); color: var(--text,#0f172a); cursor: pointer; }
+        .bidrag-knappar button.primar { background: var(--accent,#0f766e); color: var(--accent-text,#fff); border-color: transparent; }
+        .bidrag-knappar button:disabled { opacity: 0.45; cursor: default; }
+        .bidrag-prov { display: block; max-width: 100%; max-height: 38vh; margin: 8px auto; border-radius: 10px; border: 1px solid var(--kant,#e2e8f0); background: #fff; }
+        .bidrag-msg { min-height: 20px; margin-top: 10px; font-size: 14px; font-weight: 700; }
+        .bidrag-msg.fel { color: #b42318; }
+        .bidrag-msg.ok { color: #2f7d32; }
+        .bidrag-liten { display: inline-block; margin-top: 10px; font-size: 12.5px; color: var(--text-dim,#64748b); background: none; border: none; text-decoration: underline; cursor: pointer; padding: 0; }
 
         </style>
     <style>
@@ -687,6 +711,34 @@
         <div class="bild-ruta" role="dialog" aria-modal="true">
             <div class="bild-topp"><div id="bildTitel" class="bild-titel"></div><button type="button" class="bild-stang" onclick="stangBild()" aria-label="Stäng bild">✕</button></div>
             <img id="bildStor" src="" alt="">
+            <button type="button" id="bildNyKnapp" class="bild-ny" hidden>📷 Föreslå ny bild</button>
+        </div>
+    </div>
+
+    <div id="bidragLager" class="bidrag-lager" hidden onclick="if(event.target===this) stangBidrag()">
+        <div class="bidrag-ruta" role="dialog" aria-modal="true" aria-labelledby="bidragRubrik">
+            <h2 id="bidragRubrik"></h2>
+            <p id="bidragUnder" class="bidrag-under"></p>
+            <div id="bidragKod" hidden>
+                <p>Skriv in din personliga kod för att kunna skicka bilder. Den får du av den som sköter sökappen. Du behöver bara skriva den en gång på den här enheten.</p>
+                <input type="text" id="bidragKodFalt" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Din kod">
+                <div class="bidrag-knappar"><button type="button" onclick="stangBidrag()">Avbryt</button><button type="button" class="primar" id="bidragKodKnapp">Fortsätt</button></div>
+            </div>
+            <div id="bidragFoto" hidden>
+                <p id="bidragErsatt" hidden><b>Du föreslår en ny bild som ersätter den nuvarande.</b> Den gamla ligger kvar tills den nya är godkänd.</p>
+                <p><b>Så tar du bilden:</b></p>
+                <ul>
+                    <li>Bra ljus, helst dagsljus eller lampa rakt framifrån, utan hårda skuggor.</li>
+                    <li>Enfärgad bakgrund, gärna vit, till exempel ett vitt papper.</li>
+                    <li>Hela förpackningen i bild, rakt framifrån, skarp och inte suddig.</li>
+                    <li>Inga personer eller patientuppgifter i bilden.</li>
+                </ul>
+                <input type="file" id="bidragFil" accept="image/*" hidden>
+                <img id="bidragProv" class="bidrag-prov" alt="" hidden>
+                <div class="bidrag-knappar"><button type="button" id="bidragValj">📷 Ta eller välj bild</button><button type="button" class="primar" id="bidragSkicka" disabled>Skicka</button></div>
+            </div>
+            <div id="bidragMsg" class="bidrag-msg"></div>
+            <button type="button" class="bidrag-liten" id="bidragByt" hidden>Byt kod</button>
         </div>
     </div>
 
@@ -1043,6 +1095,8 @@
         const HIST_KEY = 'lagersok_hist_v1';
         const HIST_MAX = 100;
         const STAT_URL = "https://sterilsok-stat.pelle-holmstrom.workers.dev";
+        // Adress till bildtjänsten (bild_worker.js). Tom = funktionen "Lägg till / byt bild" är avstängd och syns inte.
+        const BILD_URL = "https://lagersok-bilder.pelle-holmstrom.workers.dev";
         function getHist(){ try{ const a = JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
         function saveHist(arr){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0,HIST_MAX))); }catch(e){} }
         function addHist(q, antal){
@@ -1264,7 +1318,7 @@
                     const thumbSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artId)}_thumb.webp`;
                     const fullSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artId)}.webp`;
                     const namnAttr = esc(artikel.namn).replace(/"/g, '&quot;');
-                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><img src="${thumbSrc}" data-full="${fullSrc}" data-namn="${namnAttr}" alt="" class="prod-thumb" loading="lazy" width="56" height="56"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
+                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><img src="${thumbSrc}" data-full="${fullSrc}" data-namn="${namnAttr}" data-artnr="${esc(artId)}" alt="" class="prod-thumb" loading="lazy" width="56" height="56"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
@@ -1956,13 +2010,15 @@
         // Visar hjälp som passar enheten: telefon/platta (pekskärm) eller dator.
 
         // ---- Artikelbilder: miniatyr (_thumb.webp) -> stor bild (.webp) ----
-        function visaBild(src, titel) {
+        function visaBild(src, titel, artnr) {
             var lager = document.getElementById('bildLager');
             var img = document.getElementById('bildStor');
             var tit = document.getElementById('bildTitel');
+            var ny = document.getElementById('bildNyKnapp');
             if (!lager || !img) return;
             img.src = src;
             if (tit) tit.textContent = titel || '';
+            if (ny) { ny.dataset.artnr = artnr || ''; ny.dataset.namn = titel || ''; ny.hidden = !(BILD_URL && artnr); }
             lager.hidden = false;
         }
         function stangBild() {
@@ -1977,11 +2033,15 @@
         // Klick/tryck på miniatyr (delegerat, fungerar på dator och telefon)
         document.addEventListener('click', function (e) {
             var t = e.target && e.target.closest ? e.target.closest('img.prod-thumb') : null;
-            if (!t) return;
-            e.preventDefault();
-            visaBild(t.getAttribute('data-full') || t.getAttribute('src'), t.getAttribute('data-namn') || '');
+            if (t) {
+                e.preventDefault();
+                visaBild(t.getAttribute('data-full') || t.getAttribute('src'), t.getAttribute('data-namn') || '', t.getAttribute('data-artnr') || '');
+                return;
+            }
+            var p = e.target && e.target.closest ? e.target.closest('button.bild-plus') : null;
+            if (p) { e.preventDefault(); oppnaBidrag(p.getAttribute('data-artnr') || '', p.getAttribute('data-namn') || '', false); }
         });
-        // Saknas miniatyren: prova stora bilden (visas ändå i 56x56), saknas den också: ta bort rutan.
+        // Saknas miniatyren: prova stora bilden (visas ändå i 56x56). Saknas den också: visa en "Lägg till bild"-ruta (om bidrag är på), annars ingenting.
         document.addEventListener('error', function (e) {
             var t = e.target;
             if (!t || !t.classList || !t.classList.contains('prod-thumb')) return;
@@ -1989,10 +2049,134 @@
             if (!t.dataset.steg && full && t.getAttribute('src') !== full) {
                 t.dataset.steg = '1';
                 t.src = full;
+            } else if (BILD_URL && t.getAttribute('data-artnr')) {
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'bild-plus';
+                b.setAttribute('data-artnr', t.getAttribute('data-artnr'));
+                b.setAttribute('data-namn', t.getAttribute('data-namn') || '');
+                b.setAttribute('aria-label', 'Lägg till bild');
+                b.innerHTML = '<span>📷</span><small>Lägg till bild</small>';
+                t.replaceWith(b);
             } else {
                 t.remove();
             }
         }, true);
+
+        // ======================= BIDRA MED BILDER =======================
+        // Personlig kod (sparas på enheten) -> ta/välj bild -> bilden krymps till 1600 px JPEG i webbläsaren -> skickas till inkorgen.
+        // Inget publiceras förrän det godkänts i uppdateringsprogrammet. Tom BILD_URL stänger av allt.
+        var bidrag = { artnr: '', namn: '', ersatt: false, blob: null };
+        function lagraLokalt(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+        function lasLokalt(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+        function bidragMsg(text, typ) { var m = document.getElementById('bidragMsg'); m.textContent = text || ''; m.className = 'bidrag-msg' + (typ ? ' ' + typ : ''); }
+        function bidragSteg(steg) {
+            document.getElementById('bidragKod').hidden = steg !== 'kod';
+            document.getElementById('bidragFoto').hidden = steg !== 'foto';
+            document.getElementById('bidragByt').hidden = steg !== 'foto';
+            if (steg === 'kod') { var f = document.getElementById('bidragKodFalt'); f.value = ''; setTimeout(function () { try { f.focus(); } catch (e) {} }, 50); }
+        }
+        function oppnaBidrag(artnr, namn, ersatt) {
+            if (!BILD_URL) return;
+            stangBild();
+            bidrag = { artnr: artnr, namn: namn, ersatt: !!ersatt, blob: null };
+            document.getElementById('bidragRubrik').textContent = ersatt ? 'Föreslå ny bild' : 'Lägg till bild';
+            document.getElementById('bidragUnder').textContent = (namn ? namn + ' · ' : '') + 'Art. Nr ' + artnr;
+            document.getElementById('bidragErsatt').hidden = !ersatt;
+            var prov = document.getElementById('bidragProv'); prov.hidden = true; prov.removeAttribute('src');
+            document.getElementById('bidragSkicka').disabled = true;
+            document.getElementById('bidragValj').textContent = '📷 Ta eller välj bild';
+            bidragMsg('');
+            bidragSteg(lasLokalt('bildkod') ? 'foto' : 'kod');
+            document.getElementById('bidragLager').hidden = false;
+        }
+        function stangBidrag() {
+            document.getElementById('bidragLager').hidden = true;
+            var prov = document.getElementById('bidragProv');
+            if (prov.dataset.url) { try { URL.revokeObjectURL(prov.dataset.url); } catch (e) {} prov.dataset.url = ''; }
+            bidrag.blob = null;
+        }
+        // Krymper och rättvänder bilden: längsta sidan 1600 px, vit bakgrund, JPEG. Positionsdata och annan dold bildinfo försvinner.
+        async function krympBild(fil) {
+            var bm;
+            try { bm = await createImageBitmap(fil, { imageOrientation: 'from-image' }); }
+            catch (e) {
+                bm = await new Promise(function (ok, fel) {
+                    var u = URL.createObjectURL(fil), im = new Image();
+                    im.onload = function () { URL.revokeObjectURL(u); ok(im); };
+                    im.onerror = function () { URL.revokeObjectURL(u); fel(new Error('bild')); };
+                    im.src = u;
+                });
+            }
+            var w = bm.width || bm.naturalWidth, h = bm.height || bm.naturalHeight;
+            var k = Math.min(1, 1600 / Math.max(w, h));
+            var c = document.createElement('canvas');
+            c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+            var g = c.getContext('2d');
+            g.fillStyle = '#ffffff'; g.fillRect(0, 0, c.width, c.height);
+            g.drawImage(bm, 0, 0, c.width, c.height);
+            if (bm.close) { try { bm.close(); } catch (e) {} }
+            return await new Promise(function (ok, fel) { c.toBlob(function (b) { b ? ok(b) : fel(new Error('jpeg')); }, 'image/jpeg', 0.85); });
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            var nyKnapp = document.getElementById('bildNyKnapp');
+            if (!nyKnapp) return;
+            if (BILD_URL) nyKnapp.hidden = false;
+            nyKnapp.addEventListener('click', function () { oppnaBidrag(nyKnapp.dataset.artnr || '', nyKnapp.dataset.namn || '', true); });
+            var fil = document.getElementById('bidragFil');
+            document.getElementById('bidragValj').addEventListener('click', function () { fil.value = ''; fil.click(); });
+            fil.addEventListener('change', async function () {
+                if (!fil.files || !fil.files[0]) return;
+                bidragMsg('Förbereder bilden…');
+                document.getElementById('bidragSkicka').disabled = true;
+                try {
+                    bidrag.blob = await krympBild(fil.files[0]);
+                    var prov = document.getElementById('bidragProv');
+                    if (prov.dataset.url) { try { URL.revokeObjectURL(prov.dataset.url); } catch (e) {} }
+                    prov.dataset.url = URL.createObjectURL(bidrag.blob);
+                    prov.src = prov.dataset.url; prov.hidden = false;
+                    document.getElementById('bidragSkicka').disabled = false;
+                    document.getElementById('bidragValj').textContent = '📷 Byt bild';
+                    bidragMsg('');
+                } catch (e) {
+                    bidrag.blob = null;
+                    bidragMsg('Bilden gick inte att läsa. Prova en annan bild.', 'fel');
+                }
+            });
+            document.getElementById('bidragSkicka').addEventListener('click', async function () {
+                if (!bidrag.blob) return;
+                var knapp = this; knapp.disabled = true; bidragMsg('Skickar…');
+                try {
+                    var r = await fetch(BILD_URL.replace(/\/$/, '') + '/bild', { method: 'POST', body: bidrag.blob,
+                        headers: { 'Content-Type': 'image/jpeg', 'x-kod': lasLokalt('bildkod'), 'x-artnr': bidrag.artnr, 'x-ersatt': bidrag.ersatt ? '1' : '0' } });
+                    if (r.status === 401) { lagraLokalt('bildkod', null); lagraLokalt('bildnamn', null); bidragSteg('kod'); bidragMsg('Din kod gäller inte längre. Skriv in en ny kod.', 'fel'); return; }
+                    if (!r.ok) throw new Error(String(r.status));
+                    document.getElementById('bidragFoto').hidden = true; document.getElementById('bidragByt').hidden = true;
+                    bidragMsg('Tack' + (lasLokalt('bildnamn') ? ', ' + lasLokalt('bildnamn') : '') + '! Bilden granskas innan den visas i sökappen.', 'ok');
+                    setTimeout(function () { if (!document.getElementById('bidragLager').hidden) stangBidrag(); }, 3500);
+                } catch (e) {
+                    bidragMsg('Kunde inte skicka. Kontrollera nätet och försök igen.', 'fel');
+                    knapp.disabled = false;
+                }
+            });
+            async function provaKod() {
+                var kod = document.getElementById('bidragKodFalt').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                if (kod.length < 6) { bidragMsg('Skriv in hela koden.', 'fel'); return; }
+                bidragMsg('Kontrollerar…');
+                try {
+                    var r = await fetch(BILD_URL.replace(/\/$/, '') + '/kodkoll', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kod: kod }) });
+                    if (r.status === 401) { bidragMsg('Koden stämmer inte. Kontrollera och försök igen.', 'fel'); return; }
+                    if (!r.ok) throw new Error(String(r.status));
+                    var d = await r.json();
+                    lagraLokalt('bildkod', kod); lagraLokalt('bildnamn', d.namn || '');
+                    bidragMsg(''); bidragSteg('foto');
+                } catch (e) { bidragMsg('Kunde inte kontrollera koden. Kontrollera nätet och försök igen.', 'fel'); }
+            }
+            document.getElementById('bidragKodKnapp').addEventListener('click', provaKod);
+            document.getElementById('bidragKodFalt').addEventListener('keydown', function (e) { if (e.key === 'Enter') provaKod(); });
+            document.getElementById('bidragByt').addEventListener('click', function () { lagraLokalt('bildkod', null); lagraLokalt('bildnamn', null); bidragMsg(''); bidragSteg('kod'); });
+        });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { var b = document.getElementById('bidragLager'); if (b && !b.hidden) stangBidrag(); } });
 
         function hjalpArTelefon() {
             try { return window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; }
@@ -2020,7 +2204,17 @@
             h += `<h3>Visa och sortera</h3>
                 <p><b>Visa</b> väljer om du vill se Fabrikssterilt, Instrumentgaller eller båda. Minst en måste vara vald. <b>Sortera</b> ordnar träffarna efter plats, namn, artikelnummer eller leverantörens nummer.</p>`;
             h += `<h3>Bilder på artiklar</h3>
-                <p>Har en artikel en bild visas en liten miniatyr till vänster om namnet. ${telefon ? '<b>Tryck</b>' : '<b>Klicka</b>'} på miniatyren för att se bilden större, med artikelns namn överst. Stäng med <b>✕</b>, genom att ${telefon ? 'trycka' : 'klicka'} utanför bilden${telefon ? '' : ' eller med Esc'}. Saknas bilden visas ingen ruta alls.</p>`;
+                <p>Har en artikel en bild visas en liten miniatyr till vänster om namnet. ${telefon ? '<b>Tryck</b>' : '<b>Klicka</b>'} på miniatyren för att se bilden större, med artikelns namn överst. Stäng med <b>✕</b>, genom att ${telefon ? 'trycka' : 'klicka'} utanför bilden${telefon ? '' : ' eller med Esc'}. ${BILD_URL ? 'Saknas bilden visas en streckad ruta där du kan lägga till en.' : 'Saknas bilden visas ingen ruta alls.'}</p>`;
+            if (BILD_URL) {
+                h += `<h3>Lägg till eller byt bild</h3>
+                <p>Du kan bidra med bilder om du har fått en personlig kod. ${telefon ? 'Tryck' : 'Klicka'} på den streckade rutan 📷 vid en artikel som saknar bild, eller öppna bilden och välj <b>Föreslå ny bild</b> för att byta en befintlig. Första gången skriver du in din kod. Den sparas på ${telefon ? 'telefonen' : 'datorn'}.</p>
+                <ul>
+                  <li>Bra ljus och en enfärgad bakgrund, gärna vit.</li>
+                  <li>Hela förpackningen rakt framifrån, skarp bild.</li>
+                  <li>Inga personer eller patientuppgifter i bilden.</li>
+                </ul>
+                <p>Bilden kontrolleras innan den visas i sökappen. Den nuvarande bilden ligger kvar tills den nya är godkänd.</p>`;
+            }
             h += `<h3>Platsrutorna</h3>
                 <ul>
                   <li>${dot('#7fb046')}<b>Grön</b>: fabrikssterilt, med hyllplats som <b>E-05-04-01</b>.</li>
