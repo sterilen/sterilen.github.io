@@ -367,6 +367,8 @@
         html[data-tema] .hist-titel { color:var(--text-dim); }
         html[data-tema] .hist-box-pill { background:var(--yta); color:var(--text-dim); border:1px solid var(--kant); }
         html[data-tema] .hist-box-body { background:var(--yta); border-top-color:var(--kant); }
+        html[data-tema] .hist-rensa { background:var(--yta); border-color:var(--kant); }
+        html[data-tema] .hist-rensa:hover { background:var(--kant); }
         html[data-tema] .hist-rensa, html[data-tema] .hist-pil, html[data-tema] .hist-grupp-head span, html[data-tema] .hist-tom, html[data-tema] .hist-etikett { color:var(--text-dim); }
         html[data-tema] .hist-grupp-head b { color:var(--text); }
         html[data-tema] .hist-chip { background:var(--yta-dim); border-color:var(--kant); color:var(--text); }
@@ -411,7 +413,8 @@
         .hist-box-head:hover { background:#f1f5f9; }
         .hist-titel { font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px; }
         .hist-box-pill { font-size:11px; background:#e2e8f0; color:#475569; padding:2px 8px; border-radius:999px; }
-        .hist-rensa { font-size:11px; color:#94a3b8; background:none; border:none; cursor:pointer; text-decoration:underline; margin-left:8px; }
+        .hist-rensa { font-size:11px; font-weight:600; color:#64748b; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; padding:3px 10px; cursor:pointer; text-decoration:none; margin-left:0; transition:background .15s, color .15s, border-color .15s; }
+        .hist-rensa:hover { background:#fee2e2; color:#b91c1c; border-color:#fca5a5; }
         .hist-box-body { display:none; padding:10px 12px 12px; border-top:1px solid #e2e8f0; background:#fff; }
         .hist-box.open .hist-box-body { display:block; }
         .hist-box.open .hist-pil { transform: rotate(180deg); }
@@ -520,7 +523,8 @@
         .hist-box-head:hover { background:#f1f5f9; }
         .hist-titel { font-size:12px; font-weight:800; color:#475569; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:6px; }
         .hist-box-pill { font-size:11px; background:#e2e8f0; color:#475569; padding:2px 8px; border-radius:999px; }
-        .hist-rensa { font-size:11px; color:#94a3b8; background:none; border:none; cursor:pointer; text-decoration:underline; margin-left:8px; }
+        .hist-rensa { font-size:11px; font-weight:600; color:#64748b; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:999px; padding:3px 10px; cursor:pointer; text-decoration:none; margin-left:0; transition:background .15s, color .15s, border-color .15s; }
+        .hist-rensa:hover { background:#fee2e2; color:#b91c1c; border-color:#fca5a5; }
         .hist-box-body { display:none; padding:10px 12px 12px; border-top:1px solid #e2e8f0; background:#fff; }
         .hist-box.open .hist-box-body { display:block; }
         .hist-box.open .hist-pil { transform: rotate(180deg); }
@@ -637,7 +641,7 @@
         <div id="histBox" class="hist-box" hidden>
           <div class="hist-box-head" onclick="this.parentElement.classList.toggle('open')">
             <div class="hist-titel">🕓 Sökhistorik <span id="histTotalPill" class="hist-box-pill"></span></div>
-            <div style="display:flex;align-items:center;gap:8px"><button class="hist-rensa" onclick="event.stopPropagation(); rensaHistorik()">Rensa</button><span class="hist-pil">▼</span></div>
+            <div style="display:flex;align-items:center;gap:22px"><button class="hist-rensa" onclick="event.stopPropagation(); rensaHistorik()">Rensa</button><span class="hist-pil">▼</span></div>
           </div>
           <div class="hist-box-body">
             <div style="margin-bottom:8px"><div class="hist-etikett" style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:4px">Senaste 5</div><div id="histChips" class="hist-chips"></div></div>
@@ -1135,7 +1139,6 @@
           const h = getHist();
           if(!h.length){ box.hidden=true; return; }
           box.hidden=false;
-          const pill = document.getElementById('histTotalPill'); if(pill) pill.textContent = h.length + ' st';
           const chips = document.getElementById('histChips');
           chips.innerHTML='';
           h.slice(0,5).forEach(item=>{
@@ -1166,7 +1169,7 @@
             const cnt = document.getElementById(countId);
             if(!list) return;
             list.innerHTML='';
-            if(cnt) cnt.textContent = arr.length?`· ${arr.length} st`:'';
+            if(cnt) cnt.textContent = '';
             if(!arr.length){ list.innerHTML='<div class="hist-tom">Inga sökningar</div>'; return; }
             arr.slice(0,10).forEach(item=>{
               const el = document.createElement('div');
