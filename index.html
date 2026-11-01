@@ -487,6 +487,13 @@
         .bidrag-knappar button.primar { background: var(--accent,#0f766e); color: var(--accent-text,#fff); border-color: transparent; }
         .bidrag-knappar button:disabled { opacity: 0.45; cursor: default; }
         .bidrag-prov { display: block; max-width: 100%; max-height: 38vh; margin: 8px auto; border-radius: 10px; border: 1px solid var(--kant,#e2e8f0); background: #fff; }
+        .bidrag-ram { width: min(100%, 52vh); aspect-ratio: 1; margin: 8px auto; border: 1px solid var(--kant,#cbd5e1); border-radius: 10px; overflow: hidden; background: #fff; }
+        .bidrag-ram canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+        .bidrag-ram canvas:active { cursor: grabbing; }
+        .bidrag-tips { font-size: 12.5px !important; color: var(--text-dim,#64748b); margin: 4px 0 6px; text-align: center; }
+        .bidrag-zoom { display: flex; align-items: center; gap: 10px; }
+        .bidrag-zoom input[type=range] { flex: 1; min-width: 0; }
+        .bidrag-zoom .bidrag-liten { margin-top: 0; white-space: nowrap; }
         .bidrag-msg { min-height: 20px; margin-top: 10px; font-size: 14px; font-weight: 700; }
         .bidrag-msg.fel { color: #b42318; }
         .bidrag-msg.ok { color: #2f7d32; }
@@ -739,7 +746,11 @@
                 </ul>
                 <input type="file" id="bidragFil" accept="image/*" capture="environment" hidden>
                 <input type="file" id="bidragFilGalleri" accept="image/*" hidden>
-                <img id="bidragProv" class="bidrag-prov" alt="" hidden>
+                <div id="bidragBeskar" hidden>
+                    <div class="bidrag-ram"><canvas id="bidragDuk" width="720" height="720" aria-label="Beskär bilden"></canvas></div>
+                    <p class="bidrag-tips">Dra för att flytta bilden. Zooma med reglaget eller genom att nypa. Det som syns i rutan skickas.</p>
+                    <div class="bidrag-zoom"><span>−</span><input type="range" id="bidragZoom" min="1" max="5" step="0.01" value="1" aria-label="Zooma"><span>+</span><button type="button" id="bidragNollstall" class="bidrag-liten">Återställ</button></div>
+                </div>
                 <div class="bidrag-knappar"><button type="button" id="bidragTa">📷 Ta bild</button><button type="button" id="bidragValj">🖼️ Välj från galleriet</button></div>
                 <div class="bidrag-knappar"><button type="button" class="primar" id="bidragSkicka" disabled>Skicka</button></div>
             </div>
@@ -2089,7 +2100,7 @@
             document.getElementById('bidragRubrik').textContent = ersatt ? 'Föreslå ny bild' : 'Lägg till bild';
             document.getElementById('bidragUnder').textContent = (namn ? namn + ' · ' : '') + 'Art. Nr ' + artnr;
             document.getElementById('bidragErsatt').hidden = !ersatt;
-            var prov = document.getElementById('bidragProv'); prov.hidden = true; prov.removeAttribute('src');
+            beskarNollaBild();
             document.getElementById('bidragSkicka').disabled = true;
             bidragMsg('');
             bidragSteg(lasLokalt('bildkod') ? 'foto' : 'kod');
@@ -2097,9 +2108,84 @@
         }
         function stangBidrag() {
             document.getElementById('bidragLager').hidden = true;
-            var prov = document.getElementById('bidragProv');
-            if (prov.dataset.url) { try { URL.revokeObjectURL(prov.dataset.url); } catch (e) {} prov.dataset.url = ''; }
+            beskarNollaBild();
             bidrag.blob = null;
+        }
+        // ---- Zooma och beskära: kvadratisk ruta, bilden ritas i en canvas. Det som syns i rutan blir den skickade bilden (1200x1200, vit bakgrund).
+        var besk = { bm: null, w: 1, h: 1, z: 1, x: 0, y: 0 };   // x, y: bildens mitt relativt rutans mitt, i rutstorlekar
+        function beskarNollaBild() {
+            if (besk.bm && besk.bm.close) { try { besk.bm.close(); } catch (e) {} }
+            besk.bm = null; besk.z = 1; besk.x = 0; besk.y = 0;
+            var d = document.getElementById('bidragBeskar'); if (d) d.hidden = true;
+        }
+        function beskarRita(duk, storlek, stod) {
+            var g = duk.getContext('2d');
+            g.fillStyle = '#ffffff'; g.fillRect(0, 0, storlek, storlek);
+            if (!besk.bm) return;
+            var s0 = 1 / Math.max(besk.w, besk.h);
+            var iw = besk.w * s0 * besk.z, ih = besk.h * s0 * besk.z;
+            g.drawImage(besk.bm, (0.5 + besk.x - iw / 2) * storlek, (0.5 + besk.y - ih / 2) * storlek, iw * storlek, ih * storlek);
+            if (stod) {   // hjälplinjer (tredjedelar) syns bara på skärmen, inte i den skickade bilden
+                g.strokeStyle = 'rgba(0,0,0,0.18)'; g.lineWidth = Math.max(1, storlek / 360);
+                for (var i = 1; i < 3; i++) {
+                    g.beginPath(); g.moveTo(storlek * i / 3, 0); g.lineTo(storlek * i / 3, storlek); g.stroke();
+                    g.beginPath(); g.moveTo(0, storlek * i / 3); g.lineTo(storlek, storlek * i / 3); g.stroke();
+                }
+            }
+        }
+        function beskarKlampa() {
+            besk.z = Math.min(5, Math.max(1, besk.z));
+            var s0 = 1 / Math.max(besk.w, besk.h);
+            var iw = besk.w * s0 * besk.z, ih = besk.h * s0 * besk.z;
+            var mx = 0.5 + iw / 2 - 0.15, my = 0.5 + ih / 2 - 0.15;   // minst 15 % av bilden måste ligga kvar i rutan
+            besk.x = Math.min(mx, Math.max(-mx, besk.x));
+            besk.y = Math.min(my, Math.max(-my, besk.y));
+        }
+        function beskarUppdatera() {
+            beskarKlampa();
+            beskarRita(document.getElementById('bidragDuk'), 720, true);
+            document.getElementById('bidragZoom').value = besk.z;
+        }
+        async function beskarSkapaBlob() {
+            var c = document.createElement('canvas'); c.width = 1200; c.height = 1200;
+            beskarRita(c, 1200, false);
+            return await new Promise(function (ok, fel) { c.toBlob(function (b) { b ? ok(b) : fel(new Error('jpeg')); }, 'image/jpeg', 0.85); });
+        }
+        function beskarStartaReglage() {
+            var duk = document.getElementById('bidragDuk'), zoom = document.getElementById('bidragZoom');
+            var pek = {};   // aktiva pekare: id -> {x, y}
+            function antal() { return Object.keys(pek).length; }
+            function avstand() { var k = Object.keys(pek); var a = pek[k[0]], b = pek[k[1]]; return Math.hypot(a.x - b.x, a.y - b.y) || 1; }
+            duk.addEventListener('pointerdown', function (e) {
+                if (!besk.bm) return;
+                try { duk.setPointerCapture(e.pointerId); } catch (x) {}
+                pek[e.pointerId] = { x: e.clientX, y: e.clientY };
+            });
+            duk.addEventListener('pointermove', function (e) {
+                if (!pek[e.pointerId] || !besk.bm) return;
+                var r = duk.getBoundingClientRect();
+                if (antal() >= 2) {
+                    var f0 = avstand();
+                    pek[e.pointerId] = { x: e.clientX, y: e.clientY };
+                    besk.z *= avstand() / f0;
+                } else {
+                    besk.x += (e.clientX - pek[e.pointerId].x) / r.width;
+                    besk.y += (e.clientY - pek[e.pointerId].y) / r.height;
+                    pek[e.pointerId] = { x: e.clientX, y: e.clientY };
+                }
+                beskarUppdatera();
+            });
+            function slapp(e) { delete pek[e.pointerId]; }
+            duk.addEventListener('pointerup', slapp);
+            duk.addEventListener('pointercancel', slapp);
+            duk.addEventListener('wheel', function (e) {
+                if (!besk.bm) return;
+                e.preventDefault();
+                besk.z *= Math.exp(-e.deltaY * 0.0015);
+                beskarUppdatera();
+            }, { passive: false });
+            zoom.addEventListener('input', function () { besk.z = parseFloat(zoom.value) || 1; beskarUppdatera(); });
+            document.getElementById('bidragNollstall').addEventListener('click', function () { besk.z = 1; besk.x = 0; besk.y = 0; beskarUppdatera(); });
         }
         // Krymper och rättvänder bilden: längsta sidan 1600 px, vit bakgrund, JPEG. Positionsdata och annan dold bildinfo försvinner.
         async function krympBild(fil) {
@@ -2137,11 +2223,23 @@
                 bidragMsg('Förbereder bilden…');
                 document.getElementById('bidragSkicka').disabled = true;
                 try {
-                    bidrag.blob = await krympBild(inp.files[0]);
-                    var prov = document.getElementById('bidragProv');
-                    if (prov.dataset.url) { try { URL.revokeObjectURL(prov.dataset.url); } catch (e) {} }
-                    prov.dataset.url = URL.createObjectURL(bidrag.blob);
-                    prov.src = prov.dataset.url; prov.hidden = false;
+                    var liten = await krympBild(inp.files[0]);   // rättvänd, högst 1600 px
+                    beskarNollaBild();
+                    var bm;
+                    try { bm = await createImageBitmap(liten); }
+                    catch (e2) {
+                        bm = await new Promise(function (ok, fel) {
+                            var u = URL.createObjectURL(liten), im = new Image();
+                            im.onload = function () { URL.revokeObjectURL(u); ok(im); };
+                            im.onerror = function () { URL.revokeObjectURL(u); fel(new Error('bild')); };
+                            im.src = u;
+                        });
+                    }
+                    besk.bm = bm; besk.w = bm.width || bm.naturalWidth; besk.h = bm.height || bm.naturalHeight;
+                    besk.z = 1; besk.x = 0; besk.y = 0;
+                    bidrag.blob = liten;
+                    document.getElementById('bidragBeskar').hidden = false;
+                    beskarUppdatera();
                     document.getElementById('bidragSkicka').disabled = false;
                     bidragMsg('');
                 } catch (e) {
@@ -2149,13 +2247,15 @@
                     bidragMsg('Bilden gick inte att läsa. Prova en annan bild.', 'fel');
                 }
             }
+            beskarStartaReglage();
             fil.addEventListener('change', function () { bildVald(fil); });
             galleri.addEventListener('change', function () { bildVald(galleri); });
             document.getElementById('bidragSkicka').addEventListener('click', async function () {
                 if (!bidrag.blob) return;
                 var knapp = this; knapp.disabled = true; bidragMsg('Skickar…');
                 try {
-                    var r = await fetch(BILD_URL.replace(/\/$/, '') + '/bild', { method: 'POST', body: bidrag.blob,
+                    var skick = besk.bm ? await beskarSkapaBlob() : bidrag.blob;
+                    var r = await fetch(BILD_URL.replace(/\/$/, '') + '/bild', { method: 'POST', body: skick,
                         headers: { 'Content-Type': 'image/jpeg', 'x-kod': lasLokalt('bildkod'), 'x-artnr': bidrag.artnr, 'x-ersatt': bidrag.ersatt ? '1' : '0' } });
                     if (r.status === 401) { lagraLokalt('bildkod', null); lagraLokalt('bildnamn', null); bidragSteg('kod'); bidragMsg('Din kod gäller inte längre. Skriv in en ny kod.', 'fel'); return; }
                     if (!r.ok) throw new Error(String(r.status));
@@ -2215,7 +2315,7 @@
                 <p>Har en artikel en bild visas en liten miniatyr till vänster om namnet. ${telefon ? '<b>Tryck</b>' : '<b>Klicka</b>'} på miniatyren för att se bilden större, med artikelns namn överst. Stäng med <b>✕</b>, genom att ${telefon ? 'trycka' : 'klicka'} utanför bilden${telefon ? '' : ' eller med Esc'}. ${BILD_URL ? 'Saknas bilden visas en streckad ruta där du kan lägga till en.' : 'Saknas bilden visas ingen ruta alls.'}</p>`;
             if (BILD_URL) {
                 h += `<h3>Lägg till eller byt bild</h3>
-                <p>Du kan bidra med bilder om du har fått en personlig kod. ${telefon ? 'Tryck' : 'Klicka'} på den streckade rutan 📷 vid en artikel som saknar bild, eller öppna bilden och välj <b>Föreslå ny bild</b> för att byta en befintlig. Första gången skriver du in din kod. Den sparas på ${telefon ? 'telefonen' : 'datorn'}. Sedan väljer du <b>📷 Ta bild</b> för att fota direkt eller <b>🖼️ Välj från galleriet</b> för en bild du redan har. Du ser bilden och kan skicka den eller välja en annan.</p>
+                <p>Du kan bidra med bilder om du har fått en personlig kod. ${telefon ? 'Tryck' : 'Klicka'} på den streckade rutan 📷 vid en artikel som saknar bild, eller öppna bilden och välj <b>Föreslå ny bild</b> för att byta en befintlig. Första gången skriver du in din kod. Den sparas på ${telefon ? 'telefonen' : 'datorn'}. Sedan väljer du <b>📷 Ta bild</b> för att fota direkt eller <b>🖼️ Välj från galleriet</b> för en bild du redan har. Därefter kan du <b>zooma och beskära</b> bilden: dra för att flytta den och använd reglaget eller nyp med två fingrar för att zooma. Det som syns i den kvadratiska rutan är det som skickas. <b>Återställ</b> visar hela bilden igen, och du kan välja en annan bild innan du trycker på <b>Skicka</b>.</p>
                 <ul>
                   <li>Bra ljus och en enfärgad bakgrund, gärna vit.</li>
                   <li>Hela förpackningen rakt framifrån, skarp bild.</li>
