@@ -733,9 +733,11 @@
                     <li>Hela förpackningen i bild, rakt framifrån, skarp och inte suddig.</li>
                     <li>Inga personer eller patientuppgifter i bilden.</li>
                 </ul>
-                <input type="file" id="bidragFil" accept="image/*" hidden>
+                <input type="file" id="bidragFil" accept="image/*" capture="environment" hidden>
+                <input type="file" id="bidragFilGalleri" accept="image/*" hidden>
                 <img id="bidragProv" class="bidrag-prov" alt="" hidden>
-                <div class="bidrag-knappar"><button type="button" id="bidragValj">📷 Ta eller välj bild</button><button type="button" class="primar" id="bidragSkicka" disabled>Skicka</button></div>
+                <div class="bidrag-knappar"><button type="button" id="bidragTa">📷 Ta bild</button><button type="button" id="bidragValj">🖼️ Välj från galleriet</button></div>
+                <div class="bidrag-knappar"><button type="button" class="primar" id="bidragSkicka" disabled>Skicka</button></div>
             </div>
             <div id="bidragMsg" class="bidrag-msg"></div>
             <button type="button" class="bidrag-liten" id="bidragByt" hidden>Byt kod</button>
@@ -1096,7 +1098,8 @@
         const HIST_MAX = 100;
         const STAT_URL = "https://sterilsok-stat.pelle-holmstrom.workers.dev";
         // Adress till bildtjänsten (bild_worker.js). Tom = funktionen "Lägg till / byt bild" är avstängd och syns inte.
-        const BILD_URL = "https://lagersok-bilder.pelle-holmstrom.workers.dev";
+        const BILD_URL_RAW = "https://lagersok-bilder.pelle-holmstrom.workers.dev";
+        const BILD_URL = BILD_URL_RAW && !/^https?:\/\//i.test(BILD_URL_RAW) ? "https://" + BILD_URL_RAW : BILD_URL_RAW;   // fungerar även utan https://
         function getHist(){ try{ const a = JSON.parse(localStorage.getItem(HIST_KEY)||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
         function saveHist(arr){ try{ localStorage.setItem(HIST_KEY, JSON.stringify(arr.slice(0,HIST_MAX))); }catch(e){} }
         function addHist(q, antal){
@@ -2085,7 +2088,6 @@
             document.getElementById('bidragErsatt').hidden = !ersatt;
             var prov = document.getElementById('bidragProv'); prov.hidden = true; prov.removeAttribute('src');
             document.getElementById('bidragSkicka').disabled = true;
-            document.getElementById('bidragValj').textContent = '📷 Ta eller välj bild';
             bidragMsg('');
             bidragSteg(lasLokalt('bildkod') ? 'foto' : 'kod');
             document.getElementById('bidragLager').hidden = false;
@@ -2123,26 +2125,29 @@
             if (!nyKnapp) return;
             if (BILD_URL) nyKnapp.hidden = false;
             nyKnapp.addEventListener('click', function () { oppnaBidrag(nyKnapp.dataset.artnr || '', nyKnapp.dataset.namn || '', true); });
-            var fil = document.getElementById('bidragFil');
-            document.getElementById('bidragValj').addEventListener('click', function () { fil.value = ''; fil.click(); });
-            fil.addEventListener('change', async function () {
-                if (!fil.files || !fil.files[0]) return;
+            var fil = document.getElementById('bidragFil');                 // öppnar kameran direkt (capture)
+            var galleri = document.getElementById('bidragFilGalleri');      // öppnar bildväljaren
+            document.getElementById('bidragTa').addEventListener('click', function () { fil.value = ''; fil.click(); });
+            document.getElementById('bidragValj').addEventListener('click', function () { galleri.value = ''; galleri.click(); });
+            async function bildVald(inp) {
+                if (!inp.files || !inp.files[0]) return;
                 bidragMsg('Förbereder bilden…');
                 document.getElementById('bidragSkicka').disabled = true;
                 try {
-                    bidrag.blob = await krympBild(fil.files[0]);
+                    bidrag.blob = await krympBild(inp.files[0]);
                     var prov = document.getElementById('bidragProv');
                     if (prov.dataset.url) { try { URL.revokeObjectURL(prov.dataset.url); } catch (e) {} }
                     prov.dataset.url = URL.createObjectURL(bidrag.blob);
                     prov.src = prov.dataset.url; prov.hidden = false;
                     document.getElementById('bidragSkicka').disabled = false;
-                    document.getElementById('bidragValj').textContent = '📷 Byt bild';
                     bidragMsg('');
                 } catch (e) {
                     bidrag.blob = null;
                     bidragMsg('Bilden gick inte att läsa. Prova en annan bild.', 'fel');
                 }
-            });
+            }
+            fil.addEventListener('change', function () { bildVald(fil); });
+            galleri.addEventListener('change', function () { bildVald(galleri); });
             document.getElementById('bidragSkicka').addEventListener('click', async function () {
                 if (!bidrag.blob) return;
                 var knapp = this; knapp.disabled = true; bidragMsg('Skickar…');
