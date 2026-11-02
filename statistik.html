@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Lagersök statistik</title>
+<style>
+:root {
+  --bg: #f1f5f9; --kort: #ffffff; --kant: #e2e8f0; --text: #0f172a; --dim: #64748b; --spar: #e8edf3;
+  --bla: #4687b0; --rod: #c0392b; --gron: #2f7d32; --varn: #b45309;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="ljus"]) {
+    --bg: #0f172a; --kort: #1e293b; --kant: #334155; --text: #e2e8f0; --dim: #94a3b8; --spar: #334155;
+    --bla: #6aa8d0; --rod: #ef6a5b; --gron: #6fcf75; --varn: #f0b45a;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+body { padding: 16px; }
+.sida { max-width: 1180px; margin: 0 auto; }
+h1 { font-size: 22px; margin: 0; }
+h2 { font-size: 15px; margin: 0 0 10px; }
+.topp { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; background: var(--kort); border: 1px solid var(--kant); border-top: 3px solid var(--bla); border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; }
+.topp .rubrik { flex: 1 1 200px; }
+.topp small { color: var(--dim); display: block; margin-top: 2px; }
+select, button, input { font: inherit; color: var(--text); background: var(--kort); border: 1px solid var(--kant); border-radius: 8px; padding: 8px 12px; }
+button { cursor: pointer; background: var(--bla); border-color: var(--bla); color: #fff; font-weight: 600; }
+button:disabled { opacity: .5; cursor: default; }
+button.sek { background: var(--kort); color: var(--text); border-color: var(--kant); font-weight: 500; }
+.rad { display: grid; gap: 12px; margin-bottom: 14px; }
+.k4 { grid-template-columns: repeat(4, 1fr); }
+.k3 { grid-template-columns: repeat(3, 1fr); }
+.k2 { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 860px) { .k4 { grid-template-columns: repeat(2, 1fr); } .k3, .k2 { grid-template-columns: 1fr; } }
+@media (max-width: 420px) { .k4 { grid-template-columns: 1fr; } }
+.kort { background: var(--kort); border: 1px solid var(--kant); border-top: 3px solid var(--bla); border-radius: 12px; padding: 14px 16px; min-width: 0; }
+.kort.rod { border-top-color: var(--rod); }
+.stor { font-size: 34px; font-weight: 700; color: var(--bla); line-height: 1.1; }
+.kort.rod .stor { color: var(--rod); }
+.under { color: var(--dim); font-size: 14px; margin-top: 4px; }
+.dim { color: var(--dim); }
+.tom { color: var(--dim); font-size: 14px; padding: 8px 0; }
+/* kolumndiagram */
+.kol { display: flex; align-items: flex-end; gap: 2px; height: 150px; padding-top: 18px; }
+.kol .c { flex: 1 1 0; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
+.kol .s { width: 100%; background: var(--bla); border-radius: 3px 3px 0 0; min-height: 1px; opacity: .88; }
+.kol .v { font-size: 11px; font-weight: 700; margin-bottom: 2px; }
+.etiketter { display: flex; gap: 2px; margin-top: 4px; font-size: 11px; color: var(--dim); }
+.etiketter span { flex: 1 1 0; min-width: 0; display: flex; justify-content: center; white-space: nowrap; overflow: visible; }
+/* stapellistor */
+.sl { display: grid; grid-template-columns: minmax(70px, 34%) 1fr auto; gap: 6px 10px; align-items: center; font-size: 14px; }
+.sl .n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sl .spar { background: var(--spar); border-radius: 6px; height: 12px; overflow: hidden; }
+.sl .fyll { height: 100%; background: var(--bla); border-radius: 6px; }
+.rod .sl .fyll { background: var(--rod); }
+.sl .t { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; white-space: nowrap; }
+.sl .t i { font-style: normal; font-weight: 400; color: var(--dim); }
+/* flöde */
+.flode { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; }
+.steg { flex: 1 1 130px; border: 1px solid var(--kant); border-radius: 10px; padding: 10px 12px; text-align: center; }
+.steg b { display: block; font-size: 26px; color: var(--bla); }
+.steg span { font-size: 13px; color: var(--dim); }
+.pil { align-self: center; color: var(--dim); font-size: 20px; }
+.insikt { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+.insikt .i { border: 1px solid var(--kant); border-radius: 10px; padding: 10px 12px; }
+.insikt .i small { display: block; color: var(--dim); text-transform: uppercase; letter-spacing: .04em; font-size: 11px; font-weight: 700; }
+.insikt .i b { display: block; font-size: 18px; margin: 4px 0 2px; }
+.insikt .i span { color: var(--dim); font-size: 13px; }
+.status { color: var(--dim); font-size: 14px; margin: 0 2px 12px; min-height: 20px; }
+.status.fel { color: var(--rod); font-weight: 600; }
+.lager { position: fixed; inset: 0; background: rgba(15,23,42,.6); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 10; }
+.lager[hidden] { display: none; }
+.ruta { background: var(--kort); border-radius: 14px; padding: 20px; width: 100%; max-width: 380px; }
+.ruta input { width: 100%; margin: 10px 0; }
+.ruta p { margin: 0 0 4px; color: var(--dim); font-size: 14px; }
+.fot { color: var(--dim); font-size: 12px; text-align: center; margin: 20px 0 8px; }
+</style>
+</head>
+<body>
+<div class="sida">
+  <div class="topp">
+    <div class="rubrik"><h1>Lagersök statistik</h1><small id="stamp">Ögonblicksbild – tryck på Uppdatera för att hämta på nytt</small></div>
+    <label class="dim">Period <select id="period"><option value="7">7 dagar</option><option value="14">14 dagar</option><option value="30" selected>30 dagar</option><option value="90">90 dagar</option><option value="365">365 dagar</option></select></label>
+    <button id="hamta" type="button">↻ Uppdatera</button>
+    <button id="nyckel" type="button" class="sek">Nyckel…</button>
+  </div>
+  <div id="status" class="status"></div>
+  <div id="innehall" hidden>
+    <div class="rad k4" id="toppkort"></div>
+    <div class="rad k3">
+      <div class="kort"><h2>Sökningar per dag</h2><div id="gDag"></div></div>
+      <div class="kort"><h2>Fördelning över dygnet</h2><div id="gTim"></div></div>
+      <div class="kort"><h2>Veckodag</h2><div id="gVdag"></div></div>
+    </div>
+    <div class="kort" style="margin-bottom:14px"><h2>Nyttig insikt</h2><div class="insikt" id="insikt"></div></div>
+    <div class="rad k3" id="enheter"></div>
+    <div class="kort" style="margin-bottom:14px"><h2>📷 Kameran</h2><div class="flode" id="kamera"></div><div class="under" id="kameraText"></div></div>
+    <div class="kort" style="margin-bottom:14px"><h2>🔍 Så söker man</h2><div class="rad k2" style="margin:0"><div><div class="dim" style="font-size:13px;font-weight:700;margin-bottom:6px">Sökt som</div><div id="sokt"></div></div><div><div class="dim" style="font-size:13px;font-weight:700;margin-bottom:6px">Söklängd</div><div id="langd"></div></div></div></div>
+    <div class="rad k2">
+      <div class="kort rod"><h2>Utan träff – rätta eller lägg till i databasen</h2><div id="utan"></div></div>
+      <div class="kort"><h2>Mest sökta</h2><div id="mest"></div></div>
+    </div>
+  </div>
+  <div class="fot">Visar bara söktext, tid och enhet. Ingen information om vem som sökte sparas.</div>
+</div>
+
+<div class="lager" id="lager" hidden>
+  <form class="ruta" id="nyckelForm">
+    <h2>Nyckel till statistiken</h2>
+    <p>Skriv in nyckeln en gång. Den sparas bara i den här webbläsaren.</p>
+    <input type="password" id="nyckelFalt" autocomplete="off" aria-label="Nyckel">
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button type="button" class="sek" id="nyckelAvbryt">Avbryt</button>
+      <button type="submit">Visa statistik</button>
+    </div>
+    <p id="nyckelFel" style="color:var(--rod);margin-top:8px"></p>
+  </form>
+</div>
+
+<script>
+// Adress och nyckel till statistik-tjänsten. Nyckeln ger bara läsrätt till statistiken (söktext, tid och enhet).
+// Den ligger i filen så att ingen behöver skriva in den. Byter du nyckel i Cloudflare ändrar du den även här.
+const STAT_URL = "https://sterilsok-stat.pelle-holmstrom.workers.dev";
+const STAT_NYCKEL = "Dce0nlyz!Dce0nlyz!";
+
+const $ = (id) => document.getElementById(id);
+function lagra(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+function las(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; }
+function tom(n) { while (n.firstChild) n.removeChild(n.firstChild); }
+function pct(a, b) { return b ? Math.floor(a * 100 / b) : 0; }
+
+function stapelLista(mal, rader, enhet) {
+  tom(mal);
+  if (!rader.length) { mal.appendChild(el('div', 'tom', 'Inga data för perioden.')); return; }
+  const max = Math.max(...rader.map(r => r[1])) || 1;
+  const summa = rader.reduce((s, r) => s + r[1], 0) || 1;
+  const g = el('div', 'sl');
+  rader.forEach(([namn, n, procent]) => {
+    const nm = el('div', 'n', namn); nm.title = namn; g.appendChild(nm);
+    const sp = el('div', 'spar'); const f = el('div', 'fyll'); f.style.width = Math.max(2, Math.round(n * 100 / max)) + '%'; sp.appendChild(f); g.appendChild(sp);
+    const t = el('div', 't', String(n)); const i = el('i', null, ' (' + (procent !== undefined ? procent : pct(n, summa)) + '%)'); t.appendChild(i); g.appendChild(t);
+  });
+  mal.appendChild(g);
+}
+
+function kolumner(mal, etiketter, varden, visaVarde, varannan) {
+  tom(mal);
+  const max = Math.max(...varden, 1);
+  const k = el('div', 'kol');
+  varden.forEach((v, i) => {
+    const c = el('div', 'c'); c.title = etiketter[i] + ': ' + v;
+    if (visaVarde && v) c.appendChild(el('div', 'v', String(v)));
+    const s = el('div', 's'); s.style.height = (v ? Math.max(2, Math.round(v * 100 / max)) : 0) + '%'; c.appendChild(s);
+    k.appendChild(c);
+  });
+  mal.appendChild(k);
+  const e = el('div', 'etiketter');
+  etiketter.forEach((t, i) => e.appendChild(el('span', null, (i % varannan === 0) ? t : '')));
+  mal.appendChild(e);
+}
+
+function raknaTopp(map, n) {
+  return [...map.entries()].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)).slice(0, n);
+}
+function normEnhet(s) { s = String(s || '').toLowerCase(); return s.startsWith('mob') ? 'Mobil' : s.startsWith('dat') ? 'Dator' : s.startsWith('yta') || s.startsWith('sur') || s.startsWith('tab') ? 'Surfplatta' : (s ? s[0].toUpperCase() + s.slice(1) : 'Okänd'); }
+function normOs(s) { s = String(s || '').toLowerCase(); if (s.includes('win')) return 'Windows'; if (s.includes('android')) return 'Android'; if (s.includes('ios') || s.includes('iphone') || s.includes('ipad')) return 'iOS'; if (s.includes('mac')) return 'macOS'; if (s.includes('linux')) return 'Linux'; return s ? s[0].toUpperCase() + s.slice(1) : 'Okänd'; }
+
+function rita(data, dagar) {
+  const nu = Date.now();
+  const gr = nu - dagar * 86400000;
+  const alla = data.events || [];
+  const oppn = alla.filter(e => e[8] === 2 && e[0] >= gr).length;
+  const evAlla = alla.filter(e => e[8] !== 2);
+  const ev = evAlla.filter(e => e[0] >= gr);
+  const fore = evAlla.length - ev.length;
+  const total = ev.length;
+  $('innehall').hidden = false;
+  if (!total) { $('status').textContent = 'Inga sökningar för perioden.'; }
+
+  const utan = ev.filter(e => !e[2]);
+  const dagKey = (t) => { const d = new Date(t); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  const perDag = new Map(), perTim = new Array(24).fill(0), vd = new Array(7).fill(0);
+  ev.forEach(e => { const d = new Date(e[0]); perDag.set(dagKey(e[0]), (perDag.get(dagKey(e[0])) || 0) + 1); perTim[d.getHours()]++; vd[(d.getDay() + 6) % 7]++; });
+  const aktiva = perDag.size;
+
+  // toppkort
+  const tk = $('toppkort'); tom(tk);
+  const kort = (stor, under, rod) => { const k = el('div', 'kort' + (rod ? ' rod' : '')); k.appendChild(el('div', 'stor', stor)); k.appendChild(el('div', 'under', under)); tk.appendChild(k); };
+  kort(String(total), 'Totalt sökningar');
+  kort((total / Math.max(1, Math.min(dagar, aktiva))).toFixed(1).replace('.', ','), 'Snitt / dag');
+  kort((total ? 100 - pct(utan.length, total) : 0) + ' %', 'Träffsäkerhet');
+  kort(total ? utan.length + ' (' + pct(utan.length, total) + ' %)' : '–', 'Utan träff', true);
+
+  // diagram
+  const dl = []; const base = new Date(); base.setHours(12, 0, 0, 0);
+  const antalDagar = Math.min(dagar, 60);
+  for (let i = antalDagar - 1; i >= 0; i--) { const d = new Date(base); d.setDate(d.getDate() - i); dl.push(d); }
+  kolumner($('gDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => perDag.get(dagKey(d.getTime())) || 0), false, Math.ceil(antalDagar / 6));
+  kolumner($('gTim'), Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0')), perTim, false, 3);
+  kolumner($('gVdag'), ['Mån', 'Tis', 'Ons', 'Tors', 'Fre', 'Lör', 'Sön'], vd, true, 1);
+
+  // insikt
+  const ins = $('insikt'); tom(ins);
+  const i = (rub, stor, text) => { const d = el('div', 'i'); d.appendChild(el('small', null, rub)); d.appendChild(el('b', null, stor)); d.appendChild(el('span', null, text)); ins.appendChild(d); };
+  const natt = ev.filter(e => { const h = new Date(e[0]).getHours(); return h >= 21 || h < 7; });
+  if (total) {
+    let nattText = 'Inga sökningar mellan 21 och 07.';
+    if (natt.length) { const kh = new Array(24).fill(0); natt.forEach(e => kh[new Date(e[0]).getHours()]++); const tp = kh.indexOf(Math.max(...kh)); nattText = 'Flest kl ' + String(tp).padStart(2, '0') + ':00 (' + kh[tp] + ' sök).'; }
+    i('Utanför arbetstid (21–07)', natt.length + ' sök (' + pct(natt.length, total) + '%)', nattText);
+    if (fore > 0) { const diff = Math.round((total - fore) * 100 / fore); i('Trend mot föregående period', (diff >= 0 ? '↗ +' : '↘ ') + diff + '%', total + ' nu mot ' + fore + ' innan.'); }
+    const unika = new Set(ev.map(e => String(e[1]).trim().toLowerCase())).size;
+    i('Återkommande sökningar', unika + ' unika av ' + total, 'Varje sökning upprepas i snitt ' + (total / Math.max(1, unika)).toFixed(1).replace('.', ',') + ' gånger.');
+    const dagar2 = [...perDag.keys()].sort(); let bast = 1, svit = 1;
+    for (let j = 1; j < dagar2.length; j++) { const diff = (new Date(dagar2[j]) - new Date(dagar2[j - 1])) / 86400000; svit = Math.round(diff) === 1 ? svit + 1 : 1; bast = Math.max(bast, svit); }
+    i('Kontinuitet', bast + ' dagar i rad', 'Längsta svit med sökningar.');
+    const akt = Math.min(aktiva, dagar);
+    i('Aktiva dagar', akt + ' av ' + dagar + ' dagar', pct(akt, dagar) + '% av perioden har sökningar.');
+  } else { ins.appendChild(el('div', 'tom', 'Inga sökningar än.')); }
+
+  // enheter
+  const en = $('enheter'); tom(en);
+  const harEnh = ev.filter(e => e[4]);
+  const enhKort = (rub, rader) => { const k = el('div', 'kort'); k.appendChild(el('h2', null, rub)); const m = el('div'); k.appendChild(m); en.appendChild(k); stapelLista(m, rader, ''); };
+  const grupp = (fn, lista) => { const m = new Map(); lista.forEach(e => { const n = fn(e); m.set(n, (m.get(n) || 0) + 1); }); return raknaTopp(m, 6).map(([n, v]) => [n, v, pct(v, lista.length)]); };
+  enhKort('Enhetstyp', grupp(e => normEnhet(e[4]), harEnh));
+  enhKort('Operativsystem', grupp(e => normOs(e[5]), harEnh));
+  enhKort('Installerad som app', grupp(e => e[6] ? 'Ja, som app' : 'Nej, i webbläsare', harEnh));
+
+  // kamera
+  const kam = ev.filter(e => e[8] === 1);
+  const fl = $('kamera'); tom(fl);
+  const steg = (stor, text) => { const s = el('div', 'steg'); s.appendChild(el('b', null, stor)); s.appendChild(el('span', null, text)); fl.appendChild(s); };
+  const pil = () => fl.appendChild(el('div', 'pil', '→'));
+  steg(String(oppn), 'Kameran öppnades'); pil();
+  steg(oppn ? Math.min(100, pct(kam.length, oppn)) + ' %' : '–', 'av dem ledde till en sökning'); pil();
+  steg(String(kam.length), 'sökningar via kameran'); pil();
+  steg(total ? pct(kam.length, total) + ' %' : '–', 'av alla sökningar görs med kameran');
+  let kt = '';
+  if (kam.length) { const kh = new Array(24).fill(0); kam.forEach(e => kh[new Date(e[0]).getHours()]++); kt = 'Kameran används mest kl ' + String(kh.indexOf(Math.max(...kh))).padStart(2, '0') + '.'; }
+  $('kameraText').textContent = kt;
+
+  // så söker man
+  const mest = new Map(), utanM = new Map();
+  ev.forEach(e => { const q = String(e[1]).trim().toLowerCase(); if (!q) return; mest.set(q, (mest.get(q) || 0) + 1); if (!e[2]) utanM.set(q, (utanM.get(q) || 0) + 1); });
+  const arNr = (q) => /^\d+$/.test(q) || /^\d+\s/.test(q) || /^[a-zåäö]+\s*\d/i.test(q);
+  let nNr = 0, nOrd = 0, l1 = 0, l2 = 0, l3 = 0;
+  mest.forEach((n, q) => { if (arNr(q)) nNr += n; else nOrd += n; const o = q.split(/\s+/).length; if (o === 1) l1 += n; else if (o === 2) l2 += n; else l3 += n; });
+  stapelLista($('sokt'), [['Artikelnummer', nNr], ['Ord', nOrd]].filter(r => r[1] > 0));
+  stapelLista($('langd'), [['1 ord', l1], ['2 ord', l2], ['3+ ord', l3]].filter(r => r[1] > 0));
+
+  stapelLista($('utan'), raknaTopp(utanM, 10).map(([q, n]) => [q, n, pct(n, utan.length)]));
+  stapelLista($('mest'), raknaTopp(mest, 10).map(([q, n]) => [q, n, pct(n, total)]));
+}
+
+let pagar = false;
+async function hamta() {
+  const nyckel = las('statnyckel') || STAT_NYCKEL;
+  if (!nyckel) { visaNyckel(''); return; }
+  if (pagar) return; pagar = true;
+  const dagar = parseInt($('period').value, 10) || 30;
+  $('hamta').disabled = true; $('status').className = 'status'; $('status').textContent = 'Hämtar…';
+  try {
+    const r = await fetch(STAT_URL.replace(/\/$/, '') + '/stats?dagar=' + (dagar * 2), { headers: { 'X-Admin-Key': nyckel } });
+    if (r.status === 401) { lagra('statnyckel', null); visaNyckel('Nyckeln stämmer inte. Skriv in rätt nyckel.'); $('status').textContent = ''; return; }
+    if (!r.ok) throw new Error('Svar ' + r.status);
+    const data = await r.json();
+    rita(data, dagar);
+    const nu = new Date();
+    $('status').textContent = '';
+    $('stamp').textContent = 'Läget ' + nu.toLocaleDateString('sv-SE') + ' kl ' + nu.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' }) + ' · tryck på Uppdatera för att hämta på nytt';
+  } catch (e) {
+    $('status').className = 'status fel'; $('status').textContent = 'Kunde inte hämta statistiken (' + e.message + '). Kontrollera nätet och försök igen.';
+  } finally { pagar = false; $('hamta').disabled = false; }
+}
+function visaNyckel(fel) { $('nyckelFel').textContent = fel || ''; $('lager').hidden = false; $('nyckelFalt').value = ''; setTimeout(() => { try { $('nyckelFalt').focus(); } catch (e) {} }, 50); }
+$('nyckelForm').addEventListener('submit', (e) => { e.preventDefault(); const v = $('nyckelFalt').value.trim(); if (!v) return; lagra('statnyckel', v); $('lager').hidden = true; hamta(); });
+$('nyckelAvbryt').addEventListener('click', () => { $('lager').hidden = true; });
+$('nyckel').addEventListener('click', () => visaNyckel(''));
+$('hamta').addEventListener('click', hamta);
+$('period').addEventListener('change', hamta);
+hamta();
+</script>
+</body>
+</html>
