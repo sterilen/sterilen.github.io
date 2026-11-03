@@ -731,8 +731,8 @@
             <h2 id="bidragRubrik"></h2>
             <p id="bidragUnder" class="bidrag-under"></p>
             <div id="bidragKod" hidden>
-                <p>Skriv in din personliga kod för att kunna skicka bilder. Den får du av den som sköter sökappen. Du behöver bara skriva den en gång på den här enheten.</p>
-                <input type="text" id="bidragKodFalt" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Din kod">
+                <p>Skriv ditt användarnamn (fyra tecken) för att kunna skicka bilder. Du behöver ha fått ett konto av den som sköter sökappen. Du behöver bara skriva det en gång på den här enheten.</p>
+                <input type="text" id="bidragKodFalt" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Ditt användarnamn" placeholder="Användarnamn">
                 <div class="bidrag-knappar"><button type="button" onclick="stangBidrag()">Avbryt</button><button type="button" class="primar" id="bidragKodKnapp">Fortsätt</button></div>
             </div>
             <div id="bidragFoto" hidden>
@@ -755,7 +755,7 @@
                 <div class="bidrag-knappar"><button type="button" class="primar" id="bidragSkicka" disabled>Skicka</button></div>
             </div>
             <div id="bidragMsg" class="bidrag-msg"></div>
-            <button type="button" class="bidrag-liten" id="bidragByt" hidden>Byt kod</button>
+            <button type="button" class="bidrag-liten" id="bidragByt" hidden>Byt användare</button>
         </div>
     </div>
 
@@ -2257,7 +2257,7 @@
                     var skick = besk.bm ? await beskarSkapaBlob() : bidrag.blob;
                     var r = await fetch(BILD_URL.replace(/\/$/, '') + '/bild', { method: 'POST', body: skick,
                         headers: { 'Content-Type': 'image/jpeg', 'x-kod': lasLokalt('bildkod'), 'x-artnr': bidrag.artnr, 'x-ersatt': bidrag.ersatt ? '1' : '0' } });
-                    if (r.status === 401) { lagraLokalt('bildkod', null); lagraLokalt('bildnamn', null); bidragSteg('kod'); bidragMsg('Din kod gäller inte längre. Skriv in en ny kod.', 'fel'); return; }
+                    if (r.status === 401) { lagraLokalt('bildkod', null); lagraLokalt('bildnamn', null); bidragSteg('kod'); bidragMsg('Ditt användarnamn gäller inte längre. Skriv in det igen eller kontakta den som sköter sökappen.', 'fel'); return; }
                     if (!r.ok) throw new Error(String(r.status));
                     document.getElementById('bidragFoto').hidden = true; document.getElementById('bidragByt').hidden = true;
                     bidragMsg('Tack' + (lasLokalt('bildnamn') ? ', ' + lasLokalt('bildnamn') : '') + '! Bilden granskas innan den visas i sökappen.', 'ok');
@@ -2269,16 +2269,17 @@
             });
             async function provaKod() {
                 var kod = document.getElementById('bidragKodFalt').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-                if (kod.length < 6) { bidragMsg('Skriv in hela koden.', 'fel'); return; }
+                if (kod.length < 3) { bidragMsg('Skriv ditt användarnamn (fyra tecken).', 'fel'); return; }
                 bidragMsg('Kontrollerar…');
                 try {
                     var r = await fetch(BILD_URL.replace(/\/$/, '') + '/kodkoll', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kod: kod }) });
-                    if (r.status === 401) { bidragMsg('Koden stämmer inte. Kontrollera och försök igen.', 'fel'); return; }
+                    if (r.status === 429) { bidragMsg('För många försök. Vänta en stund och försök igen.', 'fel'); return; }
+                    if (r.status === 401) { bidragMsg('Användarnamnet finns inte eller är avstängt. Kontrollera stavningen eller kontakta den som sköter sökappen.', 'fel'); return; }
                     if (!r.ok) throw new Error(String(r.status));
                     var d = await r.json();
                     lagraLokalt('bildkod', kod); lagraLokalt('bildnamn', d.namn || '');
                     bidragMsg(''); bidragSteg('foto');
-                } catch (e) { bidragMsg('Kunde inte kontrollera koden. Kontrollera nätet och försök igen.', 'fel'); }
+                } catch (e) { bidragMsg('Kunde inte kontrollera användarnamnet. Kontrollera nätet och försök igen.', 'fel'); }
             }
             document.getElementById('bidragKodKnapp').addEventListener('click', provaKod);
             document.getElementById('bidragKodFalt').addEventListener('keydown', function (e) { if (e.key === 'Enter') provaKod(); });
@@ -2315,7 +2316,7 @@
                 <p>Har en artikel en bild visas en liten miniatyr till vänster om namnet. ${telefon ? '<b>Tryck</b>' : '<b>Klicka</b>'} på miniatyren för att se bilden större, med artikelns namn överst. Stäng med <b>✕</b>, genom att ${telefon ? 'trycka' : 'klicka'} utanför bilden${telefon ? '' : ' eller med Esc'}. ${BILD_URL ? 'Saknas bilden visas en streckad ruta där du kan lägga till en.' : 'Saknas bilden visas ingen ruta alls.'}</p>`;
             if (BILD_URL) {
                 h += `<h3>Lägg till eller byt bild</h3>
-                <p>Du kan bidra med bilder om du har fått en personlig kod. ${telefon ? 'Tryck' : 'Klicka'} på den streckade rutan 📷 vid en artikel som saknar bild, eller öppna bilden och välj <b>Föreslå ny bild</b> för att byta en befintlig. Första gången skriver du in din kod. Den sparas på ${telefon ? 'telefonen' : 'datorn'}. Sedan väljer du <b>📷 Ta bild</b> för att fota direkt eller <b>🖼️ Välj från galleriet</b> för en bild du redan har. Därefter kan du <b>zooma och beskära</b> bilden: dra för att flytta den och använd reglaget eller nyp med två fingrar för att zooma. Det som syns i den kvadratiska rutan är det som skickas. <b>Återställ</b> visar hela bilden igen, och du kan välja en annan bild innan du trycker på <b>Skicka</b>.</p>
+                <p>Du kan bidra med bilder om du har ett konto (be den som sköter sökappen att lägga upp ditt användarnamn). ${telefon ? 'Tryck' : 'Klicka'} på den streckade rutan 📷 vid en artikel som saknar bild, eller öppna bilden och välj <b>Föreslå ny bild</b> för att byta en befintlig. Första gången skriver du ditt användarnamn (fyra tecken). Det sparas på ${telefon ? 'telefonen' : 'datorn'}. Sedan väljer du <b>📷 Ta bild</b> för att fota direkt eller <b>🖼️ Välj från galleriet</b> för en bild du redan har. Därefter kan du <b>zooma och beskära</b> bilden: dra för att flytta den och använd reglaget eller nyp med två fingrar för att zooma. Det som syns i den kvadratiska rutan är det som skickas. <b>Återställ</b> visar hela bilden igen, och du kan välja en annan bild innan du trycker på <b>Skicka</b>.</p>
                 <ul>
                   <li>Bra ljus och en enfärgad bakgrund, gärna vit.</li>
                   <li>Hela förpackningen rakt framifrån, skarp bild.</li>
