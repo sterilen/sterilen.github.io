@@ -482,6 +482,13 @@
         .bidrag-ruta p, .bidrag-ruta li { font-size: 14.5px; line-height: 1.45; }
         .bidrag-ruta ul { padding-left: 20px; margin: 6px 0 12px; }
         .bidrag-ruta input[type=text] { width: 100%; box-sizing: border-box; padding: 14px; font-size: 20px; letter-spacing: 3px; text-transform: uppercase; text-align: center; border: 2px solid var(--kant,#e2e8f0); border-radius: 12px; background: var(--yta-dim,#f8fafc); color: var(--text,#0f172a); }
+        .koppla-ruta { margin: 12px 0; padding: 12px; border: 1px dashed var(--kant,#cbd5e1); border-radius: 12px; font-size: 14px; color: var(--text-dim,#64748b); text-align: center; }
+        .koppla-knapp { display: block; margin: 8px auto 0; padding: 10px 14px; font-size: 14px; font-weight: 700; border-radius: 12px; border: 1px solid var(--kant,#cbd5e1); background: var(--yta-dim,#f1f5f9); color: var(--text,#0f172a); cursor: pointer; }
+        .koppla-lista { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; max-height: 34vh; overflow-y: auto; }
+        .koppla-lista button { text-align: left; padding: 10px 12px; font-size: 14px; border-radius: 10px; border: 1px solid var(--kant,#cbd5e1); background: var(--yta-dim,#f1f5f9); color: var(--text,#0f172a); cursor: pointer; }
+        .koppla-lista button small { display: block; color: var(--text-dim,#64748b); font-size: 12px; }
+        .koppla-lista button.vald { border-color: var(--accent,#0f766e); box-shadow: 0 0 0 2px var(--accent,#0f766e) inset; }
+        .bidrag-ruta .koppla-falt { text-transform: none; letter-spacing: normal; font-size: 16px; text-align: left; }
         .bidrag-knappar { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
         .bidrag-knappar button { flex: 1 1 140px; padding: 13px 14px; font-size: 15px; font-weight: 700; border-radius: 12px; border: 1px solid var(--kant,#cbd5e1); background: var(--yta-dim,#f1f5f9); color: var(--text,#0f172a); cursor: pointer; }
         .bidrag-knappar button.primar { background: var(--accent,#0f766e); color: var(--accent-text,#fff); border-color: transparent; }
@@ -726,6 +733,27 @@
         </div>
     </div>
 
+    <div id="kopplaLager" class="bidrag-lager" hidden onclick="if(event.target===this) kopplaStang()">
+        <div class="bidrag-ruta" role="dialog" aria-modal="true" aria-labelledby="kopplaRubrik">
+            <h2 id="kopplaRubrik">Koppla nummer till artikel</h2>
+            <div id="kopplaKod" hidden>
+                <p>Skriv ditt användarnamn (fyra tecken) för att kunna skicka förslag. Du behöver bara skriva det en gång på den här enheten.</p>
+                <input type="text" id="kopplaKodFalt" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Ditt användarnamn" placeholder="Användarnamn">
+                <div class="bidrag-knappar"><button type="button" onclick="kopplaStang()">Avbryt</button><button type="button" class="primar" id="kopplaKodKnapp">Fortsätt</button></div>
+            </div>
+            <div id="kopplaForm" hidden>
+                <p class="bidrag-under">Numret som står på förpackningen eller hyllan. Kontrollera att det stämmer, det kan vara felläst.</p>
+                <input type="text" id="kopplaNr" class="koppla-falt" maxlength="30" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Numret" placeholder="Numret">
+                <p class="bidrag-under">Vilken artikel hör det till? Sök på namn eller nummer.</p>
+                <input type="text" id="kopplaSok" class="koppla-falt" autocomplete="off" spellcheck="false" aria-label="Sök artikel" placeholder="Sök artikel">
+                <div id="kopplaLista" class="koppla-lista"></div>
+                <p id="kopplaValt" class="bidrag-under"></p>
+                <div class="bidrag-knappar"><button type="button" onclick="kopplaStang()">Avbryt</button><button type="button" class="primar" id="kopplaSkicka" disabled>Skicka förslag</button></div>
+                <button type="button" class="bidrag-liten" id="kopplaByt">Byt användare</button>
+            </div>
+            <div id="kopplaMsg" class="bidrag-msg"></div>
+        </div>
+    </div>
     <div id="bidragLager" class="bidrag-lager" hidden onclick="if(event.target===this) stangBidrag()">
         <div class="bidrag-ruta" role="dialog" aria-modal="true" aria-labelledby="bidragRubrik">
             <h2 id="bidragRubrik"></h2>
@@ -908,7 +936,8 @@
                     namn: hämtaCell(2) || 'Namn saknas',
                     plats: hämtaCell(3) || '-',
                     bulk: hämtaCell(4),
-                    bild: hämtaCell(5) || ''
+                    bild: hämtaCell(5) || '',
+                    alt: hämtaCell(6)          // alternativa nummer (t.ex. numret på lådan), åtskilda med |
                 });
             }
             return resultat;
@@ -949,9 +978,10 @@
         function sokKompakt(t) { return sokNorm(t).replace(/[^a-z0-9]/g, ''); }
         function sokForbered(item) {
             if (item._n !== undefined) return;
-            item._r = (item.artnr + ' ' + item.lev_artnr + ' ' + item.namn).toLowerCase();
-            item._n = sokNorm(item.artnr + ' ' + item.lev_artnr + ' ' + item.namn);
-            item._k = [sokKompakt(item.artnr), sokKompakt(item.lev_artnr)];
+            const altText = (item.alt || '').split('|').join(' ');
+            item._r = (item.artnr + ' ' + item.lev_artnr + ' ' + item.namn + ' ' + altText).toLowerCase();
+            item._n = sokNorm(item.artnr + ' ' + item.lev_artnr + ' ' + item.namn + ' ' + altText);
+            item._k = [sokKompakt(item.artnr), sokKompakt(item.lev_artnr)].concat((item.alt || '').split('|').filter(Boolean).map(sokKompakt));
             item._t = item._n.split(/[^a-z0-9]+/).filter(Boolean);
             item._tf = item._t.map(sokFon);                 // ljudlika former (c=k, w=v, ph=f ...)
             item._tr = item._tf.map(sokRot);                // utan böjningsändelse
@@ -1328,7 +1358,7 @@
                 let tabellHtml = `<div class="table-responsive"><table class="result-table"><thead><tr><th>Produktinformation</th><th style="text-align: center; padding: 0 12px 4px 4px;">Plats</th></tr></thead><tbody>`;
                 hittade.forEach(artikel => {
                     const gallerPlats = /^\d+:\d+$/.test(artikel.plats);
-                    const artInfo = gallerPlats ? '' : `<div class="art-info-block"><span class="art-no-wrap">Art. Nr: ${esc(artikel.artnr)}</span><span class="art-no-wrap">Lev. Art Nr: ${esc(artikel.lev_artnr)}</span></div>`;
+                    const artInfo = gallerPlats ? '' : `<div class="art-info-block"><span class="art-no-wrap">Art. Nr: ${esc(artikel.artnr)}</span><span class="art-no-wrap">Lev. Art Nr: ${esc(artikel.lev_artnr)}</span>${artikel.alt ? `<span class="art-no-wrap">Även: ${esc(artikel.alt.split('|').join(' · '))}</span>` : ''}</div>`;
                     const typ = gallerPlats ? 'galler' : 'forbruk';
                     const typText = gallerPlats ? 'Instrumentgaller' : 'Fabrikssterilt';
                     const artId = (artikel.artnr || '').toString().replace(/[^A-Za-z0-9]/g, '');
@@ -1340,7 +1370,9 @@
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
             } else {
-                resultatOmråde.innerHTML = "<div class='error'>🔍 Inga artiklar matchade din sökning i sterilförrådet.</div>";
+                const kopplaNr = (ordLista.length === 1 && ordLista[0].length >= 4 && /\d/.test(ordLista[0])) ? ordLista[0] : '';
+                resultatOmråde.innerHTML = "<div class='error'>🔍 Inga artiklar matchade din sökning i sterilförrådet.</div>" +
+                    (BILD_URL && kopplaNr ? `<div class="koppla-ruta">Står numret på förpackningen eller hyllan? <button type="button" class="koppla-knapp" onclick="kopplaOppna(${JSON.stringify(kopplaNr).replace(/"/g, '&quot;')})">Koppla ${esc(kopplaNr.toUpperCase())} till en artikel</button></div>` : '');
             }
 
             // Mät tid tills svaret är ritat på skärmen
@@ -1379,7 +1411,7 @@
             const exakt = new Map(), fuzz = new Map(), slim = new Map();
             const lagg = (m, nyckel, art) => { if (!m.has(nyckel)) m.set(nyckel, []); m.get(nyckel).push(art); };
             (typeof lagerData !== 'undefined' ? lagerData : []).forEach(a => {
-                [a.artnr, a.lev_artnr].forEach(v => {
+                [a.artnr, a.lev_artnr].concat((a.alt || '').split('|')).forEach(v => {
                     const n = kamNorm(v);
                     if (n.length < 4 || n === '-') return;
                     // Vissa nummer är registrerade med prefix och mellanslag, t.ex. "PN 470500".
@@ -1610,7 +1642,33 @@
         // Tar emot text och avgör vad som ska hända. Ger true om vi är klara.
         // Osäkra träffar (t.ex. 3 som lästs i stället för 8) samlas och visas först om inget säkert nummer dyker upp.
         let kamOsakra = new Set();
+        let kamKand = new Map();
+        // Samlar nummer som ser ut som artikelnummer men inte finns i databasen, så de kan föreslås som koppling
+        function kamSamlaKand(text) {
+            if (!kamNummerIndex) kamByggIndex();
+            String(text || '').split(/[\s:;()\[\]*"'<>=_|]+/).forEach(o => {
+                const n = kamNorm(o);
+                if (n.length < 5 || n.length > 20 || !/\d/.test(n) || !/^[A-Z0-9][A-Z0-9\-./]*$/.test(n)) return;
+                if (/^\d+$/.test(n) && n.length < 6) return;
+                if (/^\d{1,4}[-./]\d{1,2}[-./]\d{1,4}$/.test(n) || /^SO\d+$/.test(n)) return;
+                if (kamNummerIndex.exakt.has(n)) return;
+                kamKand.set(n, (kamKand.get(n) || 0) + 1);
+            });
+        }
+        function kamIngenTraff(omFil) {
+            const kand = [...kamKand.entries()].filter(e => e[1] >= (omFil ? 1 : 2)).sort((a, b) => b[1] - a[1]).slice(0, 5).map(e => e[0]);
+            kamStatus('Hittade inget nummer som finns i databasen');
+            let h = omFil ? '<button type="button" class="kamera-igen" onclick="document.getElementById(\'kameraFil\').click()">Ta en ny bild</button>'
+                          : '<button type="button" class="kamera-igen" onclick="kamStart()">Försök igen</button>';
+            if (BILD_URL) {
+                kand.forEach(n => { h += `<button type="button" class="kamera-igen" data-kopp="${esc(n)}">Koppla ${esc(n)}…</button>`; });
+                h += '<button type="button" class="kamera-igen" data-kopp="">Koppla ett nummer…</button>';
+            }
+            kamBotten(h);
+            document.querySelectorAll('#kameraBotten [data-kopp]').forEach(b => b.onclick = () => kopplaOppna(b.dataset.kopp));
+        }
         function kamHantera(text, slutgiltig) {
+            try { kamSamlaKand(text); } catch (e) {}
             const r = kameraHittaNummer(text);
             // Står både artikelnummer och leverantörens nummer på etiketten ger de två träffar på samma artikel. Då är det ingen fråga om val.
             if (r.exakta.length > 1) {
@@ -1631,7 +1689,7 @@
         }
 
         async function kamStart() {
-            kamAktiv = true; kamVarv = 0; kamOsakra = new Set();
+            kamAktiv = true; kamVarv = 0; kamOsakra = new Set(); kamKand = new Map();
             kamBotten('');
             kamStatus('');   // instruktionen står redan i rutan ovanför (kamera-titel)
             const klart = Date.now() + (kamSerie() ? 180000 : 60000);   // serieläget scannar längre mellan produkterna
@@ -1651,8 +1709,7 @@
             if (kamAktiv && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
             if (kamAktiv) {
                 kamAktiv = false;
-                kamStatus('Hittade inget nummer som finns i databasen');
-                kamBotten('<button type="button" class="kamera-igen" onclick="kamStart()">Försök igen</button>');
+                kamIngenTraff(false);
             }
         }
 
@@ -1731,10 +1788,9 @@
                 c.width = Math.round(bm.width * mal); c.height = Math.round(bm.height * mal);
                 c.getContext('2d').drawImage(bm, 0, 0, c.width, c.height);
                 kamForbattra(c);
-                kamOsakra = new Set();
+                kamOsakra = new Set(); kamKand = new Map();
                 for (const psm of [11, 6]) { if (kamHantera(await kamLas(c, psm), psm === 6)) return; }
-                kamStatus('Hittade inget nummer som finns i databasen');
-                kamBotten('<button type="button" class="kamera-igen" onclick="document.getElementById(\'kameraFil\').click()">Ta en ny bild</button>');
+                kamIngenTraff(true);
             } catch (err) { kamStatus('Kunde inte läsa bilden'); }
         });
 
@@ -2093,6 +2149,99 @@
             document.getElementById('bidragByt').hidden = steg !== 'foto';
             if (steg === 'kod') { var f = document.getElementById('bidragKodFalt'); f.value = ''; setTimeout(function () { try { f.focus(); } catch (e) {} }, 50); }
         }
+        // ===== Koppla ett nummer (på förpackningen/hyllan) till en artikel: förslag som godkänns i uppdateringsprogrammet =====
+        let kopplaArt = null;
+        function kopplaMsg(text, typ) { const m = document.getElementById('kopplaMsg'); m.textContent = text || ''; m.className = 'bidrag-msg' + (typ ? ' ' + typ : ''); }
+        function kopplaSteg(steg) {
+            document.getElementById('kopplaKod').hidden = steg !== 'kod';
+            document.getElementById('kopplaForm').hidden = steg !== 'form';
+            if (steg === 'kod') { const f = document.getElementById('kopplaKodFalt'); f.value = ''; setTimeout(() => { try { f.focus(); } catch (e) {} }, 50); }
+        }
+        function kopplaOppna(nr) {
+            if (!BILD_URL) return;
+            try { stangKamera(); } catch (e) {}
+            kopplaArt = null;
+            document.getElementById('kopplaNr').value = String(nr || '').toUpperCase();
+            document.getElementById('kopplaSok').value = '';
+            document.getElementById('kopplaLista').innerHTML = '';
+            document.getElementById('kopplaValt').textContent = '';
+            document.getElementById('kopplaSkicka').disabled = true;
+            kopplaMsg('');
+            kopplaSteg(lasLokalt('bildkod') ? 'form' : 'kod');
+            document.getElementById('kopplaLager').hidden = false;
+        }
+        function kopplaStang() { document.getElementById('kopplaLager').hidden = true; }
+        function kopplaSok() {
+            const ord = document.getElementById('kopplaSok').value.trim().split(/\s+/).filter(Boolean);
+            const lista = document.getElementById('kopplaLista');
+            lista.innerHTML = '';
+            if (!ord.length) return;
+            lagerData.forEach(sokForbered);
+            const bara = lagerData.filter(i => !ärGaller(i.plats));
+            let traff = bara.filter(i => ord.every(o => sokOrdTraff(i, o)));
+            if (!traff.length) {
+                // Felstavat eller ljudlikt (katheter/kateter): samma förlåtande sökning som i huvudsökningen
+                for (const niva of [1, 2, 3]) {
+                    const par = [];
+                    bara.forEach(i => {
+                        let sum = 0;
+                        for (const o of ord) {
+                            if (sokOrdTraff(i, o)) continue;
+                            const w = sokKompakt(o);
+                            const pk = /\d/.test(w) ? Infinity : sokOrdPoang(i, o, sokStam(w), niva);
+                            if (pk === Infinity) { sum = Infinity; break; }
+                            sum += pk;
+                        }
+                        if (sum !== Infinity) par.push([i, sum]);
+                    });
+                    if (par.length) { traff = sokBasta(par); break; }
+                }
+            }
+            traff = traff.slice(0, 8);
+            if (!traff.length) { lista.innerHTML = '<p class="bidrag-under">Ingen träff. Prova färre eller andra ord.</p>'; return; }
+            traff.forEach(i => {
+                const b = document.createElement('button'); b.type = 'button';
+                b.innerHTML = esc(i.namn) + '<small>Art. ' + esc(i.artnr) + (i.lev_artnr && i.lev_artnr !== '-' ? ' · Lev. ' + esc(i.lev_artnr) : '') + ' · ' + esc(i.plats) + '</small>';
+                b.onclick = () => {
+                    kopplaArt = i;
+                    lista.querySelectorAll('button').forEach(x => x.classList.remove('vald')); b.classList.add('vald');
+                    document.getElementById('kopplaValt').textContent = 'Vald: ' + i.namn + ' (Art. ' + i.artnr + ')';
+                    document.getElementById('kopplaSkicka').disabled = false;
+                };
+                lista.appendChild(b);
+            });
+        }
+        document.getElementById('kopplaSok').addEventListener('input', kopplaSok);
+        document.getElementById('kopplaByt').addEventListener('click', () => { lagraLokalt('bildkod', null); lagraLokalt('bildnamn', null); kopplaMsg(''); kopplaSteg('kod'); });
+        document.getElementById('kopplaKodKnapp').addEventListener('click', async () => {
+            const kod = document.getElementById('kopplaKodFalt').value.trim().toUpperCase();
+            if (kod.length < 3) { kopplaMsg('Skriv ditt användarnamn (fyra tecken).', 'fel'); return; }
+            try {
+                const r = await fetch(BILD_URL.replace(/\/$/, '') + '/kodkoll', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kod: kod }) });
+                if (r.status === 429) { kopplaMsg('För många försök. Vänta en stund och försök igen.', 'fel'); return; }
+                if (r.status === 401) { kopplaMsg('Användarnamnet finns inte eller är avstängt. Kontrollera stavningen eller kontakta den som sköter sökappen.', 'fel'); return; }
+                const d = await r.json();
+                lagraLokalt('bildkod', kod); lagraLokalt('bildnamn', d.namn || '');
+                kopplaMsg(''); kopplaSteg('form');
+            } catch (e) { kopplaMsg('Kunde inte kontrollera användarnamnet. Kontrollera nätet och försök igen.', 'fel'); }
+        });
+        document.getElementById('kopplaSkicka').addEventListener('click', async () => {
+            const nr = document.getElementById('kopplaNr').value.trim().replace(/\s+/g, ' ');
+            if (nr.replace(/[^A-Za-z0-9]/g, '').length < 4) { kopplaMsg('Numret är för kort.', 'fel'); return; }
+            if (!kopplaArt) { kopplaMsg('Välj vilken artikel numret hör till.', 'fel'); return; }
+            if (!kamNummerIndex) kamByggIndex();
+            const redan = kamNummerIndex.exakt.get(kamNorm(nr));
+            if (redan && redan.length) { kopplaMsg('Numret finns redan i databasen: ' + redan[0].namn + '. Sök på det i stället.', 'fel'); return; }
+            const knapp = document.getElementById('kopplaSkicka'); knapp.disabled = true; kopplaMsg('Skickar...');
+            try {
+                const r = await fetch(BILD_URL.replace(/\/$/, '') + '/koppling', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-kod': lasLokalt('bildkod') }, body: JSON.stringify({ alt: nr, artnr: kopplaArt.artnr }) });
+                if (r.status === 401) { lagraLokalt('bildkod', null); lagraLokalt('bildnamn', null); kopplaSteg('kod'); kopplaMsg('Ditt användarnamn gäller inte längre. Skriv in det igen eller kontakta den som sköter sökappen.', 'fel'); return; }
+                if (r.status === 429) { kopplaMsg('Du har skickat många förslag, försök igen senare.', 'fel'); knapp.disabled = false; return; }
+                if (!r.ok) { kopplaMsg('Kunde inte skicka. Försök igen.', 'fel'); knapp.disabled = false; return; }
+                kopplaMsg('Tack! Förslaget granskas innan det blir sökbart för alla.', 'ok');
+                setTimeout(kopplaStang, 1800);
+            } catch (e) { kopplaMsg('Kunde inte skicka. Kontrollera nätet och försök igen.', 'fel'); knapp.disabled = false; }
+        });
         function oppnaBidrag(artnr, namn, ersatt) {
             if (!BILD_URL) return;
             stangBild();
