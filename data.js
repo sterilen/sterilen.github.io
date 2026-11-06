@@ -1,6 +1,6 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-10-31 17:48';
-window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
+window.LAGER_UPPDATERAD = '2026-11-06 15:53';
+window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats;Bild;Alternativa
 100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01;BPA-31
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
 100143;87480;Endotrakealtub SHILEY HI-LO ID 8.0mm;D-13-01-01
@@ -1144,7 +1144,7 @@ A299009;XX*RF06;Arteriell förslutningsdevice, radialis TR Band Standard (up to 
 A2997053;22290;Införingsnål, Guide Wire Introducer;X-11-06-01
 A3024596;CMRM6133INT;Antibaktriellt nätTYRX antibiotika kuvärStort för ICD CRT-D;X-01-03-01
 A3031894;510001000;Nasopharyngoskop Ambu aScope 4 RhinoLaryngo dia 3.0 mm;G-17-02-01
-A3032020;N6008830;Griptång råttand alligatorkäft öppning 7,2mm 1745mm;F-06-06-01
+A3032020;N6008830;Griptång råttand alligatorkäft öppning 7,2mm 1745mm;F-06-06-01;;;FG-244NR
 A3034005;667060;Kniv till introducer till CS;X-08-07-01
 A3054099;DXT1510AL;Preformat bråcknät, polypropelen, Dextile 10x15 cm, vänster;F-21-07-01
 A3054100;DXT1510AR;Preformat bråcknät, polypropelen, Dextile 10x15 cm, höger;F-21-06-01
@@ -1380,6 +1380,9 @@ RS433116335118;J626T;Ligatur resorberbar Vicryl 0 2x70cm lila;Z-17-02-02
 ;;Modul 3 LCCK prov liner;1:9
 ;;Modul 3 LCCK tibia/femur general instrument;1:9
 ;;Modul 3 Nexgen ps liner;1:9
+;;Modul 3 Implantat korg 1 arthrex fibulock;1:11
+;;Modul 3 Implantat korg 2 arthrex fibulock;1:11
+;;Modul 3 Arthrex fibulock;1:11
 ;;Modul 3 22mm corail implantat och provhuvuden;1:12
 ;;Modul 3 Corail metallhuvuden för revision 32,36,28mm;1:12
 ;;Modul 3 Corail keramikhuvuden 28,32,36mm;1:12
@@ -1589,6 +1592,7 @@ RS433116335118;J626T;Ligatur resorberbar Vicryl 0 2x70cm lila;Z-17-02-02
 ;;Modul 3 Variax foot (T8/T10);8:11
 ;;Modul 3 Variax foot anchor 2cp;8:11
 ;;Modul 3 Repositionsinstrument small;8:11
+;;Modul 3 Ortholoc Instr+Implantat;8:11
 ;;Modul 3 VA armbåge template;8:12
 ;;Modul 3 T2 ALPHA femur märgspik;8:12
 ;;Modul 3 T2/T2 ALPHA extration;8:13
@@ -1745,6 +1749,7 @@ RS433116335118;J626T;Ligatur resorberbar Vicryl 0 2x70cm lila;Z-17-02-02
 ;;Bröstgaller;15:6
 ;;Bröstgaller;15:7
 ;;Modul 1 Robot laparascopigaller;15:8
+;;Modul 1 Tång cobra grasper ROBOT;15:9
 ;;Modul 1 Tång fenestrerad bipolär ROBOT;15:9
 ;;Modul 1 Tång tenaculum ROBOT;15:9
 ;;Modul 1 Sax böjd monopolär ROBOT;15:9
