@@ -560,7 +560,16 @@
         
         /* ===== Bildfunktion ===== */
 
-        </style>
+        
+        /* Träffarna ska synas direkt: filtret är hopfällt och rubriken försvinner när man sökt */
+        .filter-knapp { display:block; margin:6px auto 2px; padding:9px 16px; border-radius:999px; border:1px solid #e2e8f0; background:#fff; color:#475569; font:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+        .filter-knapp .filter-pil { display:inline-block; transition:transform .15s; }
+        .filter-knapp[aria-expanded="true"] .filter-pil { transform:rotate(180deg); }
+        .filter-kropp { margin-top:6px; }
+        html[data-tema] .filter-knapp { background:var(--yta); color:var(--text-dim); border-color:var(--kant); }
+        html.sokt .header-block { height:48px !important; min-height:0 !important; overflow:hidden !important; padding:0 !important; margin:0 !important; }
+        html.sokt .header-block > * { visibility:hidden; }
+</style>
 </head>
 <body>
     <div id="startbild" role="status" aria-live="polite">
@@ -643,7 +652,7 @@
         
         <div class="search-box">
             <div class="input-wrapper">
-                <input type="text" id="searchInput" placeholder="Sök produkt, art.nr, hylla..." autofocus oninput="toggleClearButton()">
+                <input type="text" id="searchInput" placeholder="Sök produkt eller art.nr" autofocus oninput="toggleClearButton()">
                 <button type="button" id="clearBtn" class="clear-btn" onclick="clearSearch()">✕</button>
             </div>
             <button type="button" id="kameraKnapp" class="kamera-knapp" onclick="oppnaKamera()" aria-label="Läs av REF-numret med kameran" title="Läs av REF-numret med kameran">📷</button>
@@ -665,6 +674,8 @@
           </div>
         </div>
 
+                <button type="button" id="filterKnapp" class="filter-knapp" onclick="vaxlaFilter()" aria-expanded="false"><span id="filterText">Visa & sortera</span> <span class="filter-pil">▾</span></button>
+                <div id="filterKropp" class="filter-kropp" hidden>
                 <div class="chip-grupp">
                     <span class="chip-rubrik">Visa</span>
                     <div class="chip-rad">
@@ -682,11 +693,12 @@
                     <button type="button" class="chip" data-sort="lev_artnr" onclick="valjSort('lev_artnr')">Lev.nr</button>
                     </div>
                 </div>
+                </div>
             </div>
         </div>
 
-        <div id="antalArtiklar" class="count-info">Laddar sterilförrådets databas...</div>
         <div id="resultatOmråde"></div>
+        <div id="antalArtiklar" class="count-info" style="margin-top:22px">Laddar sterilförrådets databas...</div>
     </div>
 
     <div id="kameraLager" class="kamera-lager" hidden>
@@ -2528,6 +2540,32 @@
                 if (f && f.value === '' && !(kam && !kam.hidden)) location.reload();
             });
         }
-    </script>
+    
+        // --- hopfällt filter + rubrik som försvinner efter sökning
+        function filterSammanfattning() {
+            try {
+                const vis = Array.from(document.querySelectorAll('[data-filter].aktiv')).map(b => b.textContent.trim());
+                const sort = (document.querySelector('[data-sort].aktiv') || {}).textContent || '';
+                const alla = document.querySelectorAll('[data-filter]').length;
+                const visTxt = vis.length === alla ? 'Allt' : vis.join(', ');
+                document.getElementById('filterText').textContent = 'Visa: ' + visTxt + '  ·  Sortera: ' + sort.trim();
+            } catch (e) {}
+        }
+        function vaxlaFilter() {
+            const k = document.getElementById('filterKropp'), kn = document.getElementById('filterKnapp');
+            const oppna = k.hidden;
+            k.hidden = !oppna;
+            kn.setAttribute('aria-expanded', oppna ? 'true' : 'false');
+        }
+        (function () {
+            const _vf = valjFilter, _vs = valjSort;
+            valjFilter = function () { const r = _vf.apply(this, arguments); filterSammanfattning(); return r; };
+            valjSort = function () { const r = _vs.apply(this, arguments); filterSammanfattning(); return r; };
+            const ra = document.getElementById('resultatOmråde');
+            const uppd = () => document.documentElement.classList.toggle('sokt', ra.innerHTML.trim() !== '');
+            new MutationObserver(uppd).observe(ra, { childList: true, subtree: true });
+            filterSammanfattning();
+        })();
+</script>
 </body>
 </html>

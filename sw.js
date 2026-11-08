@@ -1,5 +1,5 @@
-// sw.js v5 – nya appen med koppling av alternativa nummer
-const CACHE = 'sterilsok-v5';
+// sw.js v6 – träffarna högst upp, räknarna sist
+const CACHE = 'sterilsok-v6';
 const ASSETS = ['./', './index.html', './data.js', './manifest.webmanifest'];
 
 self.addEventListener('install', e => {
