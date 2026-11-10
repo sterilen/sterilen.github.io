@@ -291,7 +291,7 @@ function ritaEtiketter(rader, dagar) {
   const antal = Math.min(dagar, 60);
   for (let i = antal - 1; i >= 0; i--) { const d = new Date(base); d.setDate(d.getDate() - i); dl.push(d); }
   kolumner($('etDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => perDag.get(dagKey(d)) || 0), false, Math.ceil(antal / 6));
-  const lev = new Map(); rader.forEach(r => { const n = r.lev || (r.kalla === 'Manuell' ? 'Manuellt tillagda' : '(okänd)'); lev.set(n, (lev.get(n) || 0) + r.n); });
+  const lev = new Map(); rader.forEach(r => { let n = r.lev || (r.kalla === 'Manuell' ? 'Manuellt tillagda' : '(okänd)'); if (/medicarrier/i.test(n)) n = 'MediCarrier'; lev.set(n, (lev.get(n) || 0) + r.n); });
   stapelLista($('etLev'), raknaTopp(lev, 8).map(([n, v]) => [n, v, pct(v, tot)]));
   const kal = new Map(); rader.forEach(r => kal.set(r.kalla, (kal.get(r.kalla) || 0) + r.n));
   const kr = raknaTopp(kal, 5).map(([n, v]) => [n, v, pct(v, tot)]);
