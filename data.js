@@ -1,5 +1,5 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-11-10 15:58';
+window.LAGER_UPPDATERAD = '2026-11-10 16:13';
 window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats;Bild;Alternativa
 100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01;BPA-31
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
@@ -149,7 +149,13 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 105689;TB003;Insufflationsslang 3m med hepafilter transparent luer kona engångs;E-27-07-01
 105694;6088805;Sugslang kona/kona, 3,5m Ø5,6x8,2mm PVC-fri steril;H-27-01-01;BG-04-01
 105705;610-1120;Ultraljudsprobeskydd 14 x 244 cm;H-03-01-01
+105711;ND-2500-SG;Ultraljudsprobeskyddskit 18x120cm ink Safergel steril 15g;E-15-03-01
 105761;957-204;Blodgasspruta 0,7- 1,0 ml aspirator medblandningskula Radiometer;D-07-04-01
+105775;1601-34;Embolektomikateter 3F 40cm ballongdia 8.0mm volym 0.20ml latex;Z-06-01-01
+105777;1601-38;Embolektomikateter 3F 80cm ballongdia 8.0mm volym 0.20ml latex;Z-06-01-04
+105779;1601-44;Embolektomikateter 4F 40cm ballongdia 10.5mm volym 0.75ml latex;Z-06-01-02
+105781;1601-48;Embolektomikateter 4F 80cm ballongdia 10.5mm volym 0.75ml latex;Z-06-01-06
+105784;1601-58;Embolektomikateter 5F 80cm ballongdia 13.0mm volym 1.50ml latex;Z-06-01-03
 105787;PS2910;Nålräknare magnetask med nåldyna 10 nålars;E-23-05-01
 105820;489-524;Skål 500ml graderad i plast blå styckförpackad;C-24-04-01;BC-03-01
 105825;PS6208;Sugkyrett för exaeres flexibel 8mm;E-23-06-01
@@ -200,13 +206,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 14020610235441;5526604.;REDYROB TRANS PLUS CLOSED.WOUNDDR.-SYST;G-22-06-01
 14020610235531;4511200.;Perifix® kateterfixering;D-26-08-01
 14020610254790;5052-258.;125 X 89 X 06MM RECIPROCATOR BLADE 5 EA;E-27-02-01
-14081108315892;990927723426;Scleroseringsnål L 230cm Diam 2.6, 0.7/0.7, engångs;F-14-01-01
 15111012201073;12771;Polstervadd Cellona steril 10cmx3m;E-06-02-01;BA-01-04
-16021907345046;1601-48;Embolectomikateter 4 Fr 80 cm;Z-06-01-06
-16021907345060;1601-34;Embolectomikateter 3 Fr 40 cm;Z-06-01-01
-16021907345077;1601-44;Embolectomikateter 4 Fr 40 cm;Z-06-01-02
-16021907345093;1601-58;Embolectomikateter 5 Fr 80 cm;Z-06-01-03
-16021907345113;1601-38;Embolectomikateter 3 Fr 80 cm;Z-06-01-04
 16021907345132;1601-26;Embolectomikateter 2 Fr 60 cm;Z-06-01-05
 16022207314083;SOFT33.;Softjaw insert 33mm;F-18-06-01
 16022207314109;SOFT61.;Softjaw insert 61mm;F-18-05-02
@@ -283,6 +283,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 26011214500471;6024719;Sårdränage runt typ Smart CH19 100cm utan troakar Silikon;F-02-07-01
 26011511370759;62410100;Uretärkateter Selectip 4F öppet ändhål Tiemann tip 0 sidohål;F-26-01-03
 26012915513513;6R45B.;Magasin ets45 till endocutter reload blu;F-18-05-03
+26110414080913;BF-2.2S-160SP-20.;Biopsitång Engångs Captura Pro 2.2mm;F-16-02-01
 28256;1629H;Sutur ej resorberbar monofil Ethilon 4-0 fs-1 45cm black;Z-12-01-01
 28257;1671H;Sutur ej resorberbar monofil Ethilon 3-0 fsl 75cm black;Z-12-01-02
 28466;663H;Sutur ej resorberbar monofil Ethilon 3-0 fs-1 45cm black;Z-12-05-01
@@ -501,14 +502,14 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 85853;10702;Infusionsaggregat m luftning 320cm Filterstop hydrofilt/luftstopp;H-15-01-01
 85894;394600;Infusionskran 3-vägs för ECMO utan slang;G-14-05-01
 86087;LF1923;Kärlförslutningsinstrument LigaSure Maryland Jaw 23 cmx5mm;F-19-05-01
-86164;6659;Incisionsduk med uppsamlingspåse Ioban 74x87cm incisionsyta 42x52cm;B-18-03-01
+86164;6659;Incisionsduk med uppsamlingspåse Ioban 74x87cm incisionsyta 42x52cm;B-18-04-01
 86249;ICE1003;Tarmpåse Isolation med knytband 51x51cm;E-26-02-01
 86251;60171040T;Koppset enkelt med rondskål 3 skålar 10tork nonwoven diam 50mm;C-11-01-01;BH-01-03
 86269;705820;Slangstrumpa/kameraskydd perforerad topp 13x244cm;F-19-08-01;BF-08-02
 86274;10021969;Sugset Extrudan 4,0/6,5mm 30cm risslersug rak 3,5m;E-18-03-01;BD-03-04
 86425;489-531;Skål 2500ml graderad i plast blå styckförpackad;H-29-04-01
 86439;97068023-08;Operationsset Artroskopiset Modul 3 SÖS;A-19-01-01
-86443;97083663-06;Operationsset Axelset Litet Ort Modul 3SÖS;A-19-04-01
+86443;97083663-07;Operationsset Axelset Litet Ort Modul 3SÖS;A-19-04-01
 86474;97068857-04;Operationsset Proctoset SÖS/DKC;B-11-01-01
 86475;97061834-16;Operationsset Robotset Benstöd SÖS;A-14-01-01;BPA-20
 86476;97061844-17;Operationsset Robotset Universal SÖS;A-16-01-01;BPA-19
@@ -664,7 +665,6 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 99896;8888233213;CDK-set trippellumen med böjda skänklarMahurkar Elite 12,5Frx13cm;D-26-08-02
 99897;8888233216;CDK-set trippellumen med böjda skänklarMahurkar Elite 12,5Frx16cm;D-12-02-01
 99906;128.14122;Perifer venkateter Midline nitinolledare komplett set 4Fr längd 12cm;G-19-01-01
-99942;APC1290;UTGÅENDE Ultraljudsprobeskyddsjälvhäftande 15x122cm;E-15-03-01
 A1016149;M00570490;Choledochusstent WallFlex Heltäckt Biliary Stent 10 x 80 mm;F-04-01-02
 A1016151;M00570480;Choledochusstent WallFlex Heltäckt Biliary Stent 10 x 60 mm;F-04-01-01
 A1034029;405108;Introducerset 7F 14cm Peel away;X-17-03-01
@@ -781,7 +781,9 @@ A116620814;448949;, Ballong, 0,035", 6F, OTW, iliaca, 9/58/90,Dynetic-35;H-28-10
 A116620815;448950;, Ballong, 0,035", 6F, OTW, iliaca, 10/58/90,Dynetic-35;H-28-11-01
 A116620823;448960;, Ballong, 0,035", 6F, OTW, iliaca, 8/38/130,Dynetic-35;H-28-06-01
 A116622201;100.50n;Clips OTS för fixering av stent;F-22-01-01
+A116622734;711652;Cytologiborste gall-och pancreasgång ERCP 9Fr Kort långt system;F-24-01-01
 A116637400;PDP602H;Sutur resorberbar monofil PDS plus triklosan 2-0 UR-6 70cm lila;Z-08-07-01
+A116643198;97096174-03;Operationsset Incisionsset SÖS;B-14-04-01
 A1178866;60WK544240;Clips plast, L, flergångstång;G-07-04-01
 A1178867;60WK544250;Clips plast, XL, flergångstång;G-07-04-02
 A1184149;M00556251;Ledare med böjd spets SS 0.035 260cm 5-pack NaviPro Wire;F-16-06-01
@@ -863,7 +865,6 @@ A2144549;RM*RS7F10PQ;Introducer radialis SLENDER Mcoat 7Frx10cm S 0.021'GW 21Gx3
 A2148117;M001491321;Ledare, 0,035, 150cm, J-Curved, 3 mm J,Moveable Core, Starter;H-09-05-01
 A2149113;YOK0A;Y-konnektor,OKAYII;X-08-02-01
 A2152424;EH6443H;Ligatur ej resorberbar multifil Ethibond3-0 6x45cm green;Z-14-05-01
-A2152455;EH6714H;Ligatur silk 2-0 6x45cm black;Z-09-04-02
 A2157343;SERP65-09-40-80;Stent, Självexpanderande, 9mmx40mm, 80 CM, Protégé GPS;H-10-01-01
 A2157344;SERP65-10-40-80;Stent, Självexpanderande, 10mmx40mm, 80CM, Protégé GPS;H-10-04-01
 A2157356;SERP65-09-60-80;Stent, Självexpanderande, 9mmx60mm, 80 CM, Protégé GPS;H-10-02-01
@@ -902,6 +903,7 @@ A247788;MCS20;Clips, ej resorberbar Ligaclip förladdad20 titanium small 23,8cm;
 A247790;MCM20;Clips, ej resorberbar Ligaclip förladdad20 titanium medium 29,2cm;F-12-05-01
 A247871;TLC75;Linjära skärande stapler, Proximate stapler 75mm blå;F-05-06-01
 A247901;TCR75;Magasin Proximate 75mm linjärt skärandeblå;F-20-02-01
+A248023;W223;Ligatur silk 2-0 10x75cm;Z-09-04-02
 A248128;8623H;Sutur ej resorberbar monofil Prolene 2-075cm blå KS 60mm;Z-09-02-01
 A248169;8424H;Sutur ej resorberbar monofil Prolene 0 75cm blå CT-1 36mm;Z-09-01-01
 A248174;8833H;Sutur ej resorberbar monofil Prolene 2-075cm blå SH 26mm;Z-09-03-01
@@ -988,6 +990,7 @@ A2709843;DSF1633;Introducer 16Fr,Gore® Dryseal Flex Introducer Sheath;H-10-09-0
 A2709844;DSF1833;Introducer 18Fr,Gore® Dryseal Flex Introducer Sheath;H-10-10-01
 A2709845;DSF2033;Introducer 20Fr,Gore® Dryseal Flex Introducer Sheath;H-10-11-01
 A2709846;DSF2233;Introducer 22Fr,Gore® Dryseal Flex Introducer Sheath;H-10-12-01
+A2711019;990927723426;Injektionsnål fibrinlimningsnål dubbellumen;F-14-01-01
 A2713098;RF*PA35183M;Ledare , 0.035", 180cm, styv, 3cm böjd mjuk tip,Radifocus Guide Wire M;X-17-07-01
 A2724545;M00521231;Clips roterbara förladdade Resolution 360 längd 235cm 11 mm 10-pack;F-20-06-01
 A2724794;M00536270;Pankreasstent Advanix Rak utan inre vinge 5F x 5 cm;F-16-02-02
@@ -1139,7 +1142,6 @@ A2825234;NSTM1015E;Matrix för bröstrekonstruktion TIGR Surgical Mesh 10x15cm R
 A2825235;NSTM1520E;Matrix för bröstrekonstruktion TIGR Surgical Mesh 15x20cm Rektangulär;G-07-02-01
 A2858985;AR-9821;Ablationsprobe Apollo 90 grader XL;E-22-03-01
 A2860691;013593;Instrument engångs suture retriever;E-16-01-01
-A2866516;97096174-02;Operationsset Incisionsset SÖS;B-14-04-01
 A299009;XX*RF06;Arteriell förslutningsdevice, radialis TR Band Standard (up to 24 cm);X-04-03-01
 A2997053;22290;Införingsnål, Guide Wire Introducer;X-11-06-01
 A3024596;CMRM6133INT;Antibaktriellt nätTYRX antibiotika kuvärStort för ICD CRT-D;X-01-03-01
@@ -1159,6 +1161,7 @@ A320954;0203NA;Torque Device 0.010" - 0.020";H-19-02-01
 A321450;H74916599422;Diagnostisk kateter Impulse 6F PIG 155 110CM 5-pack;Z-02-01-01
 A3262743;12-ENM10-63GYE;Coloradonål 63mm-3mm tipp-Durable Grey II beläggning;F-02-02-02
 A3263047;PP010;Rökevakueringsslang Laparoskopisk PlumePort;F-11-01-01
+A3263181;LF2019;Kärlförslutning nano coated 21cm instrument längd;F-28-04-01
 A3276696;01-022V-11507;Bipolär pincett rak 11.5cm 0.7mm vink sp. kompl med kabel VALLEYLAB 3M;E-10-06-01
 A3276700;01-110V-16010;Bipolär pincett baj. 16cm 1.0mm rak sp.kompl med kabel VALLEYLAB 3M;E-10-01-01
 A3276704;01-110V-24010;Bipolär pincett baj. 24cm 1.0mm rak sp.kompl med kabel VALLEYLAB 3M;E-20-01-01
@@ -1169,6 +1172,7 @@ A3276793;667001;Rotation tool kit DF4 connector tool;X-01-03-02
 A3288300;EK002SU;Ventil Tätningsenhet Universal för 10/12mm troakarer engångs;F-05-03-01
 A3288301;EK001SU;Ventil Tätningsenhet för 5mm troakarer engång;F-03-04-01;BC-07-01
 A3288569;PS3895;Laparoskopisk 5mm Aspirations nål 29cm lång engångs;F-04-07-01
+A3288735;CDH29P;Cirkulärstapler Batteridriven Ethelon 29mm;B-18-03-01
 A3289098;ASM-EVAC1;Insufflationsslang AIRSEAL, ASM Tri-lumen slangset, med rökfilter;E-09-02-01;BB-01-01
 A3289099;ASM-EVAC1-BI;Insufflationsslang AIRSEAL ASM Robotic Solution slangset med rökfilter;E-09-04-01
 A3289103;IAS8-100LP;Port till insufflationsslang AIRSEAL Access Port, Optisk, 8 x 100mm;E-13-07-01
@@ -1202,7 +1206,6 @@ A334092;M0017600251;PVA partiklar ("flakes") 150-250µm, Contour;H-15-07-01
 A334095;M0017600651;PVA partiklar ("flakes") 500-710µm, Contour;H-15-07-02
 A3358478;M00546610;SpyScope DS II;F-10-01-01
 A3359204;EGMAJ-2455;Vajerlås kompatibel med 0.018-0.035 vajer CleverLock;F-24-10-01
-A3359793;10-711652;Cytologiborste gall-och pancreasgång ERCP 9Fr Kort långt system;F-24-01-01
 A3365248;ZVM14040;Stent självexp utan drog 0,035 14mm x 40mm 80cm 6F,E-Luminexx;Z-01-01-06
 A3365254;ZVM12040;Stent självexp utan drog 0,035 12mm x 40mm 80cm 6F,E-Luminexx;Z-02-01-06
 A3365302;ZVM14060;Stent självexp utan drog 0,035 14mm x 60mm 80cm 6F,E-Luminexx;Z-02-01-03
@@ -1220,7 +1223,6 @@ A3378907;IS4-90-20-V;Trombolyskateter Valvved tip, 90cm, 4F,20cm,Fountain®;X-23
 A3378908;IS4-90-30-V;Trombolyskateter Valved tip, 90cm, 4F, 30cm,Fountain®;X-23-09-01
 A3378910;IS4-90-5-V;Trombolyskateter Valved tip, 90cm, 4F, 5cm,Fountain®;X-23-04-01
 A3378911;IS4-90-50-V;Trombolyskateter Valved tip, 90cm, 4F, 50cm,Fountain®;X-23-10-01
-A343952;G11636;Introducer Flexor Raabe 6Fr 70cm Rak Ejhydrofil;Z-03-01-09
 A344066;MWCE-18S-3/2-TORNADO;Embolisering coil med fibrer, 018", D:3/2mm,Tornado® 18;H-13-05-02
 A344133;G01264;Ledare, 035", 180cm, 1.5cm floppy,RosenWire Guide;H-12-10-02
 A347072;M00545900;Dilatationsballong gallvägar Hurricane4mm 4cm;F-04-05-03
@@ -1250,7 +1252,7 @@ A381464;M001465251;Ledare, 0,035, 180cm, Straight, AmplatzSuper Stiff,Amplatz;X-
 A3985142;CTS02;Arbetshylsa gängad 5x100mm Kii Z-thread,engångs 12/fp;F-30-03-01
 A3985159;CFF03;Troakar ballong 5x100mm Kii Fios Advanced Fixation, engångs 6/fp;E-21-03-01
 A3985168;CTS22;Troakar 12x100 mm Kii Z-Thread - Hylsa;F-28-05-01
-A3985180;C0R50;Troakar blunt ballongr 12x130mm Kii Balloon Blunt tip, engångs 6/fp;F-28-04-01
+A3985180;C0R50;Troakar blunt ballongr 12x130mm Kii Balloon Blunt tip, engångs 6/fp;F-26-02-01
 A3985185;C0R47;Troakar blunt ballongr 12x100mm Kii Balloon Blunt tip, engångs 6/fp;E-25-04-01
 A3985202;CD003;Preparatpåse 180ml Inzii Universal Retrieval System 10/fp;E-13-05-01
 A3985203;CD001;Preparatpåse 225ml Inzii 10mm RetrievalSystem, engångs 10/fp;E-13-01-01
@@ -1260,7 +1262,6 @@ A3985209;CTF73;Troakar gängad 12x100mm Kii Fios First Entry Z-thread, engångs 
 A4107829;60L210;Pacemaker SSIR IS1 Proponent MRI SR;X-01-01-01
 A4107844;60L231;Pacemaker DDDR IS1 Proponent MRI EL DR;X-03-03-01
 A4108018;W3DR01;Pacemaker DDDR IS1 Azure S DR MRI;X-03-01-01
-A4161803;BF-2.2S-160SP-20;Biopsitång Engångs Captura Pro 2.2mm standard 160cm Aligator m/pigg;F-16-02-01
 A448212;CB12LT;Arbetshylsa endopath/x/nboc/wstab/100/12;F-05-01-01
 A448218;CB5LT;Arbetshylsa endopath/x/nboc/wstab/100/5;F-03-02-01
 A448221;PN120;Insufflationskanyl endopath 120mm pneumoneedle;E-19-04-01
