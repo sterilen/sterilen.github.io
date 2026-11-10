@@ -1,5 +1,5 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-11-10 14:34';
+window.LAGER_UPPDATERAD = '2026-11-10 15:58';
 window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats;Bild;Alternativa
 100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01;BPA-31
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
@@ -174,8 +174,8 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 107055;63628;Hålduk häftande flexibel 2-delad 2-lagers 75x100cm;G-16-04-01
 107056;63842;Hålduk häftande 2-lagers 150x180cm hål 5x15cm;C-13-04-01
 107057;63850;Benpåse 2-lagers 75x120cm 2-pack BARRIER;C-09-04-01
-107059;63858;Instrumentbordslakan 150x190cm 2-lagers;C-11-02-01
-107074;060022725;Spruta injektions förfylld m NaCl Luer-Lock 3-komp 20ml 0.9% NaCl;G-29-07-01
+107059;63858;Instrumentbordslakan 150x190cm 2-lagers;C-11-02-01;BD-03-05
+107074;060022725;Spruta injektions förfylld m NaCl Luer-Lock 3-komp 20ml 0.9% NaCl;G-29-07-01;BG-06-01
 107213;63619;Operationshandduk 75x90cm 2-lagers;G-25-08-01
 107217;10035442;CVK-set för högt tryck enkellumen Altius 7Fr 20cm;G-21-07-01
 107737;97124863-02;Dukningsset för CVK vuxen;B-29-01-01
