@@ -138,7 +138,7 @@ const STAT_URL = "https://sterilsok-stat.pelle-holmstrom.workers.dev";
 const STAT_NYCKEL = "Dce0nlyz!Dce0nlyz!";
 // Etikettstatistiken kommer från bildtjänsten. Nyckeln är en egen läs-nyckel (LAS_KEY i Cloudflare) som bara kan läsa etikettloggen.
 const ETIKETT_URL = "https://lagersok-bilder.pelle-holmstrom.workers.dev";
-const ETIKETT_NYCKEL = "VrqRG2WHgXbH4TWR";
+const ETIKETT_NYCKEL = "KLISTRA_IN_LAS_KEY";
 
 const $ = (id) => document.getElementById(id);
 function lagra(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
@@ -295,7 +295,7 @@ function ritaEtiketter(rader, dagar) {
   stapelLista($('etLev'), raknaTopp(lev, 8).map(([n, v]) => [n, v, pct(v, tot)]));
   const kal = new Map(); rader.forEach(r => kal.set(r.kalla, (kal.get(r.kalla) || 0) + r.n));
   const kr = raknaTopp(kal, 5).map(([n, v]) => [n, v, pct(v, tot)]);
-  if (bulk) kr.push(['varav bulkplats', bulk, pct(bulk, tot)]);
+  if (bulk) kr.push(['Varav bulkplats', bulk, pct(bulk, tot)]);
   stapelLista($('etKalla'), kr);
   const sedd = new Set(), sen = [];
   for (let i = rader.length - 1; i >= 0 && sen.length < 6; i--) {
