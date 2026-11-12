@@ -103,7 +103,7 @@ button.sek { background: var(--kort); color: var(--text); border-color: var(--ka
           <div><div class="dim" style="font-size:13px;font-weight:700;margin-bottom:6px">Etiketter per dag</div><div id="etDag"></div></div>
           <div><div class="dim" style="font-size:13px;font-weight:700;margin-bottom:6px">Per leverantör</div><div id="etLev"></div></div>
           <div><div class="dim" style="font-size:13px;font-weight:700;margin-bottom:6px">Hur artiklarna lades till</div><div id="etKalla"></div>
-            <div class="dim" style="font-size:13px;font-weight:700;margin:14px 0 6px">Senaste beställningarna</div><div id="etSenaste"></div></div>
+            <div class="dim" style="font-size:13px;font-weight:700;margin:14px 0 6px">Etiketter per veckodag</div><div id="etSenaste"></div></div>
         </div>
       </div>
     </div>
@@ -297,16 +297,11 @@ function ritaEtiketter(rader, dagar) {
   const kr = raknaTopp(kal, 5).map(([n, v]) => [n, v, pct(v, tot)]);
   if (bulk) kr.push(['Varav bulkplats', bulk, pct(bulk, tot)]);
   stapelLista($('etKalla'), kr);
-  const sedd = new Set(), sen = [];
-  for (let i = rader.length - 1; i >= 0 && sen.length < 6; i--) {
-    const r = rader[i]; const nyck = r.datum + r.so;
-    if (r.so === 'MANUELL' || sedd.has(nyck)) continue;
-    sedd.add(nyck);
-    sen.push([r.datum.slice(5) + '  ' + r.so, r.n]);
-  }
+  const VD = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag', 'Söndag'];
+  const perVd = [0, 0, 0, 0, 0, 0, 0];
+  rader.forEach(r => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(r.datum || ''); if (m) perVd[(new Date(+m[1], +m[2] - 1, +m[3], 12).getDay() + 6) % 7] += r.n; });
   const sm = $('etSenaste'); tom(sm);
-  sen.forEach(([n, v]) => { const d = el('div'); d.style.cssText = 'display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:2px 0'; d.appendChild(el('span', null, n)); d.appendChild(el('span', 'dim', v + ' st')); sm.appendChild(d); });
-  if (!sen.length) sm.appendChild(el('div', 'tom', '–'));
+  stapelLista(sm, VD.map((n, i) => [n, perVd[i], pct(perVd[i], tot)]).filter((x, i) => i < 5 || x[1] > 0));
 }
 
 async function hamtaEtiketter(dagar) {
