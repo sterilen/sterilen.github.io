@@ -243,8 +243,8 @@ function rita(data, dagar) {
   const dl = []; const base = new Date(); base.setHours(12, 0, 0, 0);
   const antalDagar = Math.min(dagar, 60);
   for (let i = antalDagar - 1; i >= 0; i--) { const d = new Date(base); d.setDate(d.getDate() - i); dl.push(d); }
-  kolumner($('gDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => perDag.get(dagKey(d.getTime())) || 0), true, Math.ceil(antalDagar / 6));
-  kolumner($('gTim'), Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0')), perTim, true, 3);
+  kolumner($('gDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => perDag.get(dagKey(d.getTime())) || 0), false, Math.ceil(antalDagar / 6));
+  kolumner($('gTim'), Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0')), perTim, false, 3);
   kolumner($('gVdag'), ['Mån', 'Tis', 'Ons', 'Tors', 'Fre', 'Lör', 'Sön'], vd, true, 1);
 
   // insikt
@@ -320,7 +320,7 @@ function ritaEtiketter(rader, dagar) {
   const dl = []; const base = new Date(); base.setHours(12, 0, 0, 0);
   const antal = Math.min(dagar, 60);
   for (let i = antal - 1; i >= 0; i--) { const d = new Date(base); d.setDate(d.getDate() - i); dl.push(d); }
-  kolumner($('etDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => perDag.get(dagKey(d)) || 0), true, Math.ceil(antal / 6));
+  kolumner($('etDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => perDag.get(dagKey(d)) || 0), false, Math.ceil(antal / 6));
   const lev = new Map(); rader.forEach(r => { let n = r.lev || (r.kalla === 'Manuell' ? 'Manuellt tillagda' : '(okänd)'); if (/medicarrier/i.test(n)) n = 'MediCarrier'; lev.set(n, (lev.get(n) || 0) + r.n); });
   stapelLista($('etLev'), raknaTopp(lev, 8).map(([n, v]) => [n, v, pct(v, tot)]));
   const kal = new Map(); rader.forEach(r => kal.set(r.kalla, (kal.get(r.kalla) || 0) + r.n));
