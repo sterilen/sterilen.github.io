@@ -47,6 +47,11 @@ button.sek { background: var(--kort); color: var(--text); border-color: var(--ka
 .kol .c { flex: 1 1 0; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
 .kol .s { width: 100%; background: var(--bla); border-radius: 3px 3px 0 0; min-height: 1px; opacity: .88; }
 .kol .v { font-size: 11px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; line-height: 1.1; }
+.graf { position: relative; }
+.graf .kol, .graf .etiketter { margin-left: 32px; }
+.graf .rutnat { position: absolute; left: 0; right: 0; top: 18px; height: 132px; pointer-events: none; }
+.graf .rutnat .l { position: absolute; left: 32px; right: 0; border-top: 1px solid var(--spar); }
+.graf .rutnat .t { position: absolute; left: 0; width: 28px; text-align: right; font-size: 10px; color: var(--dim); transform: translateY(50%); line-height: 1; }
 .etiketter { display: flex; gap: 2px; margin-top: 4px; font-size: 11px; color: var(--dim); }
 .etiketter span { flex: 1 1 0; min-width: 0; display: flex; justify-content: center; white-space: nowrap; overflow: visible; }
 /* stapellistor */
@@ -163,9 +168,20 @@ function stapelLista(mal, rader, enhet) {
 
 function kolumner(mal, etiketter, varden, visaVarde, varannan) {
   tom(mal);
-  const max = Math.max(...varden, 1);
+  const toppV = Math.max(...varden, 1);
+  // y-axelns gradering: runda steg (1, 2, 5 x 10^n), ungefär fyra intervall
+  const rå = toppV / 4, pot = Math.pow(10, Math.floor(Math.log10(rå)));
+  const steg = [1, 2, 5, 10].map(f => f * pot).find(x => x >= rå);
+  const max = steg * Math.ceil(toppV / steg);
+  const graf = el('div', 'graf'), rutnat = el('div', 'rutnat');
+  for (let y = 0; y <= max + 1e-9; y += steg) {
+    const p = (y * 100 / max) + '%';
+    const t = el('div', 't', String(Math.round(y))); t.style.bottom = p; rutnat.appendChild(t);
+    if (y > 0) { const l = el('div', 'l'); l.style.bottom = p; rutnat.appendChild(l); }
+  }
+  graf.appendChild(rutnat);
   const k = el('div', 'kol');
-  const plats = (mal.clientWidth || mal.parentElement && mal.parentElement.clientWidth || 320) / Math.max(varden.length, 1);   // bredd per stapel
+  const plats = ((mal.clientWidth || mal.parentElement && mal.parentElement.clientWidth || 320) - 32) / Math.max(varden.length, 1);   // bredd per stapel
   let sistI = -99, sistB = 0;                                          // senast visade siffra: håller undan så att siffror inte hamnar över varandra
   varden.forEach((v, i) => {
     const c = el('div', 'c'); c.title = etiketter[i] + ': ' + v;
@@ -174,7 +190,7 @@ function kolumner(mal, etiketter, varden, visaVarde, varannan) {
       let storlek = 0;
       if (plats >= n * 6.6 + 2) storlek = 11;                           // ryms med normal text
       else if (plats >= n * 5.4 + 1) storlek = 9;                       // ryms med liten text
-      if (!storlek && (v === max || i % varannan === 0)) storlek = 10;  // tätt: bara toppen och axelns etiketter
+      if (!storlek && (v === toppV || i % varannan === 0)) storlek = 10;  // tätt: bara toppen och axelns etiketter
       const bredd = n * (storlek >= 11 ? 6.6 : 5.6);
       if (storlek && (i - sistI) * plats >= (bredd + sistB) / 2 + 2) {
         const t = el('div', 'v', String(v)); if (storlek !== 11) t.style.fontSize = storlek + 'px'; c.appendChild(t);
@@ -184,10 +200,11 @@ function kolumner(mal, etiketter, varden, visaVarde, varannan) {
     const s = el('div', 's'); s.style.height = (v ? Math.max(2, Math.round(v * 100 / max)) : 0) + '%'; c.appendChild(s);
     k.appendChild(c);
   });
-  mal.appendChild(k);
+  graf.appendChild(k);
   const e = el('div', 'etiketter');
   etiketter.forEach((t, i) => e.appendChild(el('span', null, (i % varannan === 0) ? t : '')));
-  mal.appendChild(e);
+  graf.appendChild(e);
+  mal.appendChild(graf);
 }
 
 function raknaTopp(map, n) {
