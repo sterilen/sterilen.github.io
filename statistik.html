@@ -46,7 +46,7 @@ button.sek { background: var(--kort); color: var(--text); border-color: var(--ka
 .kol { display: flex; align-items: flex-end; gap: 2px; height: 150px; padding-top: 18px; }
 .kol .c { flex: 1 1 0; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
 .kol .s { width: 100%; background: var(--bla); border-radius: 3px 3px 0 0; min-height: 1px; opacity: .88; }
-.kol .v { font-size: 11px; font-weight: 700; margin-bottom: 2px; }
+.kol .v { font-size: 11px; font-weight: 700; margin-bottom: 2px; white-space: nowrap; line-height: 1.1; }
 .etiketter { display: flex; gap: 2px; margin-top: 4px; font-size: 11px; color: var(--dim); }
 .etiketter span { flex: 1 1 0; min-width: 0; display: flex; justify-content: center; white-space: nowrap; overflow: visible; }
 /* stapellistor */
@@ -165,9 +165,22 @@ function kolumner(mal, etiketter, varden, visaVarde, varannan) {
   tom(mal);
   const max = Math.max(...varden, 1);
   const k = el('div', 'kol');
+  const plats = (mal.clientWidth || mal.parentElement && mal.parentElement.clientWidth || 320) / Math.max(varden.length, 1);   // bredd per stapel
+  let sistI = -99, sistB = 0;                                          // senast visade siffra: håller undan så att siffror inte hamnar över varandra
   varden.forEach((v, i) => {
     const c = el('div', 'c'); c.title = etiketter[i] + ': ' + v;
-    if (visaVarde && v) c.appendChild(el('div', 'v', String(v)));
+    if (visaVarde && v) {
+      const n = String(v).length;
+      let storlek = 0;
+      if (plats >= n * 6.6 + 2) storlek = 11;                           // ryms med normal text
+      else if (plats >= n * 5.4 + 1) storlek = 9;                       // ryms med liten text
+      if (!storlek && (v === max || i % varannan === 0)) storlek = 10;  // tätt: bara toppen och axelns etiketter
+      const bredd = n * (storlek >= 11 ? 6.6 : 5.6);
+      if (storlek && (i - sistI) * plats >= (bredd + sistB) / 2 + 2) {
+        const t = el('div', 'v', String(v)); if (storlek !== 11) t.style.fontSize = storlek + 'px'; c.appendChild(t);
+        sistI = i; sistB = bredd;
+      }
+    }
     const s = el('div', 's'); s.style.height = (v ? Math.max(2, Math.round(v * 100 / max)) : 0) + '%'; c.appendChild(s);
     k.appendChild(c);
   });
@@ -213,8 +226,8 @@ function rita(data, dagar) {
   const dl = []; const base = new Date(); base.setHours(12, 0, 0, 0);
   const antalDagar = Math.min(dagar, 60);
   for (let i = antalDagar - 1; i >= 0; i--) { const d = new Date(base); d.setDate(d.getDate() - i); dl.push(d); }
-  kolumner($('gDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => perDag.get(dagKey(d.getTime())) || 0), false, Math.ceil(antalDagar / 6));
-  kolumner($('gTim'), Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0')), perTim, false, 3);
+  kolumner($('gDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => perDag.get(dagKey(d.getTime())) || 0), true, Math.ceil(antalDagar / 6));
+  kolumner($('gTim'), Array.from({ length: 24 }, (_, h) => String(h).padStart(2, '0')), perTim, true, 3);
   kolumner($('gVdag'), ['Mån', 'Tis', 'Ons', 'Tors', 'Fre', 'Lör', 'Sön'], vd, true, 1);
 
   // insikt
@@ -290,7 +303,7 @@ function ritaEtiketter(rader, dagar) {
   const dl = []; const base = new Date(); base.setHours(12, 0, 0, 0);
   const antal = Math.min(dagar, 60);
   for (let i = antal - 1; i >= 0; i--) { const d = new Date(base); d.setDate(d.getDate() - i); dl.push(d); }
-  kolumner($('etDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => perDag.get(dagKey(d)) || 0), false, Math.ceil(antal / 6));
+  kolumner($('etDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => perDag.get(dagKey(d)) || 0), true, Math.ceil(antal / 6));
   const lev = new Map(); rader.forEach(r => { let n = r.lev || (r.kalla === 'Manuell' ? 'Manuellt tillagda' : '(okänd)'); if (/medicarrier/i.test(n)) n = 'MediCarrier'; lev.set(n, (lev.get(n) || 0) + r.n); });
   stapelLista($('etLev'), raknaTopp(lev, 8).map(([n, v]) => [n, v, pct(v, tot)]));
   const kal = new Map(); rader.forEach(r => kal.set(r.kalla, (kal.get(r.kalla) || 0) + r.n));
