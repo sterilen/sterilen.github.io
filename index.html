@@ -754,6 +754,20 @@
             <div id="kopplaMsg" class="bidrag-msg"></div>
         </div>
     </div>
+    <div id="narvaroLager" class="bidrag-lager" hidden onclick="if(event.target===this) stangNarvaro()">
+        <div class="bidrag-ruta" role="dialog" aria-modal="true" aria-labelledby="narvaroRubrik">
+            <h2 id="narvaroRubrik">Registrera besök</h2>
+            <p id="narvaroUnder" class="bidrag-under"></p>
+            <div id="narvaroKod" hidden>
+                <p>Skriv ditt användarnamn (fyra tecken). Det är samma som du använder för att skicka bilder. Du behöver bara skriva det en gång på den här enheten.</p>
+                <input type="text" id="narvaroKodFalt" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Ditt användarnamn" placeholder="Användarnamn">
+                <div class="bidrag-knappar"><button type="button" onclick="stangNarvaro()">Avbryt</button><button type="button" class="primar" id="narvaroKodKnapp">Registrera besök</button></div>
+            </div>
+            <p id="narvaroResultat" style="font-size:20px;font-weight:800;margin:8px 0 0"></p>
+            <div id="narvaroMsg" class="bidrag-msg" role="status"></div>
+            <div class="bidrag-knappar" id="narvaroKnappar" hidden><button type="button" onclick="stangNarvaro()">Stäng</button><button type="button" class="primar" id="narvaroIgen" hidden>Försök igen</button></div>
+        </div>
+    </div>
     <div id="bidragLager" class="bidrag-lager" hidden onclick="if(event.target===this) stangBidrag()">
         <div class="bidrag-ruta" role="dialog" aria-modal="true" aria-labelledby="bidragRubrik">
             <h2 id="bidragRubrik"></h2>
@@ -1956,6 +1970,15 @@
                         }
                     } catch (e) {}
                     if (!qrAktiv) return;
+                    const forr = text ? (window.forradParse && window.forradParse(text)) : null;
+                    if (forr) {
+                        qrAktiv = false;
+                        try { kamAktiv = false; } catch (e) {}
+                        if (navigator.vibrate) navigator.vibrate(100);
+                        stangKamera();
+                        window.oppnaNarvaro(forr);
+                        return;
+                    }
                     const rad = text ? stadParse(text) : null;
                     if (rad) {
                         qrAktiv = false;
@@ -1976,6 +1999,86 @@
                 if (rad && /^[A-Za-z0-9]{1,8}$/.test(rad)) {
                     oppnaStad(rad.toUpperCase());
                     history.replaceState(null, '', location.pathname + location.hash);
+                }
+            } catch (e) {}
+        })();
+
+        // ======================= BESÖK I FÖRRÅD (QR i förrådet) =======================
+        // QR-koden i förrådet är adressen till appen med ?forrad=ID. Scannas den med telefonens kamera (eller appens egen läsare)
+        // registreras besöket direkt med personens användarnamn (samma som för bilder). Visas i fliken NÄRVARO i Lagersök Admin.
+        (function () {
+            const $ = id => document.getElementById(id);
+            let aktuellt = '', stangT = null;
+            const lasK = k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
+            const sparaK = (k, v) => { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} };
+            const bas = () => (typeof BILD_URL !== 'undefined' ? BILD_URL : '').replace(/\/$/, '');
+            function forradParse(txt) {
+                if (!txt) return null;
+                const m = String(txt).trim().match(/[?&#]forrad=([A-Za-z0-9]{1,12})(?![A-Za-z0-9])/i);
+                return m ? m[1].toUpperCase() : null;
+            }
+            window.forradParse = forradParse;
+            function msg(text, typ) { const m = $('narvaroMsg'); m.textContent = text || ''; m.className = 'bidrag-msg' + (typ ? ' ' + typ : ''); }
+            function steg(s) {
+                $('narvaroKod').hidden = s !== 'kod';
+                $('narvaroKnappar').hidden = s !== 'klar';
+                if (s === 'kod') { const f = $('narvaroKodFalt'); f.value = ''; setTimeout(() => { try { f.focus(); } catch (e) {} }, 60); }
+            }
+            window.stangNarvaro = function () { clearTimeout(stangT); $('narvaroLager').hidden = true; };
+            function tidText(ms) { const d = new Date(ms); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+            async function registrera() {
+                $('narvaroResultat').textContent = ''; $('narvaroIgen').hidden = true; msg('Registrerar...');
+                steg('vanta');
+                try {
+                    const r = await fetch(bas() + '/narvaro', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-kod': lasK('bildkod') }, body: JSON.stringify({ forrad: aktuellt }) });
+                    if (r.status === 401) { sparaK('bildkod', null); sparaK('bildnamn', null); steg('kod'); msg('Användarnamnet gäller inte. Skriv det igen eller kontakta den som sköter sökappen.', 'fel'); return; }
+                    if (r.status === 429) { steg('klar'); $('narvaroIgen').hidden = false; msg('För många försök. Vänta en stund.', 'fel'); return; }
+                    const d = await r.json().catch(() => ({}));
+                    if (!r.ok || !d.ok) { steg('klar'); msg(d.fel ? d.fel.charAt(0).toUpperCase() + d.fel.slice(1) + '.' : 'Kunde inte registrera besöket.', 'fel'); $('narvaroIgen').hidden = r.status >= 500; return; }
+                    const vad = d.forradnamn ? d.forradnamn + ' (' + d.forrad + ')' : 'förråd ' + d.forrad;
+                    $('narvaroRubrik').textContent = '✓ Besök registrerat';
+                    $('narvaroResultat').textContent = (d.namn ? d.namn + ', ' : '') + vad;
+                    msg(d.dubbel ? 'Du registrerades nyss kl ' + tidText(d.tid) + '.' : 'Kl ' + tidText(d.tid) + '. Tack!', 'ok');
+                    steg('klar');
+                    if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+                    stangT = setTimeout(window.stangNarvaro, 3500);
+                } catch (e) {
+                    steg('klar'); $('narvaroIgen').hidden = false; msg('Kunde inte nå tjänsten. Kontrollera nätet och försök igen.', 'fel');
+                }
+            }
+            window.oppnaNarvaro = function (forrad) {
+                if (!bas()) return;
+                clearTimeout(stangT);
+                try { stangKamera(); } catch (e) {}
+                try { stangBild(); } catch (e) {}
+                aktuellt = forrad;
+                $('narvaroRubrik').textContent = 'Registrera besök';
+                $('narvaroUnder').textContent = 'Förråd ' + forrad;
+                $('narvaroResultat').textContent = ''; msg('');
+                $('narvaroLager').hidden = false;
+                if (lasK('bildkod')) registrera(); else steg('kod');
+            };
+            $('narvaroIgen').addEventListener('click', registrera);
+            $('narvaroKodKnapp').addEventListener('click', async () => {
+                const kod = $('narvaroKodFalt').value.trim().toUpperCase();
+                if (kod.length < 3) { msg('Skriv ditt användarnamn (fyra tecken).', 'fel'); return; }
+                msg('Kontrollerar...');
+                try {
+                    const r = await fetch(bas() + '/kodkoll', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kod: kod }) });
+                    if (r.status === 429) { msg('För många försök. Vänta en stund och försök igen.', 'fel'); return; }
+                    if (r.status === 401) { msg('Användarnamnet finns inte eller är avstängt. Kontrollera stavningen.', 'fel'); return; }
+                    const d = await r.json();
+                    sparaK('bildkod', kod); sparaK('bildnamn', d.namn || '');
+                    registrera();
+                } catch (e) { msg('Kunde inte kontrollera användarnamnet. Kontrollera nätet och försök igen.', 'fel'); }
+            });
+            $('narvaroKodFalt').addEventListener('keydown', e => { if (e.key === 'Enter') $('narvaroKodKnapp').click(); });
+            // QR scannad med telefonens kameraapp: sidan öppnas med ?forrad=ID
+            try {
+                const f = new URLSearchParams(location.search).get('forrad');
+                if (f && /^[A-Za-z0-9]{1,12}$/.test(f)) {
+                    history.replaceState(null, '', location.pathname + location.hash);
+                    setTimeout(() => window.oppnaNarvaro(f.toUpperCase()), 300);
                 }
             } catch (e) {}
         })();
