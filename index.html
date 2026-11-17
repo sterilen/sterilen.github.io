@@ -754,18 +754,18 @@
             <div id="kopplaMsg" class="bidrag-msg"></div>
         </div>
     </div>
-    <div id="narvaroLager" class="bidrag-lager" hidden onclick="if(event.target===this) stangNarvaro()">
+    <div id="narvaroLager" class="bidrag-lager" hidden>
         <div class="bidrag-ruta" role="dialog" aria-modal="true" aria-labelledby="narvaroRubrik">
             <h2 id="narvaroRubrik">Registrera besök</h2>
             <p id="narvaroUnder" class="bidrag-under"></p>
             <div id="narvaroKod" hidden>
-                <p>Skriv ditt användarnamn (fyra tecken). Det är samma som du använder för att skicka bilder. Du behöver bara skriva det en gång på den här enheten.</p>
+                <p>Skriv ditt användarnamn (HSA-ID). Du behöver bara skriva det en gång på den här enheten.</p>
                 <input type="text" id="narvaroKodFalt" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Ditt användarnamn" placeholder="Användarnamn">
                 <div class="bidrag-knappar"><button type="button" onclick="stangNarvaro()">Avbryt</button><button type="button" class="primar" id="narvaroKodKnapp">Registrera besök</button></div>
             </div>
             <p id="narvaroResultat" style="font-size:20px;font-weight:800;margin:8px 0 0"></p>
             <div id="narvaroMsg" class="bidrag-msg" role="status"></div>
-            <div class="bidrag-knappar" id="narvaroKnappar" hidden><button type="button" onclick="stangNarvaro()">Stäng</button><button type="button" class="primar" id="narvaroIgen" hidden>Försök igen</button></div>
+            <div class="bidrag-knappar" id="narvaroKnappar" hidden><button type="button" class="primar" onclick="stangNarvaro()">OK</button><button type="button" class="primar" id="narvaroIgen" hidden>Försök igen</button></div>
         </div>
     </div>
     <div id="bidragLager" class="bidrag-lager" hidden onclick="if(event.target===this) stangBidrag()">
@@ -2041,7 +2041,6 @@
                     msg(d.dubbel ? 'Du registrerades nyss kl ' + tidText(d.tid) + '.' : 'Kl ' + tidText(d.tid) + '. Tack!', 'ok');
                     steg('klar');
                     if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
-                    stangT = setTimeout(window.stangNarvaro, 3500);
                 } catch (e) {
                     steg('klar'); $('narvaroIgen').hidden = false; msg('Kunde inte nå tjänsten. Kontrollera nätet och försök igen.', 'fel');
                 }
