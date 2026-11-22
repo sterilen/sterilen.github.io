@@ -458,6 +458,7 @@
         .prod-thumb { display: block; box-sizing: border-box; width: 56px; height: 56px; min-width: 56px; max-width: 56px; flex: 0 0 56px; object-fit: cover; border-radius: 10px; border: 1px solid var(--kant,#e2e8f0); background: var(--yta-dim,#f8fafc); cursor: zoom-in; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         .prod-thumb:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
         /* Bilden ligger i platskolumnen: platsrutorna överst, bilden i nedre högra hörnet av raden */
+        .result-table td:first-child { vertical-align: top; }      /* texten börjar på samma höjd som platsrutan */
         .result-table td.plats-td { position: relative; vertical-align: top; }
         .result-table td.plats-td.med-bild { padding-bottom: 128px; }
         /* Platskolumnen är 120 px bred med 4 + 12 px luft = 104 px innehåll: bilden är lika bred som platsrutorna och kvadratisk */
