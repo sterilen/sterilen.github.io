@@ -457,6 +457,10 @@
         .prod-rad { display: flex; gap: 12px; align-items: flex-start; }
         .prod-thumb { display: block; box-sizing: border-box; width: 56px; height: 56px; min-width: 56px; max-width: 56px; flex: 0 0 56px; object-fit: cover; border-radius: 10px; border: 1px solid var(--kant,#e2e8f0); background: var(--yta-dim,#f8fafc); cursor: zoom-in; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         .prod-thumb:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+        /* Bilden ligger i platskolumnen: platsrutorna överst, bilden i nedre högra hörnet av raden */
+        .result-table td.plats-td { position: relative; vertical-align: top; }
+        .result-table td.plats-td.med-bild { padding-bottom: 80px; }
+        .plats-td .prod-thumb, .plats-td .bild-plus { position: absolute; right: 12px; bottom: 12px; }
         .prod-info { flex: 1; min-width: 0; }
         .bild-lager { position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; padding: 16px; }
         .bild-lager[hidden] { display: none; }
@@ -1392,7 +1396,7 @@
                     const thumbSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artId)}_thumb.webp`;
                     const fullSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artId)}.webp`;
                     const namnAttr = esc(artikel.namn).replace(/"/g, '&quot;');
-                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><img src="${thumbSrc}" data-full="${fullSrc}" data-namn="${namnAttr}" data-artnr="${esc(artId)}" alt="" class="prod-thumb" loading="lazy" width="56" height="56"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}</td></tr>`;
+                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td class="plats-td med-bild"><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}<img src="${thumbSrc}" data-full="${fullSrc}" data-namn="${namnAttr}" data-artnr="${esc(artId)}" alt="" class="prod-thumb" loading="lazy" width="56" height="56"></td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
@@ -2247,6 +2251,8 @@
                 b.innerHTML = '<span>📷</span><small>Lägg till bild</small>';
                 t.replaceWith(b);
             } else {
+                var td = t.closest ? t.closest('td.plats-td') : null;
+                if (td) td.classList.remove('med-bild');
                 t.remove();
             }
         }, true);
