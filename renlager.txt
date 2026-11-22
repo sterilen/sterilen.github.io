@@ -3,3 +3,21 @@
 # Lägg den här filen i GitHub-repots rot, bredvid lagerid.txt.
 #
 # 3351  # exempel: byt mot riktigt lager id
+1240601
+1241201
+1240401
+4803201
+1313301
+49454
+1312201
+1242201
+1242901
+1313302
+4803601
+49135
+4803501
+50045
+12412
+12429
+50165
+49134
