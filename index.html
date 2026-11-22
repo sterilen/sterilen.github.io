@@ -1399,7 +1399,7 @@
                     const thumbSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artId)}_thumb.webp`;
                     const fullSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artId)}.webp`;
                     const namnAttr = esc(artikel.namn).replace(/"/g, '&quot;');
-                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td class="plats-td med-bild"><span class="lagerplats-skylt ${typ}">${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}<img src="${thumbSrc}" data-full="${fullSrc}" data-namn="${namnAttr}" data-artnr="${esc(artId)}" alt="" class="prod-thumb" loading="lazy" width="56" height="56"></td></tr>`;
+                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div>${artInfo}</div></div></td><td class="plats-td med-bild"><span class="lagerplats-skylt ${typ}">${gallerPlats ? '' : '<small>FÖRRÅD</small>'}${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}<img src="${thumbSrc}" data-full="${fullSrc}" data-namn="${namnAttr}" data-artnr="${esc(artId)}" alt="" class="prod-thumb" loading="lazy" width="56" height="56"></td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
@@ -1528,7 +1528,7 @@
                 const galler = /^\d+:\d+$/.test(a.plats);
                 return `<div class="serie-kort"><div class="serie-namn">${esc(a.namn)}</div>` +
                     `<div class="serie-info">${galler ? 'Instrumentgaller' : 'Fabrikssterilt'}${galler ? '' : ' · Art.nr ' + esc(a.artnr) + (a.lev_artnr && a.lev_artnr !== '-' ? ' · Lev.nr ' + esc(a.lev_artnr) : '')}</div>` +
-                    `<div class="serie-plats">${sk(galler ? 'galler' : '', 'PLATS', a.plats)}${a.bulk ? sk('bulk', 'BULK', a.bulk) : ''}</div></div>`;
+                    `<div class="serie-plats">${sk(galler ? 'galler' : '', galler ? 'PLATS' : 'FÖRRÅD', a.plats)}${a.bulk ? sk('bulk', 'BULK', a.bulk) : ''}</div></div>`;
             }).join('');
             kamStatus('✓ Hittad: ' + nr);
             kamBotten(kort +
