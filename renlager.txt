@@ -3,7 +3,14 @@
 # Lägg den här filen i GitHub-repots rot, bredvid lagerid.txt.
 #
 # 3351  # exempel: byt mot riktigt lager id
-3107
-3568
-3355
-3354
+3107 # STC GEMENSAM
+3568 # STC DISKRUM
+3355 # STC STERILFÖRRÅD
+3354 # STC PACKRUM
+3246 # ANE MODUL 3
+3087
+3292
+3646
+3050
+3358
+3212
