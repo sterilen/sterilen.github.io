@@ -808,7 +808,7 @@
             <button type="button" id="marockoKnapp" class="fredag-knapp" aria-label="Marocko" title="Marocko"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDAgQDAwMEBAQFBgoGBgUFBgwICQcKDgwPDg4MDQ0PERYTDxAVEQ0NExoTFRcYGRkZDxIbHRsYHRYYGRj/2wBDAQQEBAYFBgsGBgsYEA0QGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBj/wAARCACAAIADASIAAhEBAxEB/8QAGgABAAMBAQEAAAAAAAAAAAAAAAMEBQECB//EAC0QAAICAQEFBwQDAQAAAAAAAAABAgMEEQUSITFBExUiUZHB0SRTYfBCUrEj/8QAHAEBAAEFAQEAAAAAAAAAAAAAAAIBBAUGBwMI/8QAKxEAAgECBQMCBwEBAAAAAAAAAQIAAxEEBRIhMQYTQVFhIiMkQnFygZEz/9oADAMBAAIRAxEAPwD5WADUZ9NQABEAARAAEQABEAARAAEQABEAARAAEQABEAHmclCuU5PRRTbEi7qilmNgJ6B5hJTrjOL1Ukmj0IR1dQym4MAASUAARAAEQABEAARAAEQUdqW9ngOKfGb3S8ZmT9TtuqjnGvjL/X7HtQAL3PA3mpdbYqpTytsNRPzK5FJfy5sf8W5/kl2Xb2mAot8YPdLxmY30227aOUbOMf8AV7mmK4s1xwd5TonFVKmVrhq5+ZQJpN+UNh/q2P8AYAB4zboAAiAAIgACIOSbUW0m35I6BKMLiwNpnz2tRXNwnTdGS5ppfJzvnG+3d6Is5WJTlQ0mtJLlJc0UYWXbPmqsmtWU8ozS5fvkXaLScbDf0vOU5xj+o8pxX1WJVcMeKgpBgp8BwGBX9hccceJe+Mb7V3ovkp4mdVVk25F0JylN8N1cuJdz7qe7HOrcfaPdTS9SxiY8asKuDgtdNXqurK6kVCdPO3MtXwmdZpnNKguOR+wncDCmNIL3VRYNuSt2Bvt4mVl51VuTVkUwnGUHx3lz4lzvjG+1d6L5LOXjxtwrIKC101Wi6or4F1PdinbuLs3uttegujoDp425hMJnWV5zVoNjkTvp3CxpjSSllYWLbELZib7+ZzvnG+3d6I9Q2tRZNQhTdKT5JJfJBO27aE3Vi1qulcJTa5/vkXsXDpxYaQWsnzk+bKOtJBuN/S8usnx/UebYr6XEq2GHNQ0goY+QgLEt+xsOefM8W3FNpp+TOgFpOrKLAAm8AASsAARAAEQeZwjODhOKlF80z0cbSi23olxYEhUVGQrUAKnm/FveYOTjqnaHZY8ZWKPicOenXQ1sXNqyo8PDPrB+xV2brbkX5k+r0TfTr8EGW6sjNisGDduvGcOC/fyX7juHQ3IHM4VlOJfIKJzrAle3iah00LfEyBiE7drnUNza2mx8bTRys2rFj4vFPpBe5k42OrtodlkKVal4lBcNeuhLiOrHzZLOhJW68Jz4r9/JPtL/AJZGPmQ46PRtdevyEHbOheT5jNsS+f0RnWOK9vDVBqoW+JULAP3L2Oo7G1tNh53mjCEYQUIRUYrkkejiacU09U+KOlhO601RUC0wAo4txb2gACTgACIAAiAAIgqbSt7LZ89Oc/CvctkF+LDItg7XrCH8fN/knTIDAtxML1DQxWJy6th8F/0caQSbAatiSfYEnbf0mVi05OVjxpT7KhPVv+z9zXox6sercqjp5vqyRJRSSSSXJI6Tq1i/sJiumuj8NkyLUdjVrBQutvAAtpQfavsNz5JkV+PVkVblsdfJ9UZGVTk4uPKmT7Whvwv+r9jcONKSaaTT5pilWKe4jqXo/DZyrVEY0qxUrrXyCLaXH3L7HceCJV2bb2uz4a84eF+xbIKMWGPbN1PSE/4+T/BOQqEFiV4mV6eoYrDZdRw+Nt3EGkkG4OnYEfkAHff1gAEJmoAAiAAIgACIAAiAAIgACIAAiAAIgACIAAiAAIgACIAAiAAIgACIAAiAAIn/2Q==" alt=""></button>
         </div>
         Utvecklat av Pelle Holmström 2026<br>
-        Version 1.2<span id="dbdatum"></span>
+        Version 1.3<span id="dbdatum"></span>
     </footer>
     <!-- Databasen ligger i filen data.js (samma mapp som den här filen).    -->
     <!-- Den byggs av uppdatera_databas.py - ändra den inte för hand.        -->
@@ -916,6 +916,19 @@
                 const rawText = window.LAGER_CSV.trim();
                 lagerData = hanteraCSV(rawText);
                 if (window.LAGER_UPPDATERAD) document.getElementById('dbdatum').innerText = ' · Databas ' + window.LAGER_UPPDATERAD;
+                try {
+                    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(window.LAGER_UPPDATERAD || '');
+                    if (m) {
+                        const dagar = Math.floor((Date.now() - new Date(+m[1], +m[2] - 1, +m[3]).getTime()) / 86400000);
+                        if (dagar > 7) {
+                            const b = document.createElement('div');
+                            b.setAttribute('role', 'alert');
+                            b.style.cssText = 'background:#fef2f2;color:#b91c1c;border-bottom:2px solid #fca5a5;padding:10px 14px;text-align:center;font:600 14px/1.4 system-ui,sans-serif;';
+                            b.textContent = 'Databasen är ' + dagar + ' dagar gammal – plats och bulkplats kan vara fel. Kontrollera i Clockwork och meddela administratören.';
+                            document.body.insertBefore(b, document.body.firstChild);
+                        }
+                    }
+                } catch (e) {}
                 const antalGaller = lagerData.filter(i => ärGaller(i.plats)).length;
                 const tal = n => n.toLocaleString('sv-SE');
                 document.getElementById('antalArtiklar').innerHTML =
@@ -2607,7 +2620,7 @@
             h += `<h3>Färgteman</h3>
                 <p>Knappen med färgpaletten uppe till höger växlar mellan olika färgteman. Valet sparas på den här ${telefon ? 'telefonen' : 'datorn'}.</p>
                 <h3>Start, uppdateringar och utan nät</h3>
-                <p>När appen startar visas en startbild en kort stund. Appen sparar sig själv och databasen, startar direkt från den sparade kopian och fungerar även utan täckning efter första besöket. Nyare version och ny databas hämtas i bakgrunden, och sidan laddas om av sig själv om du inte har börjat söka. Längst ner står när databasen senast uppdaterades.</p>`;
+                <p>När appen startar visas en startbild en kort stund. Appen sparar sig själv och databasen, startar direkt från den sparade kopian och fungerar även utan täckning efter första besöket. Nyare version och ny databas hämtas i bakgrunden, och sidan laddas om av sig själv om du inte har börjat söka. Längst ner står när databasen senast uppdaterades. Databasen uppdateras automatiskt från Clockwork. Är den äldre än en vecka visas en röd varning högst upp, och då kan plats och bulkplats vara fel. Meddela i så fall administratören.</p>`;
             return h;
         }
         function visaHjalp() {
