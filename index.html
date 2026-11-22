@@ -143,10 +143,10 @@
             padding: 6px 2px;
             border-radius: 10px;
             font-weight: 800; 
-            font-size: 18px; 
+            font-size: 16px; 
             text-align: center; 
             box-shadow: 0 4px 6px -1px rgba(127, 176, 70, 0.1); 
-            letter-spacing: 0.5px; 
+            letter-spacing: 0; 
             white-space: nowrap;
             width: 100%;
         }
@@ -1403,7 +1403,7 @@
                     const thumbSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artId)}_thumb.webp`;
                     const fullSrc = artikel.bild ? esc(artikel.bild) : `bilder/${esc(artId)}.webp`;
                     const namnAttr = esc(artikel.namn).replace(/"/g, '&quot;');
-                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div></div>${artInfo}</div></td><td class="plats-td med-bild"><span class="lagerplats-skylt ${typ}">${gallerPlats ? '' : '<small>FÖRRÅD</small>'}${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}<img src="${thumbSrc}" data-full="${fullSrc}" data-namn="${namnAttr}" data-artnr="${esc(artId)}" alt="" class="prod-thumb" loading="lazy" width="56" height="56"></td></tr>`;
+                    tabellHtml += `<tr class="${typ}"><td><div class="prod-rad"><div class="prod-info"><span class="typ-etikett ${typ}">${typText}</span><div class="prod-namn">${esc(artikel.namn)}</div></div>${artInfo}</div></td><td class="plats-td med-bild"><span class="lagerplats-skylt ${typ}">${gallerPlats ? '<small>RAD:REOL</small>' : '<small>FÖRRÅD</small>'}${esc(artikel.plats)}</span>${artikel.bulk ? `<span class="lagerplats-skylt bulk"><small>BULK</small>${esc(artikel.bulk)}</span>` : ''}<img src="${thumbSrc}" data-full="${fullSrc}" data-namn="${namnAttr}" data-artnr="${esc(artId)}" alt="" class="prod-thumb" loading="lazy" width="56" height="56"></td></tr>`;
                 });
                 tabellHtml += `</tbody></table></div>`;
                 resultatOmråde.innerHTML = (platsLista ? `<div class="plats-info">Visar allt som står på hylla ${esc(sokPlatsVisa(platsFraga))}: ${hittade.length} ${hittade.length === 1 ? 'artikel' : 'artiklar'}.</div>` : '') + (liknande ? `<div class="likn-info">Inga exakta träffar för "${esc(document.getElementById('searchInput').value.trim())}". ${liknande === 'delvis' ? 'Visar artiklar som matchar de flesta av orden.' : 'Visar artiklar som liknar sökningen.'} Kontrollera att det är rätt produkt.</div>` : '') + tabellHtml;
@@ -1532,7 +1532,7 @@
                 const galler = /^\d+:\d+$/.test(a.plats);
                 return `<div class="serie-kort"><div class="serie-namn">${esc(a.namn)}</div>` +
                     `<div class="serie-info">${galler ? 'Instrumentgaller' : 'Fabrikssterilt'}${galler ? '' : ' · Art.nr ' + esc(a.artnr) + (a.lev_artnr && a.lev_artnr !== '-' ? ' · Lev.nr ' + esc(a.lev_artnr) : '')}</div>` +
-                    `<div class="serie-plats">${sk(galler ? 'galler' : '', galler ? 'PLATS' : 'FÖRRÅD', a.plats)}${a.bulk ? sk('bulk', 'BULK', a.bulk) : ''}</div></div>`;
+                    `<div class="serie-plats">${sk(galler ? 'galler' : '', galler ? 'RAD:REOL' : 'FÖRRÅD', a.plats)}${a.bulk ? sk('bulk', 'BULK', a.bulk) : ''}</div></div>`;
             }).join('');
             kamStatus('✓ Hittad: ' + nr);
             kamBotten(kort +
@@ -2604,7 +2604,7 @@
             h += `<h3>Platsrutorna</h3>
                 <ul>
                   <li>${dot('#7fb046')}<b>Grön</b>: fabrikssterilt, med hyllplats som <b>E-05-04-01</b>.</li>
-                  <li>${dot('#4687b0')}<b>Blå</b>: instrumentgaller, med plats som <b>12:3</b> (hylla:fack).</li>
+                  <li>${dot('#4687b0')}<b>Blå</b>: instrumentgaller, med plats som <b>12:3</b> (rad:reol – första siffran är raden, andra är reolen).</li>
                   <li>${dot('#b04671')}<b>Rosa, märkt BULK</b>: bulkplats. Den visas alltid bredvid hyllplatsen när artikeln också finns i bulk.</li>
                 </ul>`;
             if (harKamera) {
