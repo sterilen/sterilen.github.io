@@ -39,6 +39,12 @@ button.sek { background: var(--kort); color: var(--text); border-color: var(--ka
 .kort.rod { border-top-color: var(--rod); }
 .stor { font-size: 34px; font-weight: 700; color: var(--bla); line-height: 1.1; }
 .kort.rod .stor { color: var(--rod); }
+.kort.gron { border-top-color: var(--gron); } .kort.gron .stor { color: var(--gron); }
+.kort.varn { border-top-color: var(--varn); } .kort.varn .stor { color: var(--varn); }
+.tj { font-size: 14px; margin-top: 6px; display: flex; align-items: center; gap: 8px; }
+.tj i { width: 10px; height: 10px; border-radius: 50%; background: var(--dim); flex: none; }
+.tj.ok i { background: var(--gron); } .tj.fel i { background: var(--rod); }
+.stor.liten { font-size: 22px; }
 .under { color: var(--dim); font-size: 14px; margin-top: 4px; }
 .dim { color: var(--dim); }
 .tom { color: var(--dim); font-size: 14px; padding: 8px 0; }
@@ -99,6 +105,11 @@ button.sek { background: var(--kort); color: var(--text); border-color: var(--ka
       <div class="kort"><h2>Fördelning över dygnet</h2><div id="gTim"></div></div>
       <div class="kort"><h2>Veckodag</h2><div id="gVdag"></div></div>
     </div>
+    <div class="kort" style="margin-bottom:14px"><h2>🩺 Driftstatus</h2>
+      <div class="rad k4" id="driftKort" style="margin-bottom:10px"></div>
+      <div id="driftBild"></div>
+      <div class="under" id="driftText"></div>
+    </div>
     <div class="kort" style="margin-bottom:14px"><h2>Nyttig insikt</h2><div class="insikt" id="insikt"></div></div>
     <div class="kort" style="margin-bottom:14px"><h2>🏷️ Etiketter och följesedlar</h2>
       <div id="etStatus" class="tom"></div>
@@ -144,6 +155,11 @@ const STAT_NYCKEL = "Dce0nlyz!Dce0nlyz!";
 // Etikettstatistiken kommer från bildtjänsten. Nyckeln är en egen läs-nyckel (LAS_KEY i Cloudflare) som bara kan läsa etikettloggen.
 const ETIKETT_URL = "https://lagersok-bilder.pelle-holmstrom.workers.dev";
 const ETIKETT_NYCKEL = "fKF5Dibk8LXQbBvP";
+
+// Driftstatus läser söksidans egna filer: data.js (databasen) och bildmappen i samma GitHub-repo. Båda är publika.
+const DATA_URL = "data.js";
+const GH_REPO = "sterilen/sterilen.github.io";
+const tjanster = { stat: null, bild: null };   // true = svarar, false = fel, null = ej kollat
 
 const $ = (id) => document.getElementById(id);
 function lagra(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
@@ -342,8 +358,74 @@ async function hamtaEtiketter(dagar) {
     if (!r.ok) throw new Error(r.status === 401 ? 'fel nyckel' : 'svar ' + r.status);
     const data = await r.json();
     const rader = (data.rader || []).slice().sort((a, b) => (a.datum + a.tid < b.datum + b.tid ? -1 : 1));
+    tjanster.bild = true; ritaTjanster();
     ritaEtiketter(rader, dagar);
-  } catch (e) { inn.hidden = true; st.textContent = 'Kunde inte hämta etikettstatistiken (' + e.message + ').'; }
+  } catch (e) { tjanster.bild = false; ritaTjanster(); inn.hidden = true; st.textContent = 'Kunde inte hämta etikettstatistiken (' + e.message + ').'; }
+}
+
+function ritaTjanster() {
+  const m = $('tjanster'); if (!m) return;
+  tom(m);
+  const rad = (namn, v) => { const d = el('div', 'tj ' + (v === true ? 'ok' : v === false ? 'fel' : '')); d.appendChild(el('i')); d.appendChild(el('span', null, namn + (v === true ? ' svarar' : v === false ? ' svarar inte' : ' kollas…'))); m.appendChild(d); };
+  rad('Statistiktjänsten', tjanster.stat);
+  rad('Bildtjänsten', tjanster.bild);
+}
+
+function lasDatabas(txt) {
+  const m = /window\.LAGER_CSV\s*=\s*(`|")((?:\\.|(?!\1)[^\\])*)\1/s.exec(txt);
+  if (!m) throw new Error('hittade ingen artikeldata');
+  let csv = m[2]; if (m[1] === '"') csv = csv.replace(/\\n/g, '\n');
+  csv = csv.replace(/\\([\s\S])/g, '$1');
+  const rader = [];
+  csv.split(/\r?\n/).forEach((rad, i) => {
+    const d = rad.split(';');
+    if (i === 0 && ['artikelnummer', 'artnr'].includes(d[0].trim().toLowerCase())) return;
+    if (!d.some(x => x.trim())) return;
+    rader.push({ artnr: d[0].trim(), plats: (d[3] || '').trim(), bulk: (d[4] || '').trim() });
+  });
+  const st = /LAGER_UPPDATERAD\s*=\s*['"]([^'"]*)/.exec(txt);
+  return { rader, stamp: st ? st[1] : '' };
+}
+
+async function hamtaDrift() {
+  const k = $('driftKort'), b = $('driftBild'), t = $('driftText');
+  tom(k); tom(b); t.textContent = '';
+  const kort = (klass, stor, under, liten) => { const c = el('div', 'kort ' + klass); c.appendChild(el('div', 'stor' + (liten ? ' liten' : ''), stor)); c.appendChild(el('div', 'under', under)); k.appendChild(c); return c; };
+  let db = null;
+  try {
+    const r = await fetch(DATA_URL + '?t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('svar ' + r.status);
+    db = lasDatabas(await r.text());
+  } catch (e) { kort('rod', 'Okänt', 'Kunde inte läsa databasen (' + e.message + ')', true); }
+  if (db) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(db.stamp);
+    if (m) {
+      const dagar = Math.floor((Date.now() - new Date(+m[1], +m[2] - 1, +m[3], 12).getTime()) / 86400000);
+      kort(dagar >= 7 ? 'rod' : dagar >= 6 ? 'varn' : 'gron', dagar <= 0 ? 'Idag' : dagar === 1 ? '1 dag sedan' : dagar + ' dagar sedan', 'Databasen kontrollerades ' + m[1] + '-' + m[2] + '-' + m[3] + (dagar >= 7 ? ' – adminprogrammet har inte körts på över en vecka' : ''), true);
+    } else { kort('varn', 'Okänt', 'Databasen saknar uppdateringsstämpel', true); }
+    const utanPlats = db.rader.filter(a => !a.plats && !a.bulk).length;
+    kort(utanPlats ? 'varn' : 'gron', String(db.rader.length), 'artiklar i databasen' + (utanPlats ? ' · ' + utanPlats + ' utan plats' : ' · alla har plats'));
+  }
+  const tj = el('div', 'kort'); tj.appendChild(el('div', 'under', 'Tjänster')); const tm = el('div'); tm.id = 'tjanster'; tj.appendChild(tm);
+  // bilder
+  let bilder = null, avkortad = false;
+  try {
+    const r = await fetch('https://api.github.com/repos/' + GH_REPO + '/git/trees/HEAD?recursive=1', { headers: { Accept: 'application/vnd.github+json' } });
+    if (!r.ok) throw new Error(r.status === 403 ? 'GitHub tillåter inte fler anrop just nu' : 'svar ' + r.status);
+    const j = await r.json(); avkortad = !!j.truncated;
+    bilder = new Set();
+    (j.tree || []).forEach(f => { const mm = /^bilder\/([^\/]+)\.webp$/i.exec(f.path); if (mm && !/_thumb$/i.test(mm[1])) bilder.add(mm[1]); });
+  } catch (e) { t.textContent = 'Kunde inte kontrollera bilderna (' + e.message + ').'; }
+  if (db && bilder) {
+    const har = db.rader.filter(a => bilder.has(a.artnr)).length, tot = db.rader.length, p = pct(har, tot);
+    kort(p >= 90 ? 'gron' : p >= 60 ? 'varn' : 'rod', p + ' %', har + ' av ' + tot + ' artiklar har bild');
+    const g = el('div', 'sl'); g.appendChild(el('div', 'n', 'Artiklar med bild'));
+    const sp = el('div', 'spar'), f = el('div', 'fyll'); f.style.width = Math.max(1, p) + '%'; sp.appendChild(f); g.appendChild(sp);
+    const tx = el('div', 't', har + ' / ' + tot); g.appendChild(tx); b.appendChild(g);
+    const art = new Set(db.rader.map(a => a.artnr)); let utanArt = 0; bilder.forEach(n => { if (!art.has(n)) utanArt++; });
+    t.textContent = (utanArt ? utanArt + ' bilder hör inte till någon artikel i databasen (kan städas bort under Bilder → Orphans). ' : '') + (avkortad ? 'GitHub gav en avkortad lista, så siffran kan vara för låg.' : '');
+  } else { kort('varn', '–', 'Bilder kunde inte räknas', true); }
+  k.appendChild(tj); ritaTjanster();
 }
 
 let pagar = false;
@@ -358,12 +440,15 @@ async function hamta() {
     if (r.status === 401) { lagra('statnyckel', null); visaNyckel('Nyckeln stämmer inte. Skriv in rätt nyckel.'); $('status').textContent = ''; return; }
     if (!r.ok) throw new Error('Svar ' + r.status);
     const data = await r.json();
+    tjanster.stat = true; ritaTjanster();
     rita(data, dagar);
     hamtaEtiketter(dagar);
+    hamtaDrift();
     const nu = new Date();
     $('status').textContent = '';
     $('stamp').textContent = 'Läget ' + nu.toLocaleDateString('sv-SE') + ' kl ' + nu.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' }) + ' · tryck på Uppdatera för att hämta på nytt';
   } catch (e) {
+    tjanster.stat = false; ritaTjanster();
     $('status').className = 'status fel'; $('status').textContent = 'Kunde inte hämta statistiken (' + e.message + '). Kontrollera nätet och försök igen.';
   } finally { pagar = false; $('hamta').disabled = false; }
 }
