@@ -114,7 +114,8 @@ button.sek { background: var(--kort); color: var(--text); border-color: var(--ka
     <div class="kort" style="margin-bottom:14px"><h2>🏷️ Etiketter och följesedlar</h2>
       <div id="etStatus" class="tom"></div>
       <div id="etInnehall" hidden>
-        <div class="rad k4" id="etKort"></div>
+        <div class="rad k4" id="etKort" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))"></div>
+        <div id="etPaf" hidden style="margin-bottom:14px"><div class="dim" style="font-size:13px;font-weight:700;margin-bottom:6px">Artiklar från påfyllningslistan per dag</div><div id="etPafDag"></div><div class="under" id="etPafText"></div></div>
         <div class="rad k3" style="margin:0">
           <div><div class="dim" style="font-size:13px;font-weight:700;margin-bottom:6px">Etiketter per dag</div><div id="etDag"></div></div>
           <div><div class="dim" style="font-size:13px;font-weight:700;margin-bottom:6px">Per leverantör</div><div id="etLev"></div></div>
@@ -332,12 +333,22 @@ function ritaEtiketter(rader, dagar) {
   kort(String(ordrar.size), 'beställningar hanterade');
   kort(String(tillf), 'utskrifter');
   kort(String(manuella), 'enskilda artiklar (manuellt)');
+  const pafyll = rader.filter(r => r.kalla === 'Påfyllningslista');
+  if (pafyll.length) kort(String(pafyll.reduce((a, r) => a + r.n, 0)), 'etiketter från påfyllningslistan (' + new Set(pafyll.map(r => r.datum + ' ' + r.tid)).size + ' utskrifter)');
   const dagKey = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const dl = []; const base = new Date(); base.setHours(12, 0, 0, 0);
   const antal = Math.min(dagar, 60);
   for (let i = antal - 1; i >= 0; i--) { const d = new Date(base); d.setDate(d.getDate() - i); dl.push(d); }
   kolumner($('etDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => perDag.get(dagKey(d)) || 0), false, Math.ceil(antal / 6));
-  const lev = new Map(); rader.forEach(r => { let n = r.lev || (r.kalla === 'Manuell' ? 'Manuellt tillagda' : '(okänd)'); if (/medicarrier/i.test(n)) n = 'MediCarrier'; lev.set(n, (lev.get(n) || 0) + r.n); });
+  const paf = rader.filter(r => r.kalla === 'Påfyllningslista');
+  $('etPaf').hidden = !paf.length;
+  if (paf.length) {
+    const pPerDag = new Map(); paf.forEach(r => pPerDag.set(r.datum, (pPerDag.get(r.datum) || 0) + r.n));
+    const pTot = paf.reduce((a, r) => a + r.n, 0), pUt = new Set(paf.map(r => r.datum + ' ' + r.tid)).size;
+    kolumner($('etPafDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => pPerDag.get(dagKey(d)) || 0), false, Math.ceil(antal / 6));
+    $('etPafText').textContent = pTot + ' artiklar under perioden, ' + pUt + ' utskrifter, i snitt ' + Math.round(pTot / Math.max(pUt, 1)) + ' artiklar per utskrift.';
+  }
+  const lev = new Map(); rader.forEach(r => { let n = r.lev || (r.kalla === 'Påfyllningslista' ? 'Påfyllningslista' : (r.kalla === 'Manuell' ? 'Manuellt tillagda' : '(okänd)')); if (/medicarrier/i.test(n)) n = 'MediCarrier'; lev.set(n, (lev.get(n) || 0) + r.n); });
   stapelLista($('etLev'), raknaTopp(lev, 8).map(([n, v]) => [n, v, pct(v, tot)]));
   const kal = new Map(); rader.forEach(r => kal.set(r.kalla, (kal.get(r.kalla) || 0) + r.n));
   const kr = raknaTopp(kal, 5).map(([n, v]) => [n, v, pct(v, tot)]);
