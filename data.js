@@ -1,5 +1,5 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-11-21 16:34';
+window.LAGER_UPPDATERAD = '2026-11-23 17:47';
 window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats;Bild;Alternativa
 100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01;BPA-31
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
@@ -75,6 +75,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 103819;10026779;Spinalkanyl NRFit Sprotte 25G 120mm med40mm införare;D-08-02-01
 103826;4470046N;Spinalset NRFit kundanpassat 25G 88mm;D-02-02-01;BPA-08
 103828;15491050;Uppdragningskanyl NRFit trubbig tvärslipad 18Gx50mm;D-10-04-01
+103829;-;Uppdragningskanyl NRFit trubbig tvärslip;G-20-04-01
 103831;10027051;Propp NRFit lock hankoppling;D-22-01-01
 103837;4892610NR-01;Kanyl NRFit för perifer nervblockad injslang atr spets 20G 100mm;D-18-02-01
 103839;4892605NR-01;Kanyl NRFit för perifer nervblockad injslang atr spets 22G 50mm;D-10-05-01
@@ -172,7 +173,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 106226;97135440-04;Dukningsset Angioset SÖS/Karolinska;B-15-01-01;BPA-14
 106233;97103856-02;EVAR/TEVAR Lakan;B-27-03-01
 106355;9640-20;PEG-set komplett Mic Peg set PULL 20Fr Silikon;F-14-07-01
-106390;EN0120;Enteralspruta Caina Medical 20ml ENFit engångs;G-20-05-01
+106390;EN0120;Enteralspruta Caina Medical 20ml ENFit engångs;G-20-02-01
 106576;595400;Polyuretanskumförband m. fästkant 15x15cm Mepilex Border Flex;G-27-06-01
 106911;6099905WB;Sugslang kona/kona 3,5m Ø5,6x8,2mm steril;E-20-04-01
 107020;PC3787EU;Ultraljudsprobeskydd transparant 13x244cm;F-19-03-01
@@ -645,6 +646,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 98546;IDE1000;Kantduk häftande 30x45cm m tejp transparent PE;E-15-02-01
 98569;10026808;Säkerhetsskalpell med handtag i plast rostfritt stål nr 15;G-29-05-02
 98607;610900;Assistansbordspåse förstärkt 3-lagers 79x145cm;C-09-02-01;BF-04-04
+98719;-;Ultraljudsprobeskydd med klister på 18x3;G-20-03-01
 98748;3332-4G;Krok tvåfinger 14mm 4pk;G-03-01-01
 98771;9751002;Munstycke långt för koaxialkanal PulsedLavage längd 19cm;E-29-09-01
 98772;9750000;Nätdrift Pulsed Lavage;E-16-02-01;BD-08-02
