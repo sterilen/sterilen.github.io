@@ -1,5 +1,5 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-11-23 17:47';
+window.LAGER_UPPDATERAD = '2026-11-25 07:00';
 window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats;Bild;Alternativa
 100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01;BPA-31
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
@@ -894,7 +894,7 @@ A2162519;EGIA60AMT;Magasin endo gia tri-staple, vinklad 60,medium/tjock 60 mm li
 A2162520;EGIA60AVM;Magasin endo gia tri-staple, vinklad 60,vaskulär/medium 60 mm beige;F-08-03-01
 A2162541;VLOCM0604;Sutur resorberba med hulling V-loc 3-0 15cm taper point 26mm 1/2c lila;Z-10-02-01
 A2162545;VLOCM2145;Sutur resorberbar med hulling V-loc 2-023cm taper point 27mm1/2c lila;Z-10-02-02
-A2162548;VLOCN1126;Sutur ej resorberbar med hulling V-loc 045cm taper point 27mm1/2c blå;Z-10-09-02
+A2162548;VLOCN1126;Sutur ej resorberbar med hulling V-loc 045cm taper point 27mm1/2c blå;Z-10-04-02
 A2162571;ONB12STF;Troakar optisk 12mmx100mm arbetshylsa med fixation VersaOne;E-25-02-01
 A2162572;ONB5STF;Troakar optisk 5mmx100mm med arbetshylsamed fixation VersaOne std;E-23-04-01
 A2162583;ONB5SHF;Troakar optisk 5mmx70mm med arbetshylsamed fixation VersaOne kort;E-19-02-01
