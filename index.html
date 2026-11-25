@@ -1423,8 +1423,14 @@
         // (leverantörens artikelnummer, "REF", eller vårt eget artikelnummer). Textläsaren (Tesseract.js)
         // hämtas först när man trycker på kameraknappen, ligger mappen tesseract bredvid sidan används den, annars behövs nät första gången (ca 8 MB).
         const TESS_JS = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
-        const TESS_SPRAK = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int';
+        const TESS_SPRAK = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_fast';
         let kamNummerIndex = null;
+        // Snabbare avläsning: inga ordlistor (numren är inga ord), bara de tecken som kan förekomma i artikelnummer,
+        // och bara ren text som svar (ingen hOCR/TSV/blockdata som annars byggs för varje bild).
+        const KAM_INIT = { load_system_dawg: '0', load_freq_dawg: '0', load_punc_dawg: '0', load_number_dawg: '0', load_unambig_dawg: '0', load_bigram_dawg: '0' };
+        const KAM_TECKEN = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-./|:,()';
+        let kamArbetare = [];                               // textläsare: { w: arbetare, psm: senast inställt sidläge }. Nr 2 startas i bakgrunden på kraftfullare telefoner.
+        let kamLokal = false, kamGen = 0;
         let kamStrom = null, kamWorker = null, kamWorkerLovar = null;
         let kamAktiv = false, kamVarv = 0;
 
@@ -1571,22 +1577,39 @@
                 document.head.appendChild(sc);
             });
         }
+        // Skapar en textläsare. Lokala filer först (om mappen tesseract finns), annars internet.
+        async function kamSkapaWorker() {
+            let w = null;
+            if (kamLokal) {
+                const bas = new URL('tesseract/', location.href).href;   // måste vara fullständiga adresser (arbetaren startas från en blob)
+                try {
+                    w = await Tesseract.createWorker('eng', 1, { workerPath: bas + 'worker.min.js', corePath: bas, langPath: bas + 'lang', gzip: true }, KAM_INIT);
+                } catch (e) { w = null; }       // filer saknas eller är trasiga: använd internet i stället
+            }
+            if (!w) w = await Tesseract.createWorker('eng', 1, { langPath: TESS_SPRAK, gzip: true }, KAM_INIT);
+            try { await w.setParameters({ tessedit_char_whitelist: KAM_TECKEN, preserve_interword_spaces: '1' }); } catch (e) {}
+            return w;
+        }
+        // Läsare nummer 2 arbetar parallellt med nummer 1 så att dubbelt så många bilder hinner läsas. Bara på telefoner med minst 4 kärnor och tillräckligt minne.
+        async function kamLaddaExtra() {
+            try {
+                if ((navigator.hardwareConcurrency || 2) < 4) return;
+                if (navigator.deviceMemory && navigator.deviceMemory < 3) return;
+                const w = await kamSkapaWorker();
+                kamArbetare.push({ w, psm: null });
+            } catch (e) {}
+        }
         function laddaTesseract() {
             if (kamWorkerLovar) return kamWorkerLovar;
             kamWorkerLovar = (async () => {
-                let lokal = false;
                 if (!window.Tesseract) {
-                    try { await kamLaddaSkript('tesseract/tesseract.min.js'); lokal = true; }
+                    try { await kamLaddaSkript('tesseract/tesseract.min.js'); kamLokal = true; }
                     catch (e) { await kamLaddaSkript(TESS_JS); }
                 }
-                if (lokal) {
-                    const bas = new URL('tesseract/', location.href).href;   // måste vara fullständiga adresser (arbetaren startas från en blob)
-                    try {
-                        kamWorker = await Tesseract.createWorker('eng', 1, { workerPath: bas + 'worker.min.js', corePath: bas, langPath: bas + 'lang', gzip: true });
-                    } catch (e) { kamWorker = null; }       // filer saknas eller är trasiga: använd internet i stället
-                }
-                if (!kamWorker) kamWorker = await Tesseract.createWorker('eng', 1, { langPath: TESS_SPRAK, gzip: true });
+                kamWorker = await kamSkapaWorker();
+                kamArbetare = [{ w: kamWorker, psm: null }];
                 try { localStorage.setItem('kamAnvand', '1'); } catch (e) {}
+                setTimeout(kamLaddaExtra, 500);
                 return kamWorker;
             })().catch(e => { kamWorkerLovar = null; throw e; });
             return kamWorkerLovar;
@@ -1629,16 +1652,17 @@
                 sw = Math.min(vw - sx, ram.width / skala);
                 sh = Math.min(vh - sy, ram.height / skala);
             }
-            const mal = Math.min(1, (hel ? 1100 : 900) / Math.max(sw, sh));   // mindre bild går snabbare att läsa
+            const mal = Math.min(1, (hel ? 850 : 700) / Math.max(sw, sh));   // mindre bild går snabbare att läsa
             const c = document.createElement('canvas');
             c.width = Math.max(1, Math.round(sw * mal)); c.height = Math.max(1, Math.round(sh * mal));
             c.getContext('2d').drawImage(v, sx, sy, sw, sh, 0, 0, c.width, c.height);
             return kamForbattra(c);
         }
 
-        async function kamLas(canvas, psm) {
-            await kamWorker.setParameters({ tessedit_pageseg_mode: String(psm) });
-            const { data } = await kamWorker.recognize(canvas);
+        async function kamLas(canvas, psm, ent) {
+            ent = ent || kamArbetare[0];
+            if (ent.psm !== psm) { await ent.w.setParameters({ tessedit_pageseg_mode: String(psm) }); ent.psm = psm; }
+            const { data } = await ent.w.recognize(canvas, {}, { text: true });
             return data.text || '';
         }
 
@@ -1718,22 +1742,27 @@
 
         async function kamStart() {
             kamAktiv = true; kamVarv = 0; kamOsakra = new Set(); kamKand = new Map();
+            const gen = ++kamGen;                           // gamla varv som fortfarande väntar på svar ska inte blanda sig i ett nytt
             kamBotten('');
             kamStatus('');   // instruktionen står redan i rutan ovanför (kamera-titel)
             const klart = Date.now() + (kamSerie() ? 180000 : 60000);   // serieläget scannar längre mellan produkterna
             // Oftast bara rutan (snabbast), varannan gång hela bilden ifall numret står utanför rutan
             const upplagg = [[false, 6], [true, 11], [false, 11], [true, 6], [false, 6], [false, 11]];
-            while (kamAktiv && Date.now() < klart) {
-                const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
-                const bild = kamTaBild(hel);
-                if (!bild) { await new Promise(r => setTimeout(r, 300)); continue; }
-                let text = '';
-                try { text = await kamLas(bild, psm); } catch (e) { kamStatus('Textläsningen misslyckades'); break; }
-                if (!kamAktiv) return;
-                if (kamHantera(text, false)) return;
-                if (kamAktiv && kamVarv >= 12 && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
-                await new Promise(r => setTimeout(r, 20));
-            }
+            const lopp = async (ent) => {                   // en läsare = ett varv; med två läsare tas två bilder samtidigt
+                while (kamAktiv && gen === kamGen && Date.now() < klart) {
+                    const [hel, psm] = upplagg[kamVarv++ % upplagg.length];
+                    const bild = kamTaBild(hel);
+                    if (!bild) { await new Promise(r => setTimeout(r, 300)); continue; }
+                    let text = '';
+                    try { text = await kamLas(bild, psm, ent); } catch (e) { kamStatus('Textläsningen misslyckades'); return; }
+                    if (!kamAktiv || gen !== kamGen) return;
+                    if (kamHantera(text, false)) return;
+                    if (kamAktiv && kamVarv >= 12 && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
+                    await new Promise(r => setTimeout(r, 20));
+                }
+            };
+            await Promise.all(kamArbetare.slice(0, 2).map((ent, i) => new Promise(r => setTimeout(r, i * 150)).then(() => lopp(ent))));
+            if (gen !== kamGen) return;
             if (kamAktiv && kamOsakra.size) { kamAktiv = false; kamVisaVal([], [...kamOsakra]); return; }
             if (kamAktiv) {
                 kamAktiv = false;

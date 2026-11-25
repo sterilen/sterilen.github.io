@@ -1,5 +1,5 @@
 // sw.js v7 – räknarna längst ner
-const CACHE = 'sterilsok-v19';
+const CACHE = 'sterilsok-v21';
 const ASSETS = ['./', './index.html', './data.js', './manifest.webmanifest'];
 
 self.addEventListener('install', e => {
