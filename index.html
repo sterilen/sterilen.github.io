@@ -1423,7 +1423,7 @@
         // (leverantörens artikelnummer, "REF", eller vårt eget artikelnummer). Textläsaren (Tesseract.js)
         // hämtas först när man trycker på kameraknappen, ligger mappen tesseract bredvid sidan används den, annars behövs nät första gången (ca 8 MB).
         const TESS_JS = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
-        const TESS_SPRAK = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_fast';
+        const TESS_SPRAK = 'https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng@1.0.0/4.0.0_best_int';
         let kamNummerIndex = null;
         // Snabbare avläsning: inga ordlistor (numren är inga ord), bara de tecken som kan förekomma i artikelnummer,
         // och bara ren text som svar (ingen hOCR/TSV/blockdata som annars byggs för varje bild).
