@@ -1,5 +1,5 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-11-25 07:00';
+window.LAGER_UPPDATERAD = '2026-11-26 05:30';
 window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats;Bild;Alternativa
 100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01;BPA-31
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
@@ -180,8 +180,8 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 107024;PS4611A;Lamphandtagsskydd för operationslampa Polaris Dräger 1-pack;C-22-03-01
 107055;63628;Hålduk häftande flexibel 2-delad 2-lagers 75x100cm;G-16-04-01
 107056;63842;Hålduk häftande 2-lagers 150x180cm hål 5x15cm;C-13-04-01
-107057;63850;Benpåse 2-lagers 75x120cm 2-pack BARRIER;C-09-04-01
-107059;63858;Instrumentbordslakan 150x190cm 2-lagers;C-11-02-01;BD-03-05
+107057;63850;Benpåse 2-lagers 75x120cm 2-pack BARRIER;C-09-04-01;;;610930
+107059;63858;Instrumentbordslakan 150x190cm 2-lagers;C-11-02-01;BD-03-05;;98590
 107074;060022725;Spruta injektions förfylld m NaCl Luer-Lock 3-komp 20ml 0.9% NaCl;G-29-07-01;BG-06-01
 107213;63619;Operationshandduk 75x90cm 2-lagers;G-25-08-01
 107217;10035442;CVK-set för högt tryck enkellumen Altius 7Fr 20cm;G-21-07-01
@@ -340,14 +340,14 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 61967;185260;Operationsduk nonwoven 5-pack med röntgentråd 20x40cm grön;C-15-04-01
 61968;185460;Operationsduk nonwoven 5-pack med röntgentråd 30x40cm brun;C-17-02-01;BA-01-01
 61969;185830;Operationsduk nonwoven 1-pack med röntgentråd 40x65cm grå;C-15-03-01
-61970;185860;Operationsduk nonwoven 5-pack med röntgentråd 40x65cm svart;C-19-03-01
+61970;185860;Operationsduk nonwoven 5-pack med röntgentråd 40x65cm svart;C-19-03-01;;;185860-21
 61971;159160;Operationsduk gasväv 10x10cm 12-lager mröntgentråd orange 5pk;C-17-03-01
-61972;159860;Operationsduk gasväv 10x60cm 12-lager mröntgentråd röd 5pk;C-17-01-02
+61972;159860;Operationsduk gasväv 10x60cm 12-lager mröntgentråd röd 5pk;C-17-01-02;;;159860-20
 61973;159460;Operationsduk gasväv 10x60cm 4-lager m röntgentråd lila 5pk;C-15-04-02
 61978;707035;Sug- och diatermipåse 40X35cm;C-22-01-01
 62096;0703-125-002;Knivelektrod till diatermihandtag belagd isolerad 125mm, SafeAir;E-24-03-01
 62099;0703125001;Knivelektrod till diatermihandtag 125mm, SafeAir;F-08-06-03
-62204;187922;Operationsduk nonwoven xtra kraftig grön rtg-tråd 40x60cm 2-pk svart;C-15-03-02
+62204;187922;Operationsduk nonwoven xtra kraftig grön rtg-tråd 40x60cm 2-pk svart;C-15-03-02;;;187922-20
 62218;708131;Slanghållare kardborrband häftande 2,5x30cm;C-22-02-01
 62228;1463-02;Operationshandduk absorberande 70x60cm häftkant 5cm 3-lagers;E-10-04-01;BG-05-01
 62255;1825;Slangstrumpa för kablar transparent 17x240cm;F-23-02-01
@@ -386,9 +386,9 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 63785;4617304F;Spruta injektions Luer Lock 3-komp 30mlgraderad 1ml;F-22-04-01
 63786;4617022V;Spruta injektions Luer Lock 3-komp 3ml graderad 0,1ml;H-05-01-02
 64219;6619;Vertikallakan transparent 328x252cm uppsam.påse m avtappningskran;E-28-07-01
-64239;150060;Operationstork gasväv m rtgtråd med kontrollkvitto nr 0 orange 5st;C-19-01-01
+64239;150060;Operationstork gasväv m rtgtråd med kontrollkvitto nr 0 orange 5st;C-19-01-01;;;150060-20
 64240;150160;Operationstork gasväv m rtgtråd med kontrollkvitto nr 1 gul 5st;C-17-01-01
-64241;150360;Operationstork gasväv m rtgtråd med kontrollkvitto nr 3 blå 5st;C-19-01-02
+64241;150360;Operationstork gasväv m rtgtråd med kontrollkvitto nr 3 blå 5st;C-19-01-02;;;150360-20
 64242;150560;Operationstork gasväv m rtgtråd med kontrollkvitto nr 5 svart 5st;B-20-02-01
 65254;60881040;Sugkateter rak 40cm nr 10 svart;D-28-08-01
 65255;60881053;Sugkateter rak 53cm nr 10 svart;G-06-04-01
@@ -410,7 +410,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 66607;68409;Dränageset med troakar med sugboll uppspåse nr 10 effekt 75mm Hg;E-27-05-01
 66608;68410;Dränageset med troakar med sugboll uppspåse nr 14 effekt 75mm Hg;H-29-02-01
 66633;804555;Incisionsfilm 45x55cm incisionsyta 45x49cm 25my;E-30-08-01
-66638;185060;Operationsduk nonwoven 5-pack med röntgentråd 10x40cm orange;C-19-02-01
+66638;185060;Operationsduk nonwoven 5-pack med röntgentråd 10x40cm orange;C-19-02-01;;;185060-21
 66727;381035;Operationstejp 9x49cm;C-26-04-01;BC-03-02
 66729;850103;Operationsrock standard classic L-L längd 131cm bröstvidd 54cm;C-03-01-01;BPA-04
 66730;850111;Operationsrock standard classic 2 handdXXL-XL längd 161cm bröstv 66cm;C-07-01-01
@@ -738,8 +738,8 @@ A116507983;IS5-90-20-V;Trombolyskateter Valved tip, 90cm, 5F, 20cm,Fountain®;X-
 A116510561;RF*ZM74110M;Periferkateter/Hydrofil kateter 4F Straight, 100cm,Glidecath;Z-03-01-10
 A116510579;RF*ZV94110M;Periferkateter/Hydrofil kateter 4F Non tapered angled, 100cm,Glidecath;Z-03-01-05
 A116516974;97103291-04;Operationsset Trachset SÖS;B-16-01-01
-A116575056;DAR 630;Blodstillande plåster, för radialis, Statseal;X-01-04-01
-A116575057;DAP 629;Blodstillande plåster, för femoralis, Statseal;X-01-04-02
+A116575056;DAR 630;Blodstillande plåster, för radialis, Statseal;X-01-04-01;;;DAR020
+A116575057;DAP 629;Blodstillande plåster, för femoralis, Statseal;X-01-04-02;;;DAP019
 A116581123;2N02E;Sutur Taper Point CV-2, 91 cm, TH-26, 1/2 Circle Dubbelnål;F-08-07-01
 A116581187;6M12E;Sutur kärlgraft ej resorberbar 5-0 CV-6taper Point 1/2c 76 cm;F-08-07-02
 A116581202;7M10E;Sutur kärlgraft ej resorberbar 6-0 CV-7taper Point 1/2c 76 cm;F-08-06-02
