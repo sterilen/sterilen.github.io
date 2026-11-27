@@ -348,8 +348,16 @@ function ritaEtiketter(rader, dagar) {
     kolumner($('etPafDag'), dl.map(d => String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')), dl.map(d => pPerDag.get(dagKey(d)) || 0), false, Math.ceil(antal / 6));
     $('etPafText').textContent = pTot + ' artiklar under perioden, ' + pUt + ' utskrifter, i snitt ' + Math.round(pTot / Math.max(pUt, 1)) + ' artiklar per utskrift.';
   }
-  const lev = new Map(); rader.forEach(r => { let n = r.lev || (r.kalla === 'Påfyllningslista' ? 'Påfyllningslista' : (r.kalla === 'Manuell' ? 'Manuellt tillagda' : '(okänd)')); if (/medicarrier/i.test(n)) n = 'MediCarrier'; lev.set(n, (lev.get(n) || 0) + r.n); });
+  // Bara riktiga leverantörer; påfyllningslista och manuellt tillagda har ingen leverantör och räknas för sig
+  const lev = new Map(), utanK = new Map(); let utan = 0;
+  rader.forEach(r => {
+    let n = (r.lev || '').trim();
+    if (!n) { utan += r.n; const k = r.kalla === 'Påfyllningslista' ? 'påfyllningslista' : (r.kalla === 'Manuell' ? 'manuellt' : 'okänd'); utanK.set(k, (utanK.get(k) || 0) + r.n); return; }
+    if (/medicarrier/i.test(n)) n = 'MediCarrier';
+    lev.set(n, (lev.get(n) || 0) + r.n);
+  });
   stapelLista($('etLev'), raknaTopp(lev, 8).map(([n, v]) => [n, v, pct(v, tot)]));
+  if (utan) $('etLev').appendChild(el('div', 'dim', 'Utan leverantör: ' + utan + ' (' + [...utanK.entries()].sort((a, b) => b[1] - a[1]).map(e => e[0]).join(' och ') + ')'));
   const kal = new Map(); rader.forEach(r => kal.set(r.kalla, (kal.get(r.kalla) || 0) + r.n));
   const kr = raknaTopp(kal, 5).map(([n, v]) => [n, v, pct(v, tot)]);
   if (bulk) kr.push(['Varav bulkplats', bulk, pct(bulk, tot)]);
