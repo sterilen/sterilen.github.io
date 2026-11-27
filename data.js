@@ -1,5 +1,5 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-11-27 05:30';
+window.LAGER_UPPDATERAD = '2026-11-27 14:08';
 window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats;Bild;Alternativa
 100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01;BPA-31
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
@@ -16,18 +16,13 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 101835;MG-245277;Blandningssystem för cytostatika Syringe Adaptor Lock Chemfort;G-04-05-01;BD-06-03
 101837;MG-245248;Blandningssystem för cytostatika Vial Adaptor 13/20mm Chemfort;G-04-02-01;BD-06-04
 101839;MG-245269;Blandningssystem för cytostatika Vial Adaptor 32mm Chemfort;G-04-03-01
-101876;144668;Injektionskanyl 22Gx50mm svart Prosum;D-26-04-01
-101877;144669;Injektionskanyl 23Gx25mm blå Prosum;D-26-04-02
-101880;144673;Injektionskanyl 27Gx19mm grå Prosum;D-24-07-01
 101883;4665465;Injektionskanyl 21Gx80 mm grön Sterican;D-24-07-02
 101886;4550591;Uppdragningskanyl universal Spike med injektionsmembran f flaska blå;G-10-03-01
-101887;144656;Uppdragningskanyl trubbig/tvärslipad 18Gx50mm rosa singelpack Prosum;D-17-01-01;BD-02-04
 101894;10553-01;Infusionskran 3-vägs evercare 100cm slang 3x4,1mm;X-03-06-01
 101895;10575-02;Infusionskran 3-vägs evercare 10cm slang 3x4,1mm 2injmemb;G-12-05-01;BD-08-01
 101909;B956017;Spruta injektions Luer Lock 3-komp 1ml grad 0,01ml centrisk;G-11-05-02
 102032;393227;Infusionskanyl säkerhetsprodukt 18Gx45mm grön BD Venflon™ Pro Safety;D-10-08-02
 102033;900406;Injektionskanyl 14Gx80mm ljusgrön KD-FINE;G-08-05-02
-102034;714841;Infusionskran 3-vägs två SWAN-LOCK 100cm slang SELF LOCK green line;D-27-03-01;BD-05-04
 102188;CSE-P-125;Klockset till Haemonetics Cellsaver Elite+, 125 ml;D-22-07-01;BF-03-04
 102190;00205-00;Uppsamlingsreservoar 3 liter till Cellsaver Elite+;D-24-09-01
 102191;00208-00;Sugslang med antikoagulering standard passar Elite+;E-05-07-01;BF-07-03
@@ -175,6 +170,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 106355;9640-20;PEG-set komplett Mic Peg set PULL 20Fr Silikon;F-14-07-01
 106390;EN0120;Enteralspruta Caina Medical 20ml ENFit engångs;G-20-02-01
 106576;595400;Polyuretanskumförband m. fästkant 15x15cm Mepilex Border Flex;G-27-06-01
+106848;-;Insulinspruta 0.5ml med stickskydd 30G (;D-15-01-01
 106911;6099905WB;Sugslang kona/kona 3,5m Ø5,6x8,2mm steril;E-20-04-01
 107020;PC3787EU;Ultraljudsprobeskydd transparant 13x244cm;F-19-03-01
 107024;PS4611A;Lamphandtagsskydd för operationslampa Polaris Dräger 1-pack;C-22-03-01
@@ -186,6 +182,14 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 107213;63619;Operationshandduk 75x90cm 2-lagers;G-25-08-01
 107217;10035442;CVK-set för högt tryck enkellumen Altius 7Fr 20cm;G-21-07-01
 107737;97124863-02;Dukningsset för CVK vuxen;B-29-01-01
+107927;-;Blandningsaggregat 180cm, injektionsmemb;G-12-03-01
+107930;-;Infusionsaggregat 320cm luftat Air-Guard;H-15-01-01
+107971;-;Injektionskanyl 22G 0,7x50mm svart;D-26-04-01
+107988;-;Injektionskanyl KD-FINE 23G 0,6x25mm blå;D-26-04-02
+107992;-;Injektionskanyl KD-FINE 27G 0,4x20mm grå;D-24-07-01
+108004;-;Uppdragningskanyl trubbig/tvärslipad uta;D-17-01-01;BD-02-04
+108017;-;Infusionskran 3-vägs evercare 100cm slan;D-27-03-01;BD-05-04
+108043;-;Spruta injektion Luer Lock 3-komp Bluebi;G-11-05-02
 1089;6066500208;Öronsugkanyl metall engångs 14G, 2,0x70mm grön;E-26-08-02
 11080413034606;HEK06/75CPUT.;Hemacarotid Patch 6x75mm;F-18-07-01
 12091313580927;H060010;Propaten graft 6mm 10cm;F-06-02-01
@@ -500,7 +504,6 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 85694;97013225-09;Operationsset Vaginalset SÖS;B-14-01-01
 85840;8250833SP;Aggregat till infusionspump Infusomat Spaceline Enteral ENFit 320cm;G-08-02-01;BF-08-01
 85852;10700;Infusionsaggregat m luftning 180cm Filterstop hydrofilt/luftstopp;D-23-01-01;BPA-03
-85853;10702;Infusionsaggregat m luftning 320cm Filterstop hydrofilt/luftstopp;H-15-01-01
 85894;394600;Infusionskran 3-vägs för ECMO utan slang;G-14-05-01
 86087;LF1923;Kärlförslutningsinstrument LigaSure Maryland Jaw 23 cmx5mm;F-19-05-01
 86164;6659;Incisionsduk med uppsamlingspåse Ioban 74x87cm incisionsyta 42x52cm;B-18-04-01
@@ -571,7 +574,6 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 91150;97100600-01;Operationsset Kir Rekto/ Vaginalset SÖS;B-11-04-01
 91153;97107376-03;Operationsset Sectiobubblan SÖS;B-02-01-01;BPA-16
 91183;340006075;Op-handske, latexfri, underhandske, extra kemikalietålig, grön 7,5;C-04-01-01
-91687;10583-02;Blandningsaggregat läkemedel 180cm Spinning Spiros;G-12-03-01
 91695;10672;Transfusionsaggregat 180cm slang PVC-fri;D-29-01-01
 91757;5050G;Hudskydd barriärfilm med applikator Cavilon Advanced 2,7ml;G-22-01-01
 91789;C-PPD-850-IMH;Pleuradränage 8,5FR 15cm 6sidohål böjd ledare nål 18G 7cm;G-23-07-01
@@ -587,7 +589,6 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 92055;4616057V;Spruta injektions Luer 5ml graderad 0,2ml, excentrisk;D-03-02-01;BE-03-01
 92056;4616103V;Spruta injektions Luer 10ml graderad 0,5ml excentrisk;D-01-02-01;BPA-30
 92057;4616200V;Spruta injektions Luer 20ml graderad 1ml excentrisk;D-09-01-01;BE-03-03
-92062;200002SG;Insulinspruta säkerhetsprodukt SOL-Guard 0,5ml 29G 12,5mm;D-15-01-01
 92114;4710500394-3;Förfyllt system för bencement Optipac 40g Refobacin;E-12-01-01;BPA-01
 92826;60213;Extremitetslakan förstärkt 3-lagers 230x315cm hål 7cm;E-27-06-01
 92976;6913230;CDK-set antegrad tunnelering EquistreamXK 16Fr (5,28 yd mm) 23cm rak;H-17-07-01
