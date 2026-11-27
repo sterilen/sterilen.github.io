@@ -1,5 +1,5 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-11-26 05:30';
+window.LAGER_UPPDATERAD = '2026-11-27 05:30';
 window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats;Bild;Alternativa
 100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01;BPA-31
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
@@ -383,7 +383,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 63659;226516;Urinkateter Nelaton 2-v 10ml 16Ch 40cm rosa;G-09-04-01
 63783;4617100V;Spruta injektions Luer Lock 3-komp 10mlgraderad 0,5ml;H-05-01-01
 63784;4617207V;Spruta injektions Luer Lock 3-komp 20mlgraderad 1ml;G-02-04-01
-63785;4617304F;Spruta injektions Luer Lock 3-komp 30mlgraderad 1ml;F-22-04-01
+63785;4617304F;Spruta injektions Luer Lock 3-komp 30mlgraderad 1ml;F-18-08-01
 63786;4617022V;Spruta injektions Luer Lock 3-komp 3ml graderad 0,1ml;H-05-01-02
 64219;6619;Vertikallakan transparent 328x252cm uppsam.påse m avtappningskran;E-28-07-01
 64239;150060;Operationstork gasväv m rtgtråd med kontrollkvitto nr 0 orange 5st;C-19-01-01;;;150060-20
