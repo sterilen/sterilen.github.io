@@ -1,8 +1,5 @@
 # Lager id för renförrådet (beställningsenheter vars inköpsorder visas under RENFÖRRÅD).
 # Ett lager id per rad. Det som står efter # är bara en kommentar.
-# Lägg den här filen i GitHub-repots rot, bredvid lagerid.txt.
-#
-# 3351  # exempel: byt mot riktigt lager id
 
 3093 # 	URO OPERATION MODUL 1		
 3644 # 	URO OPERATION MODUL 1		
