@@ -95,7 +95,6 @@ button.sek { background: var(--kort); color: var(--text); border-color: var(--ka
     <div class="rubrik"><h1>Lagersök statistik</h1><small id="stamp">Ögonblicksbild – tryck på Uppdatera för att hämta på nytt</small></div>
     <label class="dim">Period <select id="period"><option value="7">7 dagar</option><option value="14">14 dagar</option><option value="30" selected>30 dagar</option><option value="90">90 dagar</option><option value="365">365 dagar</option></select></label>
     <button id="hamta" type="button">↻ Uppdatera</button>
-    <button id="nyckel" type="button" class="sek">Nyckel…</button>
   </div>
   <div id="status" class="status"></div>
   <div id="innehall" hidden>
@@ -361,6 +360,9 @@ function ritaEtiketter(rader, dagar) {
   const kal = new Map(); rader.forEach(r => kal.set(r.kalla, (kal.get(r.kalla) || 0) + r.n));
   const kr = raknaTopp(kal, 5).map(([n, v]) => [n, v, pct(v, tot)]);
   if (bulk) kr.push(['Varav bulkplats', bulk, pct(bulk, tot)]);
+  const bortN = rader.reduce((a, r) => a + (r.bort || 0), 0), restN = rader.reduce((a, r) => a + (r.rest || 0), 0);
+  if (bortN) kr.push(['Bockades bort', bortN, pct(bortN, tot)]);
+  if (restN) kr.push(['Restorderrader', restN, pct(restN, tot)]);
   stapelLista($('etKalla'), kr);
   const VD = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag', 'Söndag'];
   const perVd = [0, 0, 0, 0, 0, 0, 0];
@@ -474,7 +476,6 @@ async function hamta() {
 function visaNyckel(fel) { $('nyckelFel').textContent = fel || ''; $('lager').hidden = false; $('nyckelFalt').value = ''; setTimeout(() => { try { $('nyckelFalt').focus(); } catch (e) {} }, 50); }
 $('nyckelForm').addEventListener('submit', (e) => { e.preventDefault(); const v = $('nyckelFalt').value.trim(); if (!v) return; lagra('statnyckel', v); $('lager').hidden = true; hamta(); });
 $('nyckelAvbryt').addEventListener('click', () => { $('lager').hidden = true; });
-$('nyckel').addEventListener('click', () => visaNyckel(''));
 $('hamta').addEventListener('click', hamta);
 $('period').addEventListener('change', hamta);
 hamta();
