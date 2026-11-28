@@ -1,5 +1,5 @@
 // Skapad automatiskt av uppdatera_databas.py - ändra inte för hand.
-window.LAGER_UPPDATERAD = '2026-11-27 14:08';
+window.LAGER_UPPDATERAD = '2026-11-28 05:30';
 window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats;Bild;Alternativa
 100082;97122501-03;Röntgen Nefrostomi SÖS,ProcedurePak®;B-21-01-01;BPA-31
 100132;87470;Endotrakealtub SHILEY HI-LO ID 7.0mm;D-13-03-01
@@ -188,7 +188,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 107988;-;Injektionskanyl KD-FINE 23G 0,6x25mm blå;D-26-04-02
 107992;-;Injektionskanyl KD-FINE 27G 0,4x20mm grå;D-24-07-01
 108004;-;Uppdragningskanyl trubbig/tvärslipad uta;D-17-01-01;BD-02-04
-108017;-;Infusionskran 3-vägs evercare 100cm slan;D-27-03-01;BD-05-04
+108017;-;Infusionskran 3-vägs evercare 100cm slan;D-27-03-01;BD-05-04;;71.4841
 108043;-;Spruta injektion Luer Lock 3-komp Bluebi;G-11-05-02
 1089;6066500208;Öronsugkanyl metall engångs 14G, 2,0x70mm grön;E-26-08-02
 11080413034606;HEK06/75CPUT.;Hemacarotid Patch 6x75mm;F-18-07-01
@@ -457,7 +457,7 @@ window.LAGER_CSV = `Artikelnummer;Leverantörsnummer;Produktnamn;Plats;Bulkplats
 69026;4160;Blandningssystem för bencement Optivac M;E-29-07-01
 69058;7612.50.180;Cementrestriktorplugg storlek 18-22mm femlock, plast;E-24-08-01
 69099;66038973;Bencement för revision 1x40 Copal 0,5g gentamicin + 2g vankomycin;F-29-07-01
-69100;M1173311;Bencement för revision 1x40 Copal 1g gentamicin + 1g clindamycin;F-27-01-01
+69100;M1173311;Bencement för revision 1x40 Copal 1g gentamicin + 1g clindamycin;F-27-01-01;;;66017790
 69118;4154;Injektionsrör cementblandningssystem för Optivac/Optipac nozzle slim;E-22-02-01
 69991;340058060;Op-handske, latexfri, underhandske standard tunn 6,0;C-08-01-01
 83087;980202EU;Blodvärmare Kassett enFlow med 7 cm slang 24h användning;D-01-03-01
